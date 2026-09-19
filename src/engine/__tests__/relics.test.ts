@@ -36,9 +36,9 @@ function setup(relicIds: string[], g = grid(['P O R', 'X T E', 'V I S'])) {
 }
 
 describe('relics data', () => {
-  it('has 35 unique ids and valid requires', () => {
-    expect(RELICS.length).toBe(35);
-    expect(new Set(RELICS.map((r) => r.id)).size).toBe(35);
+  it('has 36 unique ids and valid requires', () => {
+    expect(RELICS.length).toBe(36);
+    expect(new Set(RELICS.map((r) => r.id)).size).toBe(36);
     for (const r of RELICS) if (r.requires) expect(RELIC_BY_ID.has(r.requires)).toBe(true);
   });
 });
@@ -119,6 +119,11 @@ describe('side-effect relics', () => {
     const { ctx, relics } = setup(['case-joker', 'double-joker']);
     const g = runGridGenerate(grid(['A B', 'C D']), relics, ctx);
     expect(g.cells.flat().filter((c) => c.isJoker).length).toBe(2);
+  });
+  it('Épargne pays 5 % of held euros', () => {
+    const { ctx, relics } = setup(['epargne']); // run.euros = 40
+    expect(runMancheEnd(relics, ctx, true, 20)).toBe(22);
+    expect(runMancheEnd(relics, ctx, false, 10)).toBe(12);
   });
   it('Économe and Alchimiste', () => {
     const { ctx, relics } = setup(['econome', 'alchimiste']);

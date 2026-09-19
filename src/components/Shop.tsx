@@ -5,6 +5,7 @@ import { useRunStore } from '../state/runStore';
 import { RelicCard } from './RelicCard';
 
 const KIND_LABEL: Record<ShopItem['kind'], string> = { relic: 'Relic', consumable: 'Consommable', curse: 'Malédiction' };
+const labelOf = (item: ShopItem) => (item.kind === 'relic' && relic(item.id).charm ? 'Charme' : KIND_LABEL[item.kind]);
 
 function cardOf(item: ShopItem) {
   if (item.kind === 'relic') return relic(item.id);
@@ -22,8 +23,9 @@ export function Shop() {
   const rerolls = useRunStore((s) => s.shopRerolls);
   if (!run) return null;
   const rerollPrice = shopRerollPrice(rerolls.paid, rerolls.freeLeft);
-  const canReroll = run.euros >= rerollPrice && shop.some((s) => !s.sold);
+  const canReroll = run.euros >= rerollPrice;
   const inventoryFull = run.consumables.length >= MAX_CONSUMABLES;
+  const owned = (id: string) => run.relicIds.filter((r) => r === id).length;
   return (
     <div className="panel pick shop">
       <h2>Boutique</h2>
@@ -33,10 +35,11 @@ export function Shop() {
           const def = cardOf(item);
           const blockedInventory = item.kind === 'consumable' && inventoryFull;
           const canBuy = !item.sold && run.euros >= item.price && !blockedInventory;
-          const footer = item.sold ? 'Acheté' : blockedInventory ? 'Inventaire plein' : `${item.price} €`;
+          const count = item.kind === 'relic' ? owned(item.id) : 0;
+          const footer = item.sold ? 'Acheté' : blockedInventory ? 'Inventaire plein' : `${item.price} €${count ? ` · déjà ×${count}` : ''}`;
           return (
-            <div key={item.id} className={`shop-slot kind-${item.kind}`}>
-              <span className="kind">{KIND_LABEL[item.kind]}</span>
+            <div key={`${i}-${item.id}`} className={`shop-slot kind-${item.kind} ${def.charm ? 'kind-charm' : ''}`}>
+              <span className="kind">{labelOf(item)}</span>
               <RelicCard relic={def} onPick={canBuy ? () => buy(i) : undefined} footer={footer} disabled={!canBuy} />
             </div>
           );

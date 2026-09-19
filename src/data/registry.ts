@@ -2,6 +2,7 @@ import type { ConsumableDef, Curse, Mutator, Relic } from '../engine/hooks';
 import { CONSUMABLE_BY_ID } from './consumables';
 import { MUTATOR_BY_ID } from './mutators';
 import { CURSE_BY_ID } from './curses';
+import { charmFromId } from './charms';
 import { RELIC_BY_ID } from './relics';
 
 export function curse(id: string): Curse {
@@ -28,7 +29,7 @@ export function activeHooks(relicIds: readonly string[], curseIds: readonly stri
 }
 
 export function relic(id: string): Relic {
-  const r = RELIC_BY_ID.get(id);
+  const r = RELIC_BY_ID.get(id) ?? charmFromId(id);
   if (!r) throw new Error(`relic inconnu: ${id}`);
   return r;
 }

@@ -75,6 +75,9 @@ export interface Relic {
   rarity: Rarity;
   description: string;
   requires?: string;
+  price?: number;       // remplace le prix par rareté (charmes)
+  charm?: boolean;      // petit achat généré à la volée
+  stackable?: boolean;  // peut être possédé plusieurs fois
   enemyRelic?: boolean; // proposé seulement à partir de la manche 2, boosté si mutateur à ennemis pris
   shopRerolls?: number; // changements de boutique gratuits par visite (Brocanteur)
   gridRerolls?: number; // Sourcier : nouvelles grilles possibles sur l'écran « prêt »

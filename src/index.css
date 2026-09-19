@@ -175,6 +175,8 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 .is-ready .cell { filter: blur(4px); opacity: 0.8; }
 .relic.mutator { border-color: #cfe0f5; background: #eef4fb; }
+.relic.charm { border-color: #f6e0c8; background: #fff8f1; font-weight: 600; }
+.shop-slot.kind-charm .relic-card { border-color: #f6e0c8; background: #fffaf4; min-height: 120px; }
 .ready-line.mutator { color: #6f9ed1; }
 .ready-overlay .secondary { margin-top: 4px; }
 .cell.inspired { background: #fff0a8 !important; box-shadow: 0 0 20px 4px rgba(230, 169, 76, 0.55); animation: glow 1s ease-in-out infinite; }

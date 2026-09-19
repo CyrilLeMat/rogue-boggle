@@ -202,6 +202,11 @@ export const RELICS: Relic[] = [
     description: 'Avant chaque manche, tu peux retirer la grille jusqu\'à 2 fois en voyant son humeur et son seuil',
   },
   {
+    id: 'epargne', name: 'Épargne', rarity: 'common',
+    description: 'À chaque fin de manche, +5 % des euros que tu as en poche (arrondi au supérieur)',
+    onMancheEnd: (ctx, _success, euros) => euros + Math.ceil(ctx.run.euros * 0.05),
+  },
+  {
     id: 'brocanteur', name: 'Brocanteur', rarity: 'common', shopRerolls: 2,
     description: '2 changements d\'articles gratuits à chaque visite de la boutique',
   },

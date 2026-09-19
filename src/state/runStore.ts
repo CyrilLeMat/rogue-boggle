@@ -330,8 +330,9 @@ export const useRunStore = create<Store>((set, get) => ({
     if (!run) return;
     const price = shopRerollPrice(shopRerolls.paid, shopRerolls.freeLeft);
     if (run.euros < price) return;
-    const keep = shop.map((s) => (s.sold ? s : null));
-    const next = generateShopOffer(shopInput(run), run.rng, keep);
+    void shop;
+    // tous les emplacements sont retirés, achetés ou non : une boutique vidée se remplit à nouveau
+    const next = generateShopOffer(shopInput(run), run.rng);
     set({
       shop: next,
       run: { ...run, euros: run.euros - price },
@@ -346,7 +347,11 @@ export const useRunStore = create<Store>((set, get) => ({
     const item = shop[index];
     if (!run || !item || item.sold || run.euros < item.price) return;
     const next: RunState = { ...run, euros: run.euros - item.price };
-    if (item.kind === 'relic') next.relicIds = [...run.relicIds, item.id];
+    if (item.kind === 'relic') {
+      const def = resolveRelics([item.id])[0];
+      if (run.relicIds.includes(item.id) && !def.stackable) return;
+      next.relicIds = [...run.relicIds, item.id];
+    }
     if (item.kind === 'curse') next.pendingCurseIds = [...run.pendingCurseIds, item.id];
     if (item.kind === 'consumable') {
       if (run.consumables.length >= MAX_CONSUMABLES) return;

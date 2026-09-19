@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CURSES } from '../../data/curses';
+import { isCharmId } from '../../data/charms';
 import { RELICS } from '../../data/relics';
 import { createRng } from '../rng';
 import { generateShopOffer, shopRerollPrice } from '../shop';
@@ -7,15 +8,16 @@ import { generateShopOffer, shopRerollPrice } from '../shop';
 const base = { manche: 1, relicIds: [] as string[], consumableIds: [] as string[], enemiesEnabled: false, tookEnemyMutator: false };
 
 describe('generateShopOffer', () => {
-  it('offers 3 distinct items: 2 relic/consumable, 1 curse/consumable', () => {
+  it('offers 4 distinct items: 2 relic/consumable, 1 curse/consumable, 1 charm', () => {
     for (let i = 0; i < 50; i++) {
       const offer = generateShopOffer(base, createRng('s' + i));
-      expect(offer.length).toBe(3);
-      expect(new Set(offer.map((o) => o.id)).size).toBe(3);
+      expect(offer.length).toBe(4);
+      expect(new Set(offer.map((o) => o.id)).size).toBe(4);
       expect(offer[0].kind).not.toBe('curse');
       expect(offer[1].kind).not.toBe('curse');
       expect(offer[2].kind).not.toBe('relic');
-      for (const o of offer) {
+      expect(isCharmId(offer[3].id)).toBe(true);
+      for (const o of offer.slice(0, 3)) {
         expect(o.price).toBeGreaterThan(0);
         if (o.kind === 'relic') {
           const r = RELICS.find((x) => x.id === o.id)!;
@@ -27,13 +29,13 @@ describe('generateShopOffer', () => {
       }
     }
   });
-  it('reroll keeps sold items in place and redraws the rest without duplicates', () => {
+  it('keep[] pins items in place and redraws the rest without duplicates', () => {
     const rng = createRng('rr');
     const offer = generateShopOffer(base, rng);
     const sold = { ...offer[1], sold: true };
     const next = generateShopOffer(base, rng, [null, sold, null]);
     expect(next[1]).toEqual(sold);
-    expect(new Set(next.map((o) => o.id)).size).toBe(3);
+    expect(new Set(next.map((o) => o.id)).size).toBe(4);
     expect(next[2].kind).not.toBe('relic');
   });
   it('reroll price: free first, then 5, 10, 15', () => {
@@ -44,7 +46,7 @@ describe('generateShopOffer', () => {
   it('never offers owned relics or consumables and unlocks Double joker after Case joker', () => {
     const owned = RELICS.filter((r) => !r.enemyRelic && r.id !== 'double-joker').map((r) => r.id);
     const offer = generateShopOffer({ ...base, relicIds: owned, consumableIds: ['reroll', 'gel', 'shuffle'] }, createRng('x'));
-    const relicIds = offer.filter((o) => o.kind === 'relic').map((o) => o.id);
+    const relicIds = offer.filter((o) => o.kind === 'relic' && !isCharmId(o.id)).map((o) => o.id);
     for (const id of relicIds) expect(id).toBe('double-joker');
     expect(offer.some((o) => o.kind === 'consumable')).toBe(false);
   });

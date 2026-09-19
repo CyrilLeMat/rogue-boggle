@@ -412,7 +412,9 @@ Malédictions : 10 € (Vision trouble, Dette de temps, Infestation), 15 € (Un
 - La boutique propose **3 objets** : 2 tirés dans relics + consommables, 1 tiré dans malédictions + consommables **[tuning]**.
 - Un relic déjà possédé n'est pas proposé. Un relic avec `requires` n'est proposé que si le prérequis est possédé.
 - Pas de plafond de relics.
-- **Changer les articles** : bouton en boutique, **5 €** le premier changement de la visite, puis 10, 15… **[tuning]**. Les articles déjà achetés restent à leur place, seuls les autres sont retirés. Le relic **Brocanteur** offre 2 changements gratuits par visite.
+- **4 emplacements** : 2 tirés parmi relics + consommables, 1 parmi malédictions + consommables, et **1 charme** toujours présent (5-8 €).
+- **Charmes** : petits relics empilables générés depuis des gabarits paramétrés (`src/data/charms.ts`), l'id encode le gabarit : `charme-lettre-E` (+10 % sur les mots contenant un E), `charme-longueur-4` (+15 % sur les 4 lettres), `charme-categorie-NOM` (+10 % sur les noms), `charme-finale-S`, `charme-initiale-voyelle`, `charme-plat-1` (+1 pt par mot), `charme-chrono-3` (+3 s par manche), `charme-long-6` (+20 % sur 6+). Plusieurs exemplaires se cumulent (multiplicatif). Réponse au retour « pas grand-chose à dépenser ».
+- **Changer les articles** : bouton en boutique, **5 €** le premier changement de la visite, puis 10, 15… **[tuning]**. Les 4 emplacements sont retirés, achetés ou non : un joueur riche enchaîne achats et changements (avec 1 000 €, une dizaine d'objets par visite). Le relic **Brocanteur** offre 2 changements gratuits par visite.
 - Consommables : 3 emplacements max, achat = recharge des charges.
 - Malédictions : achetées en boutique, appliquées à la **prochaine manche uniquement**.
 - **La boutique s'ouvre après chaque manche, y compris la première.** Revenu attendu : 20 € garantis + le dépassement du seuil, donc 20 à 100 €/manche selon la performance : un consommable ou une malédiction à chaque manche, un relic commun dès qu'on dépasse le seuil de 20 pts, un rare quand on l'écrase.
@@ -421,7 +423,7 @@ Malédictions : 10 € (Vision trouble, Dette de temps, Infestation), 15 € (Un
 
 ## 7. Contenu du MVP
 
-### 7.1 Relics passifs (35)
+### 7.1 Relics passifs (36)
 
 | # | Nom | Effet | Rareté | Hook | Note |
 |---|---|---|---|---|---|
@@ -458,6 +460,7 @@ Malédictions : 10 € (Vision trouble, Dette de temps, Infestation), 15 € (Un
 | 32 | Résonance | ×1.6 sur tous les mots | Légendaire | onWordFound percent | |
 | 33 | Lettre porte-bonheur | Une lettre de la grille tirée par manche (elle commence ≥ 3 mots), cases marquées : mots qui **commencent** par elle ×2 | Rare | onMancheStart + onWordFound final | Idée joueur |
 | 34 | Lettre bénie | La lettre porte-bonheur double aussi les mots qui la **contiennent** | Légendaire | onWordFound final, `requires: porte-bonheur` | |
+| 36 | Épargne | +5 % des euros en poche à chaque fin de manche (arrondi sup.) — l'intérêt de Balatro | Commun | onMancheEnd | Idée joueur |
 | 35 | Sourcier | Sur l'écran « prêt », retirer la grille jusqu'à 2 fois par manche en voyant son humeur et son seuil (choisir plus ou moins aride) | Rare | gridRerolls | Idée joueur |
 | 29 | Collectionneur de crânes | +3 % de score (percent) par ennemi tué depuis le début de la run, permanent | Légendaire | onWordFound percent, compteur dans `run.history` | Snowball assumé |
 
@@ -537,7 +540,7 @@ Un mutateur partage les hooks de mot d'un relic et peut en plus changer la taill
 
 | Catégorie | Quantité |
 |---|---|
-| Relics | 35 |
+| Relics | 36 |
 | Mutateurs | 8 codés (+ XXL) |
 | Consommables | 5 |
 | Malédictions | 5 |

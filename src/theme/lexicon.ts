@@ -4,7 +4,7 @@
 
 export const GAME_TITLE = 'Rogue Boggle';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
-export const TAGLINE = 'Dix dictées. Trois bons points. Ta place en CM1 se joue ici.';
+export const TAGLINE = 'Dix dictées te séparent du CM1. La maîtresse en a préparé onze, au cas où.';
 
 export const L = {
   manche: 'Dictée',
@@ -44,7 +44,7 @@ export const L = {
   relicDepartSub: 'Toute la classe est là. On ne change pas de peau en cours d\'année : choisis bien.',
   pretClassique: 'Dictée classique. Rien que toi, la feuille, et une maîtresse qui croit encore aux règles.',
   repit: 'de répit, la maîtresse a eu pitié',
-  manqueList: 'Le maître attendait aussi',
+  manqueList: 'Elle attendait aussi',
   meilleurs: 'Tes plus beaux mots',
   motsTouche: 'touche un mot pour revoir son tracé',
   plancher: 'Le minimum syndical',
@@ -67,51 +67,61 @@ export const SCOLDS = [
   'Qu\'est-ce que tu m\'as encore écrit ?',
   'Tu n\'as rien dans la tête ou quoi ?',
   'Mais qu\'est-ce qu\'on va faire de toi…',
-  'Ce mot n\'existe dans aucune langue connue.',
+  'J\'ai vérifié dans trois dictionnaires. Trois.',
   'C\'est du français, ça ?',
-  'Recommence. Et réfléchis, cette fois.',
+  'Je vais faire comme si je n\'avais rien vu.',
   'Ton voisin fait moins de fautes. Et il dort.',
-  'J\'ai mal pour la langue de Molière.',
+  'Molière s\'est retourné. J\'ai entendu le bruit.',
   'Non. Non non non.',
   'Tu inventes des mots maintenant ?',
-  'Ton cahier va finir au feu.',
-];
-
-// Ce qu'elle lâche quand tu écris un beau mot. Rare : sinon ça ne vaut plus rien.
-export const PRAISES_BIG = [
-  'Voilà du travail !',
-  'Ça, c\'est un mot.',
-  'La maîtresse en lâche sa craie.',
-  'Toute la classe se retourne.',
-  'On note celui-là au tableau d\'honneur.',
-  'Même l\'inspecteur aurait applaudi.',
-];
-
-export const PRAISES_SMALL = [
-  'Bravo.',
-  'Tu vois, quand tu fais des efforts.',
-  'C\'est déjà mieux.',
-  'Bien. Continue.',
-  'Ce n\'est pas si compliqué, hein ?',
-  'Enfin un mot juste.',
-  'Note-le, ça n\'arrivera pas deux fois.',
-  'Tes parents seront contents.',
+  'Mon stylo rouge n\'a plus d\'encre. À cause de toi.',
+  'J\'ai fait sept ans d\'études pour lire ça.',
+  'Même le radiateur a honte.',
+  'Tu écris comme on jette des cailloux.',
+  'Le dictionnaire vient de claquer tout seul.',
+  'Sors. Non, reste. Non, sors.',
+  'J\'ai rêvé de cette faute cette nuit. Je le jure.',
+  'Ce mot me donne des palpitations.',
 ];
 
 // Les très gros mots la font sortir de ses gonds. Dans le bon sens.
 export const PRAISES_HUGE = [
   'C\'est tellement bien que j\'en suis tombée de ma chaise.',
   'J\'ai dû m\'asseoir. Sur le sol, il n\'y avait plus de chaise.',
-  'On va encadrer ta copie dans le couloir.',
+  'On encadre ta copie dans le couloir. Ce soir.',
   'J\'ai les larmes aux yeux. Et ce n\'est pas la craie.',
-  'Je photocopie ça pour la salle des maîtres.',
+  'Je photocopie ça pour la salle des profs.',
   'Vingt-six ans de carrière. Vingt-six.',
   'J\'ai failli en avaler ma craie.',
   'Ta copie part au rectorat dès ce soir.',
   'J\'appelle ta mère. En bien, pour une fois.',
   'Le radiateur lui-même s\'est arrêté de claquer.',
   'Toute la classe s\'est levée. Même ceux du fond.',
-  'Je vais le raconter à ma retraite.',
+  'Je raconterai ça à ma retraite. Tous les ans.',
+  'Je vais devoir m\'asseoir sur le bureau. Voilà. C\'est fait.',
+];
+
+export const PRAISES_BIG = [
+  'Voilà. VOILÀ.',
+  'Ça, c\'est un mot.',
+  'J\'en lâche ma craie.',
+  'Toute la classe s\'est retournée. Moi aussi.',
+  'On note celui-là au tableau d\'honneur.',
+  'Même l\'inspecteur aurait applaudi.',
+  'Je n\'ai rien à redire. C\'est rare. Savoure.',
+];
+
+export const PRAISES_SMALL = [
+  'Bravo.',
+  'Tu vois, quand tu fais des efforts.',
+  'C\'est déjà mieux.',
+  'Note-le, je vais le relire ce soir.',
+  'Ce n\'est pas si compliqué, hein ?',
+  'Enfin un mot juste.',
+  'Note-le, ça n\'arrivera pas deux fois.',
+  'Tes parents seront contents.',
+  'Je reprends espoir. Un peu.',
+  'Tiens donc.',
 ];
 
 // Quand tu sors un mot que personne dans la classe ne connaît, elle se méfie.
@@ -125,18 +135,20 @@ export const SUSPICIONS = [
   'Personne dans cette classe ne connaît ce mot. Personne.',
   'C\'est ton grand frère qui t\'a soufflé ?',
   'Répète-le pour voir. Sans regarder.',
+  'Je note ce mot. Et je note ton nom à côté.',
 ];
 
 export const DUPLICATES = [
-  'Tu l\'as déjà écrit.',
+  'Encore lui ? Vous vous êtes attachés ?',
   'Deux fois le même mot. Deux fois.',
-  'On a déjà vu celui-là.',
+  'Ce mot et toi, c\'est une longue histoire.',
   'Tu tournes en rond, mon pauvre.',
 ];
 
 export const TOO_SHORT = [
   'Trois lettres minimum, tu le sais très bien.',
   'C\'est un peu court, jeune homme.',
+  'Deux lettres. Deux. Tu te moques de moi ?',
 ];
 
 // Stable pour un même feedback : la réplique ne change pas sous les yeux du joueur.
@@ -148,12 +160,12 @@ export function scold(list: readonly string[], seed: number): string {
 export function appreciation(ratio: number, success: boolean, lives: number): string {
   if (!success && lives <= 1) return 'Alarmant. Je convoque les parents dès lundi.';
   if (!success && ratio >= 0.8) return 'Si près. C\'est rageant, pour toi comme pour moi.';
-  if (!success) return 'Insuffisant. Des efforts sérieux sont attendus.';
+  if (!success) return 'Insuffisant. J\'ai relu trois fois en espérant m\'être trompée.';
   if (ratio >= 2.5) return 'Exceptionnel. Je n\'avais pas vu ça depuis 1987.';
   if (ratio >= 1.8) return 'Très bon travail. Voilà ce que j\'attends de toi.';
-  if (ratio >= 1.3) return 'Bon trimestre. Continue sur cette lancée.';
+  if (ratio >= 1.3) return 'Bon travail. J\'ai souri. Ne le répète à personne.';
   if (ratio >= 1.1) return 'Correct. Mais tu peux mieux faire, nous le savons tous les deux.';
-  return 'Juste, tout juste. Ne recommence pas à te reposer sur tes lauriers.';
+  return 'Juste, tout juste. J\'avais déjà décapuchonné le stylo rouge.';
 }
 
 export const SIGNATURE = 'La maîtresse';

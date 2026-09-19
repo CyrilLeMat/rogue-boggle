@@ -104,7 +104,7 @@ export function MancheRecap() {
       {result.cursedWord && (
         <p className={`cursed-reveal ${cursedFound ? 'ok' : ''}`}>
           Mot mystère : <button className={`word-link ${shown === result.cursedWord ? 'active' : ''}`} onClick={() => setShown(shown === result.cursedWord ? null : result.cursedWord)}>{result.cursedWord}</button>
-          {cursedFound ? ' · trouvé. Le maître hausse un sourcil, impressionné.' : shownPath === null && shown === result.cursedWord ? ' · raté (la feuille a changé depuis)' : ' · raté. Le maître soupire.'}
+          {cursedFound ? ' · trouvé. La maîtresse hausse un sourcil. Elle ne dira rien.' : shownPath === null && shown === result.cursedWord ? ' · raté (la feuille a changé depuis)' : ' · raté. Elle le savait depuis le début.'}
         </p>
       )}
       <button onClick={next}>{L.continuer}</button>

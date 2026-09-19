@@ -139,7 +139,7 @@ export const RELICS: Relic[] = [
   },
   {
     id: 'mot-maudit', name: 'Mot mystère', rarity: 'common',
-    description: 'Le maître pense à un mot de la feuille : tu connais sa longueur et sa case de départ. +60 pts si tu le traces',
+    description: 'La maîtresse pense à un mot de la feuille : tu connais sa longueur et sa case de départ. +60 pts si tu le traces',
     onMancheStart: (ctx) => {
       const size = ctx.manche.grid.size;
       const candidates = [...ctx.manche.search.words].filter((w) => w.length >= 4 && w.length <= size + 2 && ctx.isCommon(w));
@@ -229,7 +229,7 @@ export const RELICS: Relic[] = [
     onEnemyKilled: (_e, bounty, ctx) => { ctx.timer.add(5); return bounty; },
   },
   {
-    id: 'primes', name: 'Chouchou du maître', rarity: 'common', enemyRelic: true,
+    id: 'primes', name: 'Chouchou de la maîtresse', rarity: 'common', enemyRelic: true,
     description: 'Primes de la maîtresse +50 %',
     onEnemyKilled: (_e, bounty) => Math.round(bounty * 1.5),
   },

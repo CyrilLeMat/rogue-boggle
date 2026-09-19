@@ -98,6 +98,19 @@ export const PRAISES_SMALL = [
   'Tes parents seront contents.',
 ];
 
+// Quand tu sors un mot que personne dans la classe ne connaît, elle se méfie.
+export const SUSPICIONS = [
+  'Tu connais ce mot, toi ?',
+  'Tu triches ou quoi ?',
+  'Où as-tu appris ça ?',
+  'Ce mot n\'est pas de ton âge.',
+  'Tu as lu le dictionnaire en cachette ?',
+  'Je vais vérifier, tiens.',
+  'Personne dans cette classe ne connaît ce mot. Personne.',
+  'C\'est ton grand frère qui t\'a soufflé ?',
+  'Répète-le pour voir. Sans regarder.',
+];
+
 export const DUPLICATES = [
   'Tu l\'as déjà écrit.',
   'Deux fois le même mot. Deux fois.',

@@ -1,13 +1,17 @@
 import { useRunStore } from '../state/runStore';
-import { DUPLICATES, PRAISES_BIG, PRAISES_SMALL, SCOLDS, TOO_SHORT, scold } from '../theme/lexicon';
+import { dictionary } from '../data/dictionary';
+import { DUPLICATES, PRAISES_BIG, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, scold } from '../theme/lexicon';
 
 export function FoundWords() {
   const found = useRunStore((s) => s.manche?.found ?? []);
   const feedback = useRunStore((s) => s.feedback);
-  // un compliment sur les beaux mots, et de loin en loin sur les autres : sinon ça ne vaut plus rien
-  const praise = feedback?.kind === 'ok'
-    ? (feedback.score ?? 0) >= 20 ? scold(PRAISES_BIG, feedback.id)
-      : feedback.id % 4 === 0 ? scold(PRAISES_SMALL, feedback.id) : null
+  // Un mot que personne ne connaît la rend suspicieuse ; un beau mot l'impressionne ;
+  // le reste du temps, un encouragement de loin en loin, sinon ça ne vaut plus rien.
+  const rare = !!feedback?.word && !dictionary.common.has(feedback.word);
+  const praise = feedback?.kind !== 'ok' ? null
+    : rare ? scold(SUSPICIONS, feedback.id)
+    : (feedback.score ?? 0) >= 20 ? scold(PRAISES_BIG, feedback.id)
+    : feedback.id % 4 === 0 ? scold(PRAISES_SMALL, feedback.id)
     : null;
   const msg =
     feedback?.kind === 'ok' ? `${feedback.word} +${feedback.score}${feedback.bonus ? ` · ${feedback.bonus}` : ''}` :
@@ -18,7 +22,7 @@ export function FoundWords() {
     <div className="found">
       <div key={feedback?.id} className={`feedback ${feedback?.kind ?? ''}`}>
         {msg}
-        {praise && <span className="praise">{praise}</span>}
+        {praise && <span className={`praise ${rare ? 'suspicious' : ''}`}>{praise}</span>}
       </div>
       <ul>
         {[...found].reverse().map((f) => (

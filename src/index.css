@@ -345,6 +345,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .feedback.ok { color: var(--ok); }
 .feedback .praise { display: block; font-family: 'Patrick Hand', cursive; font-size: 0.95rem; color: var(--muted); font-weight: 400; }
 .feedback .praise.suspicious { color: var(--lilac); }
+.feedback .praise.huge { color: var(--ko); font-size: 1.1rem; }
 .feedback.duplicate { color: var(--muted); }
 .feedback.invalid, .feedback.tooShort { color: var(--ko); }
 @keyframes pop { from { transform: scale(1.15); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }

@@ -98,6 +98,22 @@ export const PRAISES_SMALL = [
   'Tes parents seront contents.',
 ];
 
+// Les très gros mots la font sortir de ses gonds. Dans le bon sens.
+export const PRAISES_HUGE = [
+  'C\'est tellement bien que j\'en suis tombée de ma chaise.',
+  'J\'ai dû m\'asseoir. Sur le sol, il n\'y avait plus de chaise.',
+  'On va encadrer ta copie dans le couloir.',
+  'J\'ai les larmes aux yeux. Et ce n\'est pas la craie.',
+  'Je photocopie ça pour la salle des maîtres.',
+  'Vingt-six ans de carrière. Vingt-six.',
+  'J\'ai failli en avaler ma craie.',
+  'Ta copie part au rectorat dès ce soir.',
+  'J\'appelle ta mère. En bien, pour une fois.',
+  'Le radiateur lui-même s\'est arrêté de claquer.',
+  'Toute la classe s\'est levée. Même ceux du fond.',
+  'Je vais le raconter à ma retraite.',
+];
+
 // Quand tu sors un mot que personne dans la classe ne connaît, elle se méfie.
 export const SUSPICIONS = [
   'Tu connais ce mot, toi ?',

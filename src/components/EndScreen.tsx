@@ -20,7 +20,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
       <p className="muted">{victory ? L.victoireSub : L.gameoverSub(run.currentManche)}</p>
       <p className="big">{run.score} pts</p>
       {run.endBonus > 0 && <p className="ok">dont +{run.endBonus} pts de bonus de fin d'année</p>}
-      <p className="muted">{allWords.length} mots · {run.euros} {L.nonDepenses}</p>
+      <p className="muted">{allWords.length} mots · {run.euros} {L.nonDepenses}{run.sageWins > 0 ? ` · ${run.sageWins} ${L.sageWins}` : ''}</p>
 
       <table className="run-table">
         <thead><tr><th>Dictée</th><th>Feuille</th><th>Note</th><th>Attendu</th><th>Meilleur mot</th><th>Billes</th></tr></thead>

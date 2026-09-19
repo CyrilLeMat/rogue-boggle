@@ -2,12 +2,13 @@ import { create } from 'zustand';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { isConditionManche, mutatorGridSize, pickCondition } from '../data/mutators';
 import { ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
-import { dictionary } from '../data/dictionary';
+import { dictionary, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
 import { RELICS } from '../data/relics';
 import type { Mood } from '../engine/difficulty';
 import { CRITTER_MOVE_SECONDS, CRITTER_MULTIPLIER, moveCritter, spawnCritters, touchedCritters, type Critter } from '../engine/critter';
 import { pickQuest, updateQuest } from '../engine/quests';
+import { SAGE_CONSOLATION, SAGE_HINT_RATIO, applyHint, createSageChallenge, formedWord, isCorrect, isSageManche, sageReward, type SageChallenge } from '../engine/sage';
 import { adjustThreshold, difficultyOf } from '../engine/difficulty';
 import { FRENCH_STANDARD_WEIGHTS, generateGrid, sampleLetter } from '../engine/gridGenerator';
 import { collectModifiers, makeContext, mancheSeconds, runGridGenerate, runInvalidWord, runMancheEnd, runMancheStart, runRunEnd, runWordAccepted, streakRules, uiFlags } from '../engine/hookRunner';
@@ -22,7 +23,7 @@ import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'intro' | 'startPick' | 'ready' | 'playing' | 'recap' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'intro' | 'startPick' | 'ready' | 'playing' | 'recap' | 'sage' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -74,6 +75,7 @@ export interface RunState extends RunView {
   nextMutatorId: string | null;
   lastConditionId: string | null;
   seenEnemies: boolean; // la coopérative ne parle de cancres qu'après la première leçon « Le cancre copie »
+  sageWins: number;
   history: MancheResult[];
   endBonus: number;
   consumables: OwnedConsumable[];
@@ -89,6 +91,7 @@ interface Store {
   startChoices: string[];
   shop: ShopItem[];
   shopRerolls: { paid: number; freeLeft: number };
+  sage: SageChallenge | null;
   feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; path?: Pos[]; id: number } | null;
 
   startRun(seed?: string): void;
@@ -103,6 +106,11 @@ interface Store {
   endManche(early?: boolean): void;
   finishEarly(): void;
   continueAfterRecap(): void;
+  sageTick(dt: number): void;
+  sagePlace(letterIndex: number): void;
+  sageUndo(position?: number): void;
+  sageGiveUp(): void;
+  leaveSage(): void;
   buy(index: number): void;
   rerollShop(): void;
   nextManche(): void;
@@ -141,6 +149,7 @@ export const useRunStore = create<Store>((set, get) => ({
   startChoices: [],
   shop: [],
   shopRerolls: { paid: 0, freeLeft: 0 },
+  sage: null,
   feedback: null,
 
   startRun(seed = randomSeed()) {
@@ -153,7 +162,7 @@ export const useRunStore = create<Store>((set, get) => ({
       run: {
         seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
-        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false,
+        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, sageWins: 0,
       },
       lastResult: null,
       startChoices,
@@ -399,9 +408,59 @@ export const useRunStore = create<Store>((set, get) => ({
       set({ phase: run.lives <= 0 ? 'gameover' : 'victory', run: { ...run, endBonus, score: run.score + endBonus } });
       return;
     }
-    const shop = generateShopOffer(shopInput(run), run.rng);
-    const freeLeft = resolveRelics(run.relicIds).reduce((n, r) => n + (r.shopRerolls ?? 0), 0);
-    set({ phase: 'shop', shop, shopRerolls: { paid: 0, freeLeft } });
+    // Le Sage du CM1 s'invite après certaines dictées : une respiration avant la coopérative.
+    if (isSageManche(run.currentManche)) {
+      set({ phase: 'sage', sage: createSageChallenge(sageWords(), run.rng) });
+      return;
+    }
+    openShop();
+  },
+
+  sageTick(dt) {
+    const { sage, phase } = get();
+    if (!sage || phase !== 'sage' || sage.outcome !== 'playing') return;
+    const timeLeft = Math.max(0, sage.timeLeft - dt);
+    let next: SageChallenge = { ...sage, timeLeft };
+    if (!next.hintGiven && timeLeft <= sage.seconds * SAGE_HINT_RATIO) next = applyHint(next);
+    if (timeLeft === 0) next = { ...next, outcome: 'lost', reward: SAGE_CONSOLATION };
+    set({ sage: next });
+    if (next.outcome === 'lost') payoutSage(next);
+  },
+
+  sagePlace(letterIndex) {
+    const { sage } = get();
+    if (!sage || sage.outcome !== 'playing' || sage.placed.includes(letterIndex)) return;
+    const next: SageChallenge = { ...sage, placed: [...sage.placed, letterIndex] };
+    if (next.placed.length === sage.word.length && isCorrect(formedWord(next), sage.word, dictionary)) {
+      const won: SageChallenge = { ...next, outcome: 'won', reward: sageReward(sage.word.length, sage.timeLeft) };
+      set({ sage: won });
+      payoutSage(won);
+      return;
+    }
+    set({ sage: next });
+  },
+
+  // Sans argument : retire la dernière. Avec : retire cette position (pratique sur un mot de 12 lettres).
+  sageUndo(position) {
+    const { sage } = get();
+    if (!sage || sage.outcome !== 'playing' || !sage.placed.length) return;
+    const at = position ?? sage.placed.length - 1;
+    if (sage.hintGiven && at === 0) return; // l'indice du sage reste en place
+    set({ sage: { ...sage, placed: sage.placed.filter((_, i) => i !== at) } });
+  },
+
+  sageGiveUp() {
+    const { sage } = get();
+    if (!sage || sage.outcome !== 'playing') return;
+    const lost: SageChallenge = { ...sage, outcome: 'lost', reward: SAGE_CONSOLATION, timeLeft: 0 };
+    set({ sage: lost });
+    payoutSage(lost);
+  },
+
+  leaveSage() {
+    if (get().phase !== 'sage') return;
+    set({ sage: null });
+    openShop();
   },
 
   rerollShop() {
@@ -518,7 +577,7 @@ export const useRunStore = create<Store>((set, get) => ({
   },
 
   backToMenu() {
-    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], shop: [] });
+    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], shop: [], sage: null });
   },
 
   addRelic(id) {
@@ -546,6 +605,22 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   const hpMult = draft.curseIds.includes('peau-dure') ? 1.5 : 1;
   draft.enemies = count ? spawnEnemies(grid, search, run.rng, enemyHp(draft.threshold, count, hpMult), count) : [];
   runMancheStart(hooks, ctx);
+}
+
+function payoutSage(c: SageChallenge) {
+  const { run } = useRunStore.getState();
+  if (!run) return;
+  useRunStore.setState({
+    run: { ...run, euros: run.euros + c.reward, sageWins: run.sageWins + (c.outcome === 'won' ? 1 : 0) },
+  });
+}
+
+function openShop() {
+  const { run } = useRunStore.getState();
+  if (!run) return;
+  const shop = generateShopOffer(shopInput(run), run.rng);
+  const freeLeft = resolveRelics(run.relicIds).reduce((n, r) => n + (r.shopRerolls ?? 0), 0);
+  useRunStore.setState({ phase: 'shop', shop, shopRerolls: { paid: 0, freeLeft } });
 }
 
 function shopInput(run: RunState): ShopInput {

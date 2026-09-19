@@ -38,7 +38,7 @@ export function ScoreBoard() {
   return (
     <>
     <div className="scoreboard">
-      <div className="stat"><span className="label">{L.manche}</span><span className="value">{run.currentManche}/{TOTAL_MANCHES} <span className="muted small-hint">{manche.grid.size}×{manche.grid.size}</span></span></div>
+      <div className="stat"><span className="label">{L.manche}</span><span className="value">{run.currentManche}/{TOTAL_MANCHES}</span></div>
       <div className={`stat stat-mood mood-${manche.difficulty.mood}`}><span className="label">{L.grille}</span><span className="value">{manche.difficulty.mood}</span></div>
       <div className="stat"><span className="label">{L.vies}</span><span className="value bons-points">{'★'.repeat(run.lives)}{'☆'.repeat(Math.max(0, 3 - run.lives))}</span></div>
       <div className="stat">

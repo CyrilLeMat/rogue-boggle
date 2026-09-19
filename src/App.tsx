@@ -3,6 +3,7 @@ import { activeHooks } from './data/registry';
 import { posKey } from './engine/adjacency';
 import { uiFlags } from './engine/hookRunner';
 import type { Pos } from './engine/types';
+import { Classroom } from './components/Classroom';
 import { ConsumableBar } from './components/ConsumableBar';
 import { DevPanel } from './components/DevPanel';
 import { EndScreen } from './components/EndScreen';
@@ -17,6 +18,7 @@ import { QuestBadge } from './components/QuestBadge';
 import { ReadyOverlay } from './components/ReadyScreen';
 import { StreakGauge } from './components/StreakGauge';
 import { ScoreBoard } from './components/ScoreBoard';
+import { SageChallenge } from './components/SageChallenge';
 import { Shop } from './components/Shop';
 import { SoundEffects } from './components/SoundEffects';
 import { StartPick } from './components/StartPick';
@@ -29,11 +31,11 @@ function Menu() {
   const [seed, setSeed] = useState('');
   return (
     <div className="panel menu">
-      <h1 className="title">{GAME_TITLE}</h1>
-      <p className="subtitle">{GAME_SUBTITLE}</p>
+      <h1 className="sr-only">{GAME_TITLE} — {GAME_SUBTITLE}</h1>
+      <div className="frame menu-frame"><Classroom /></div>
       <p className="tagline">{TAGLINE}</p>
+      <button className="menu-cta" onClick={() => start(seed || undefined)}>Entrer en classe</button>
       <input placeholder="année (seed, optionnel)" value={seed} onChange={(e) => setSeed(e.target.value)} />
-      <button onClick={() => start(seed || undefined)}>Entrer en classe</button>
     </div>
   );
 }
@@ -115,6 +117,7 @@ export default function App() {
       {phase === 'startPick' && <StartPick />}
       {(phase === 'playing' || phase === 'ready') && <Playing />}
       {phase === 'recap' && <MancheRecap />}
+      {phase === 'sage' && <SageChallenge />}
       {phase === 'shop' && <Shop />}
       {phase === 'victory' && <EndScreen victory />}
       {phase === 'gameover' && <EndScreen victory={false} />}

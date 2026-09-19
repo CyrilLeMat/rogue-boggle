@@ -77,6 +77,18 @@ Quand le thème est tiré, des escargots se promènent sur la grille : **1 en 4�
 
 Chaque mot validé moins de **5 s** après le précédent ajoute un maillon ; le multiplicateur final vaut `1 + 0.1 × maillons` plafonné à **×1.5** (5 maillons) **[tuning]**. Une jauge visible montre le multiplicateur et le temps restant pour enchaîner. Le relic Combo élargit la fenêtre à 8 s et le plafond à ×2. Récompense le rythme, lisible d'un coup d'œil.
 
+### 3.2.4 Le Sage du CM1 (entre deux dictées)
+
+**Une respiration, avec un autre type d'effort** : pas de grille ni d'adjacence, juste des lettres en vrac à remettre dans l'ordre.
+
+- **Quand** : après les dictées **3 et 7** (`SAGE_AFTER`), entre le récap et la coopérative.
+- **L'énigme** : un mot **courant de 8 à 12 lettres**, nom ou adjectif (2 376 candidats ; les formes conjuguées comme « abandonnez » sont exclues, devinette ingrate). Lettres mélangées, mélange garanti différent du mot.
+- **Chrono** : `15 + 3 × longueur` s (39 s pour 8 lettres, 51 s pour 12) **[tuning]**.
+- **Jouer** : taper une tuile la pose, taper une lettre placée la retire (n'importe laquelle, pratique sur 12 lettres), le clavier fonctionne aussi (lettres + retour arrière). À **mi-temps**, le sage pose lui-même la première lettre et la verrouille.
+- **Validation** : dès que toutes les lettres sont posées. Le mot cible **ou toute anagramme valide du dictionnaire** est acceptée (le joueur qui trouve « senorita » au lieu de « notaires » a gagné aussi).
+- **Récompense** : `10 + 5 × longueur + secondes restantes / 3` billes **[tuning]**, soit ~50 à 85, l'équivalent d'une belle fourniture. Échec ou abandon : **10 billes** de consolation, et le sage révèle le mot.
+- Le nombre de défis relevés apparaît sur l'écran de fin.
+
 ### 3.2.3 L'objectif de manche (thème « Objectif »)
 
 Quand le thème est tiré, un mini-objectif est tiré parmi ceux réalisables dans la grille, payé en euros à la fin : un mot de (taille+1) lettres (+20 €), trois mots de 5+ lettres (+15 €), trois mots commençant par une lettre donnée (+15 €), un mot avec lettre rare (+15 €), N mots dans la manche (+15 €, N = 8 + 2 par palier de taille). Progression affichée à côté de la jauge de série.
@@ -558,6 +570,8 @@ Bilan partagé : la boucle, l'économie, les thèmes et le pipeline tiennent ; i
 
 1. **Juice + prévisualisation du score** : score du mot en cours affiché pendant le tracé avec le détail (base × relics × escargot × série), lettres qui s'allument à la validation, chiffre qui s'envole, compteur qui grimpe.
 2. **Désencombrement** : un seul code visuel par information, fusion des relics redondantes (4 d'information → 2, 4 d'argent → 2).
+3bis. **Page d'accueil illustrée** : bandeau de salle de classe en SVG (tableau noir portant le titre à la craie, carte de France enroulée, horloge dont l'aiguille tourne, pupitre avec cahier et plume qui écrit, bons points épinglés), dans le style des cases du prologue. Le titre vit dans l'illustration, un `h1` reste pour les lecteurs d'écran.
+
 3. **Univers « La Dictée »** (choisi parmi six pistes françaises : marché, dictée, cafés Belle Époque, Tour de France, bistrot, BnF) : une école communale racontée avec des enjeux dramatiques absurdes — c'est le ton. Titre : **Rogue Boggle — Ultimate Dictée de CE2 Edition**. Lexique (`src/theme/lexicon.ts`) : manche = dictée, seuil = note à atteindre, vies = bons points ★, euros = billes, boutique = coopérative, relics = fournitures (Bescherelle, Bled, Petit Robert, Grevisse, plume Sergent-Major, buvard, antisèche…), charmes = gommettes, malédictions = punitions (au coin, retenue, cent lignes), thèmes = leçons (leçon de choses, consigne du jour, le cancre copie, tableau effacé, taches d'encre, calcul mental, rédaction, grande carte), ennemi = cancre, mot maudit = mot mystère, série = élan, game over = redoublement, victoire = passage en sixième. Look : papier à grands carreaux, marge rouge, encre violette, titres manuscrits (Patrick Hand). **Fait.** Icônes SVG maison : à faire.
 4. Boss manches 5 et 10, choix de route (2 thèmes proposés avec récompense), relics qui grandissent, daily.
 

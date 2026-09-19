@@ -81,6 +81,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .scoreboard { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 12px; }
 .stat { display: flex; flex-direction: column; }
 .stat .label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+.stat .short { display: none; }
 .stat .value { font-size: 1.2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
 .stat.ok .value { color: var(--ok); }
 .stat.cursed .value { color: var(--lilac); }
@@ -146,6 +147,26 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .intro-cta { font-size: 1.1rem; padding: 14px 30px; animation: pulse 1.6s ease-in-out infinite; }
 .intro-skip { background: none; box-shadow: none; color: var(--muted); font-size: 0.8rem; padding: 4px 8px; font-weight: 600; }
 .intro-skip:hover { background: none; color: var(--text); transform: none; }
+
+.note-hero { margin: 4px 0 10px; }
+.note-numbers { display: flex; align-items: baseline; gap: 10px; }
+.note-now { font-size: 2.6rem; font-weight: 800; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+.note-target { font-size: 1.3rem; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+.note-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin-left: auto; }
+.note-bar { height: 8px; background: #f1e9df; border-radius: 999px; overflow: hidden; margin-top: 6px; }
+.note-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), #f4d35e); transition: width 0.3s; border-radius: 999px; }
+.note-hero.ok .note-now, .note-hero.ok .note-label { color: var(--ok); }
+.note-hero.ok .note-bar > span { background: linear-gradient(90deg, var(--ok), #a9d6bd); }
+.note-hero.bump .note-now { color: var(--gold); transform: scale(1.06); transition: transform 0.1s; display: inline-block; }
+.relic.cartable { background: #fff; border-color: #d9cff0; }
+.relic.cartable.open { border-color: var(--accent); }
+.cartable-list { margin-top: 8px; background: #fff; border-radius: 14px 18px 16px 20px; padding: 8px 12px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
+.cartable-list li { display: flex; flex-direction: column; gap: 1px; border-bottom: 1px dashed #eee3d6; padding: 6px 0; font-size: 0.85rem; }
+.cartable-list li strong { color: var(--text); }
+.cartable-list li span { color: #6d667c; }
+.cartable-list li.curse strong { color: var(--lilac); }
+.cartable-list li.mutator strong { color: #6f9ed1; }
+.cartable-list li.charm strong { color: var(--gold); }
 
 .timer { position: relative; height: 26px; background: #f1e9df; border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
 .timer-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #a9d6bd); transition: width 0.1s linear; border-radius: 999px; }
@@ -397,8 +418,22 @@ button.small { padding: 6px 14px; font-size: 0.8rem; }
   .current-word { font-size: 1.4rem; min-height: 2.2rem; gap: 8px; }
   .cw-total { font-size: 1.2rem; }
   .cw-part { font-size: 0.65rem; padding: 1px 6px; }
-  .scoreboard { gap: 12px; }
-  .under-bar { gap: 6px; }
+  .scoreboard { gap: 10px 14px; margin-bottom: 8px; }
+  .stat .label { font-size: 0.62rem; }
+  .stat .value { font-size: 0.95rem; }
+  .stat .long { display: none; }
+  .stat .short { display: inline; }
+  /* les infos de fournitures sont déjà dans la légende sous la grille ; l'humeur est sur l'écran « prêt » */
+  .stat-info, .stat-mood { display: none; }
+  .timer { height: 22px; margin-bottom: 10px; }
+  /* barre de fournitures : une ligne qui défile, tap pour la description */
+  .relic-bar { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+  .relic-bar::-webkit-scrollbar { display: none; }
+  .relic { flex: none; font-size: 0.72rem; padding: 4px 10px; }
+  .relic-bar-wrap { margin-bottom: 8px; }
+  .under-bar { gap: 6px; margin-bottom: 8px; }
+  .current-word { min-height: 1.9rem; }
+  .note-now { font-size: 2.2rem; }
   .streak-bar { width: 44px; }
   .quest { font-size: 0.8rem; padding: 5px 10px; gap: 6px; }
   .shop-head { flex-direction: column; align-items: stretch; }

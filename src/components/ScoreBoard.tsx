@@ -34,34 +34,42 @@ export function ScoreBoard() {
   const bumping = shownScore !== manche.score;
   const live = eurosFor(manche.score, t, reached);
   const flags = uiFlags(relics(run.relicIds));
+  const pct = Math.min(100, (shownScore / t) * 100);
   return (
+    <>
     <div className="scoreboard">
       <div className="stat"><span className="label">{L.manche}</span><span className="value">{run.currentManche}/{TOTAL_MANCHES} <span className="muted small-hint">{manche.grid.size}×{manche.grid.size}</span></span></div>
-      <div className={`stat ${reached ? 'ok' : ''} ${bumping ? 'bump' : ''}`}>
-        <span className="label">{L.seuil}</span>
-        <span className="value">{shownScore} / {t}</span>
-      </div>
-      <div className={`stat mood-${manche.difficulty.mood}`}><span className="label">{L.grille}</span><span className="value">{manche.difficulty.mood}</span></div>
+      <div className={`stat stat-mood mood-${manche.difficulty.mood}`}><span className="label">{L.grille}</span><span className="value">{manche.difficulty.mood}</span></div>
       <div className="stat"><span className="label">{L.vies}</span><span className="value bons-points">{'★'.repeat(run.lives)}{'☆'.repeat(Math.max(0, 3 - run.lives))}</span></div>
       <div className="stat">
         <span className="label">{L.euros}</span>
         <span className="value">{run.euros}{reached && <span className="live-euros"> +{live.total}</span>}</span>
       </div>
       {flags.showLongestLength && (
-        <div className="stat"><span className="label">Petit Larousse</span><span className="value">{manche.search.longestLength} lettres</span></div>
+        <div className="stat stat-info"><span className="label">Petit Larousse</span><span className="value">{manche.search.longestLength} lettres</span></div>
       )}
       {manche.amorce && (
-        <div className="stat amorce"><span className="label">Antisèche · {manche.amorce.length} lettres</span><span className="value">{manche.amorce.prefix}…</span></div>
+        <div className="stat stat-info amorce"><span className="label">Antisèche · {manche.amorce.length} lettres</span><span className="value">{manche.amorce.prefix}…</span></div>
       )}
       {manche.luckyLetter && (
-        <div className="stat lucky"><span className="label">Lettre soulignée</span><span className="value">{manche.luckyLetter}</span></div>
+        <div className="stat stat-info lucky"><span className="label">Lettre soulignée</span><span className="value">{manche.luckyLetter}</span></div>
       )}
       {manche.cursedWord && (
-        <div className="stat cursed">
+        <div className="stat stat-info cursed">
           <span className="label">Mot mystère</span>
           <span className="value">{manche.found.some((f) => f.word === manche.cursedWord) ? manche.cursedWord : `${manche.cursedWord.length} lettres · ${'_ '.repeat(manche.cursedWord.length).trim()}`}</span>
         </div>
       )}
     </div>
+    {/* le score est l'information n°1 : en gros, avec sa progression vers la note */}
+    <div className={`note-hero ${reached ? 'ok' : ''} ${bumping ? 'bump' : ''}`}>
+      <div className="note-numbers">
+        <span className="note-now">{shownScore}</span>
+        <span className="note-target">/ {t}</span>
+        <span className="note-label">{reached ? 'note atteinte' : L.seuil.toLowerCase()}</span>
+      </div>
+      <div className="note-bar"><span style={{ width: `${pct}%` }} /></div>
+    </div>
+    </>
   );
 }

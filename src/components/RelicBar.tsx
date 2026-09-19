@@ -2,39 +2,41 @@ import { useState } from 'react';
 import { curse, mutator, relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
 
-// Un tap sur une puce affiche sa description (les infobulles au survol n'existent pas au doigt).
+// La leçon du jour reste visible ; les fournitures se replient dans un « cartable » qu'on ouvre au tap.
 export function RelicBar() {
   const ids = useRunStore((s) => s.run?.relicIds ?? []);
   const curseIds = useRunStore((s) => s.manche?.curseIds ?? []);
   const mutatorId = useRunStore((s) => s.manche?.mutatorId ?? null);
-  const [open, setOpen] = useState<string | null>(null);
-  if (ids.length === 0 && curseIds.length === 0 && !mutatorId) return null;
+  const [open, setOpen] = useState(false);
   const mut = mutatorId ? mutator(mutatorId) : null;
   const counts = new Map<string, number>();
   for (const id of ids) counts.set(id, (counts.get(id) ?? 0) + 1);
   const items = [
-    ...(mut ? [{ id: mut.id, name: mut.name, description: mut.description, cls: 'mutator' }] : []),
     ...relics([...counts.keys()]).map((r) => ({
       id: r.id, name: (counts.get(r.id) ?? 1) > 1 ? `${r.name} ×${counts.get(r.id)}` : r.name,
       description: r.description, cls: r.charm ? 'charm' : r.rarity,
     })),
     ...curseIds.map(curse).map((c) => ({ id: c.id, name: c.name, description: c.description, cls: 'curse' })),
   ];
-  const current = items.find((i) => i.id === open);
+  if (!mut && items.length === 0) return null;
   return (
     <div className="relic-bar-wrap">
       <div className="relic-bar">
-        {items.map((it) => (
-          <button
-            key={it.id}
-            className={`relic ${it.cls} ${open === it.id ? 'open' : ''}`}
-            onClick={() => setOpen(open === it.id ? null : it.id)}
-          >
-            {it.name}
+        {mut && <span className="relic mutator" title={mut.description}>{mut.name}</span>}
+        {items.length > 0 && (
+          <button className={`relic cartable ${open ? 'open' : ''}`} onClick={() => setOpen(!open)} aria-expanded={open}>
+            🎒 Cartable · {items.length}{curseIds.length ? ` · ${curseIds.length} punition${curseIds.length > 1 ? 's' : ''}` : ''}
           </button>
-        ))}
+        )}
       </div>
-      {current && <div className="relic-desc-box"><strong>{current.name}</strong> · {current.description}</div>}
+      {open && (
+        <ul className="cartable-list">
+          {mut && <li className="mutator"><strong>{mut.name}</strong><span>{mut.description}</span></li>}
+          {items.map((it) => (
+            <li key={it.id} className={it.cls}><strong>{it.name}</strong><span>{it.description}</span></li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

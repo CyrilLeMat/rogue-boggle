@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
-import { MUTATORS, mutatorGridSize } from '../data/mutators';
+import { isConditionManche, mutatorGridSize, pickCondition } from '../data/mutators';
 import { dictionary } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
 import { RELICS } from '../data/relics';
@@ -19,7 +19,7 @@ import type { Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'startPick' | 'mutatorPick' | 'ready' | 'playing' | 'recap' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'startPick' | 'ready' | 'playing' | 'recap' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -58,6 +58,7 @@ export interface RunState extends RunView {
   snailRng: Rng; // flux séparé : les déplacements dépendent du timing, ils ne doivent pas désynchroniser la run
   lostLifeLastManche: boolean;
   nextMutatorId: string | null;
+  lastConditionId: string | null;
   history: MancheResult[];
   endBonus: number;
   consumables: OwnedConsumable[];
@@ -73,13 +74,11 @@ interface Store {
   startChoices: string[];
   shop: ShopItem[];
   shopRerolls: { paid: number; freeLeft: number };
-  mutatorChoices: string[];
   feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; id: number } | null;
 
   startRun(seed?: string): void;
   pickStartRelic(id: string): void;
   startManche(): void;
-  pickMutator(id: string | null): void;
   rerollGrid(): void; // Sourcier, depuis l'écran « prêt »
   beginPlay(): void; // écran « prêt » → chrono lancé
   submitPath(path: Pos[]): void;
@@ -125,7 +124,6 @@ export const useRunStore = create<Store>((set, get) => ({
   startChoices: [],
   shop: [],
   shopRerolls: { paid: 0, freeLeft: 0 },
-  mutatorChoices: [],
   feedback: null,
 
   startRun(seed = randomSeed()) {
@@ -138,7 +136,7 @@ export const useRunStore = create<Store>((set, get) => ({
       run: {
         seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
-        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null,
+        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null,
       },
       lastResult: null,
       startChoices,
@@ -174,13 +172,6 @@ export const useRunStore = create<Store>((set, get) => ({
       feedback: null,
       run: { ...run, pendingCurseIds: [], consumables },
     });
-  },
-
-  pickMutator(id) {
-    const { run, mutatorChoices } = get();
-    if (!run || (id !== null && !mutatorChoices.includes(id))) return;
-    set({ run: { ...run, nextMutatorId: id }, mutatorChoices: [] });
-    get().startManche();
   },
 
   rerollGrid() {
@@ -363,9 +354,10 @@ export const useRunStore = create<Store>((set, get) => ({
   nextManche() {
     const { run } = get();
     if (!run) return;
-    const next = { ...run, currentManche: run.currentManche + 1, nextMutatorId: null };
-    const mutatorChoices = run.rng.shuffle(MUTATORS).slice(0, 3).map((m) => m.id);
-    set({ run: next, shop: [], phase: 'mutatorPick', mutatorChoices });
+    const manche = run.currentManche + 1;
+    const condition = isConditionManche(manche) ? pickCondition(run.rng, run.lastConditionId) : null;
+    set({ run: { ...run, currentManche: manche, nextMutatorId: condition, lastConditionId: condition ?? run.lastConditionId }, shop: [] });
+    get().startManche();
   },
 
   useConsumable(id) {

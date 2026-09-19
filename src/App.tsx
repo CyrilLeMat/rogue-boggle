@@ -13,7 +13,6 @@ import { FoundWords } from './components/FoundWords';
 import { Grid } from './components/Grid';
 import { GridLegend } from './components/GridLegend';
 import { MancheRecap } from './components/MancheRecap';
-import { MutatorPick } from './components/MutatorPick';
 import { QuestBadge } from './components/QuestBadge';
 import { ReadyOverlay } from './components/ReadyScreen';
 import { StreakGauge } from './components/StreakGauge';
@@ -112,7 +111,6 @@ export default function App() {
       <SoundEffects />
       {phase === 'menu' && <Menu />}
       {phase === 'startPick' && <StartPick />}
-      {phase === 'mutatorPick' && <MutatorPick />}
       {(phase === 'playing' || phase === 'ready') && <Playing />}
       {phase === 'recap' && <MancheRecap />}
       {phase === 'shop' && <Shop />}

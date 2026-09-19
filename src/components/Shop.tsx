@@ -28,28 +28,36 @@ export function Shop() {
   const owned = (id: string) => run.relicIds.filter((r) => r === id).length;
   return (
     <div className="panel pick shop">
-      <h2>Boutique</h2>
-      <p className="muted">Manche {run.currentManche} terminée · <strong className="euros">{run.euros} €</strong> en poche</p>
+      <div className="shop-head">
+        <div>
+          <h2>Boutique</h2>
+          <p className="muted">Manche {run.currentManche} terminée · achète ce que tu veux, puis passe à la suite.</p>
+        </div>
+        <div className="wallet"><span className="label">Portefeuille</span><span className="amount">{run.euros} €</span></div>
+      </div>
       <div className="cards">
         {shop.map((item, i) => {
           const def = cardOf(item);
           const blockedInventory = item.kind === 'consumable' && inventoryFull;
-          const canBuy = !item.sold && run.euros >= item.price && !blockedInventory;
+          const tooPoor = run.euros < item.price;
+          const canBuy = !item.sold && !tooPoor && !blockedInventory;
           const count = item.kind === 'relic' ? owned(item.id) : 0;
-          const footer = item.sold ? 'Acheté' : blockedInventory ? 'Inventaire plein' : `${item.price} €${count ? ` · déjà ×${count}` : ''}`;
           return (
-            <div key={`${i}-${item.id}`} className={`shop-slot kind-${item.kind} ${def.charm ? 'kind-charm' : ''}`}>
-              <span className="kind">{labelOf(item)}</span>
-              <RelicCard relic={def} onPick={canBuy ? () => buy(i) : undefined} footer={footer} disabled={!canBuy} />
+            <div key={`${i}-${item.id}`} className={`shop-slot kind-${item.kind} ${'charm' in def && def.charm ? 'kind-charm' : ''} ${item.sold ? 'sold' : ''}`}>
+              <span className="kind">{labelOf(item)}{count ? ` · déjà ×${count}` : ''}</span>
+              <RelicCard relic={def} />
+              <button className={`buy ${canBuy ? '' : 'secondary'}`} disabled={!canBuy} onClick={() => buy(i)}>
+                {item.sold ? '✓ Acheté' : blockedInventory ? 'Inventaire plein' : tooPoor ? `${item.price} € · pas assez` : `Acheter · ${item.price} €`}
+              </button>
             </div>
           );
         })}
       </div>
       <div className="row">
         <button className="secondary" onClick={reroll} disabled={!canReroll}>
-          Changer les articles · {rerollPrice === 0 ? `gratuit (${rerolls.freeLeft})` : `${rerollPrice} €`}
+          ↻ Changer les articles · {rerollPrice === 0 ? `gratuit (${rerolls.freeLeft})` : `${rerollPrice} €`}
         </button>
-        <button onClick={next}>Manche {run.currentManche + 1}</button>
+        <button onClick={next}>Passer à la manche {run.currentManche + 1} →</button>
       </div>
     </div>
   );

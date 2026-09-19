@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react';
 import { sfx } from '../audio/sfx';
 import { areAdjacent, posKey } from '../engine/adjacency';
+import { LETTER_VALUES } from '../engine/gridGenerator';
 import type { Grid as GridModel, Pos } from '../engine/types';
+
+// couleur de case = palier de valeur de la lettre (1 / 2-3 / 4 / 8+)
+const valueTier = (letter: string) => {
+  const v = LETTER_VALUES[letter] ?? 1;
+  return v >= 8 ? 'val-8' : v >= 4 ? 'val-4' : v >= 2 ? 'val-2' : 'val-1';
+};
 
 interface Props {
   grid: GridModel;
@@ -171,6 +178,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
             const key = posKey(r, c);
             const cls = [
               'cell',
+              !cell.isJoker && valueTier(cell.letter),
               idx >= 0 && 'selected',
               idx === path.length - 1 && idx >= 0 && 'head',
               cell.isJoker && 'joker',
@@ -188,6 +196,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
             return (
               <div key={`${r}-${c}-${cell.gen ?? 0}`} className={cls} data-pos={`${r}-${c}`}>
                 <span className="letter">{cell.isJoker ? '★' : cell.letter}</span>
+                <span className="value">{cell.isJoker ? 1 : LETTER_VALUES[cell.letter] ?? 1}</span>
                 {cell.isToxic && <span className="badge badge-toxic" title="Case toxique : −8 s si utilisée">☠</span>}
                 {oracleCell === key && <span className="badge badge-oracle" title="Oracle : ici commence le mot le plus long">{oracleLength}</span>}
                 {cursedCell === key && <span className="badge badge-cursed" title="Mot maudit : il commence ici">✦</span>}

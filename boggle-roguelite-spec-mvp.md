@@ -34,7 +34,7 @@ Pas de meta-progression inter-run au MVP (tout le contenu est disponible dès la
 
 ### 3.1 Boucle
 
-- **Taille de grille** : elle grandit avec la run **[tuning]** : manches 1-2 en **4×4**, 3-5 en **5×5**, 6-8 en **6×6**, 9-10 en **7×7**. La référence de difficulté (3.1.1) est propre à chaque taille, donc le seuil reste comparable ; une grande grille offre plus de choix, pas plus de points gratuits. Lettres et espacement s'adaptent pour tenir sur un téléphone.
+- **Taille de grille** : elle grandit avec la run **[tuning]** : manches 1-2 en **4×4**, 3-5 en **5×5**, 6-10 en **6×6**. Le **7×7 est l'exception**, pas le trajet normal : il n'arrive que par la condition « Grille géante ». La référence de difficulté (3.1.1) est propre à chaque taille, donc le seuil reste comparable ; une grande grille offre plus de choix, pas plus de points gratuits. Lettres et espacement s'adaptent pour tenir sur un téléphone.
 - **Chrono** : 90 s en 4×4, **+15 s par palier de taille** (105 s en 5×5, 120 s en 6×6, 135 s en 7×7) **[tuning]**. Après une vie perdue, la manche suivante offre **+10 s de répit** (filet anti-spirale).
 - **Écran « prêt »** entre la boutique et la manche : grille visible mais floutée, résumé (seuil, humeur, objectif, chrono), le chrono démarre au premier toucher.
 - **Run** : 10 manches. Manche 10 réussie → écran de félicitations (score final, relics, mots marquants). Pas de mode endless au MVP.
@@ -62,7 +62,7 @@ Mot **courant** = fréquence films ≥ **3 par million** (9 722 mots ; à 1/mill
 
 **Avant la manche 1** : le joueur choisit son **relic de départ** parmi 3 communs tirés au sort (hors relics d'attaque et relics à prérequis). Il donne une direction à la run dès la première grille.
 
-1. **Choix du mutateur** : 3 propositions tirées au sort dans le pool (section 7.2) + toujours une option « Grille standard ». Le joueur en choisit une. Manche 1 : grille standard imposée, pas de choix. Manches 5 et 10 (quand les ennemis existeront) : « Antre du boss » remplace l'une des 3 propositions. **Implémenté.**
+1. **Condition imposée** aux manches **3, 6 et 9** : une règle tirée au sort dans le pool (section 7.2), jamais deux fois la même d'affilée, annoncée sur l'écran « prêt ». Pas de choix : le choix de mutateur parmi 3 a été testé puis retiré (les variantes de pondération n'avaient pas d'intérêt perceptible, une contrainte imposée est plus lisible). Manches 5 et 10 (quand les ennemis existeront) : « Antre du boss ».
 2. Génération de la grille (mutateur + relics `onGridGenerate` + malédictions actives).
 3. Manche chronométrée. Dès que le seuil est atteint, un bouton **« Terminer la manche »** permet de s'arrêter : chaque tranche de **5 s restantes rapporte 1 €** **[tuning]**, affiché en direct sur le bouton. Rester jusqu'au bout reste rentable si on dépasse le seuil de plus de 1 pt par 5 s.
 4. **Récap** : mots trouvés, score de la manche vs seuil, 5 meilleurs mots manqués (satisfaction Boggle classique), euros gagnés (plancher, dépassement animé, objectif, fin anticipée, relics).
@@ -470,16 +470,13 @@ Les relics 24-29 ne sont proposés en boutique qu'à partir de la manche 2, et l
 
 **Coupé du MVP** : Chasseur de chaîne / Famille lexicale (lemmatisation), Grammairien (multi-catégories).
 
-### 7.2 Mutateurs de grille (9) — le joueur choisit 1 parmi 3 + « Grille standard »
+### 7.2 Conditions de manche (5) — imposées aux manches 3, 6, 9
 
-Un mutateur partage les hooks de mot d'un relic et peut en plus changer la taille, le chrono, le seuil, les poids de lettres et post-traiter la grille. Il apparaît comme une puce bleue dans la barre des relics et sur l'écran « prêt ».
+Une condition partage les hooks de mot d'un relic et peut en plus changer la taille, le chrono, le seuil et post-traiter la grille. Elle apparaît comme une puce bleue dans la barre des relics et sur l'écran « prêt ». **Retirés** : Dense voyelles, Dense consonnes (imperceptibles), Grille XXL.
 
 | # | Nom | Effet |
 |---|---|---|
-| 1 | Grande grille | +1 de taille par rapport à la manche (max 8×8), chrono adapté |
-| 2 | Grille XXL | +2 de taille — **pas encore codé** |
-| 3 | Dense voyelles | Poids AEIOUY ×2 |
-| 4 | Dense consonnes | Poids consonnes ×2 |
+| 1 | Grille géante | +1 de taille par rapport à la manche, plafonné à **7×7**, chrono adapté. Seule voie vers le 7×7 |
 | 5 | Grille toxique | 2 cases toxiques visibles (marquées) : chaque utilisation dans un mot validé coûte -8 s ; +50 % sur tous les mots de la manche |
 | 8 | **Terre fracturée** | Chaque case utilisée dans un mot valide se **fissure** (rendu visuel) ; à la **2e utilisation** elle se brise et révèle une nouvelle lettre (animation). Les mots trouvables sont recalculés. Pousse à réfléchir avant de tracer : une lettre clé peut disparaître. Idée joueur |
 | 9 | Sprint | −30 s, seuil −30 % |
@@ -541,7 +538,7 @@ Un mutateur partage les hooks de mot d'un relic et peut en plus changer la taill
 | Catégorie | Quantité |
 |---|---|
 | Relics | 36 |
-| Mutateurs | 8 codés (+ XXL) |
+| Conditions | 5 |
 | Consommables | 5 |
 | Malédictions | 5 |
 | Ennemis | 6 + 1 boss |

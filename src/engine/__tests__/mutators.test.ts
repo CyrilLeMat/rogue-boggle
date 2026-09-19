@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { FRACTURE_USES, MUTATORS, MUTATOR_BY_ID, mutatorGridSize } from '../../data/mutators';
+import { FRACTURE_USES, MUTATORS, MUTATOR_BY_ID, isConditionManche, mutatorGridSize, pickCondition } from '../../data/mutators';
 import { buildDictionary } from '../dictionary';
 import type { MancheView, RunView } from '../hooks';
 import { makeContext, runWordAccepted } from '../hookRunner';
-import { FRENCH_STANDARD_WEIGHTS, makeCell } from '../gridGenerator';
+import { makeCell } from '../gridGenerator';
 import { createRng } from '../rng';
 import type { Grid } from '../types';
 import { findAllWords } from '../wordFinder';
@@ -40,12 +40,13 @@ describe('mutators', () => {
     expect(m.grid.cells[1][1].letter).toBe('E'); // hors chemin : intact
     expect(m.gridDirty).toBe(true);
   });
-  it('weights and size mutators', () => {
-    const w = MUTATOR_BY_ID.get('dense-voyelles')!.weights!(FRENCH_STANDARD_WEIGHTS);
-    expect(w.A).toBe(FRENCH_STANDARD_WEIGHTS.A * 2);
-    expect(w.B).toBe(FRENCH_STANDARD_WEIGHTS.B);
-    expect(mutatorGridSize(7, MUTATOR_BY_ID.get('grande')!)).toBe(8);
-    expect(mutatorGridSize(8, MUTATOR_BY_ID.get('grande')!)).toBe(8);
+  it('grid size is capped at 7 and conditions land on manches 3, 6, 9', () => {
+    expect(mutatorGridSize(6, MUTATOR_BY_ID.get('geante')!)).toBe(7);
+    expect(mutatorGridSize(7, MUTATOR_BY_ID.get('geante')!)).toBe(7);
+    expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].filter(isConditionManche)).toEqual([3, 6, 9]);
+    const c = pickCondition(createRng('c'), 'fracture');
+    expect(c).not.toBe('fracture');
+    expect(MUTATOR_BY_ID.has(c)).toBe(true);
   });
   it('Grille toxique marks two cells', () => {
     const g = MUTATOR_BY_ID.get('toxique')!.applyToGrid!({ size: 4, cells: Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => makeCell('A'))) }, createRng('t'));

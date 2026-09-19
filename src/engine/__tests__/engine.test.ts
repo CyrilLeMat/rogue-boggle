@@ -122,7 +122,7 @@ describe('time per size', () => {
 
 describe('grid size schedule', () => {
   it('grows with the manche', () => {
-    expect([1, 2, 3, 5, 6, 8, 9, 10].map(gridSizeFor)).toEqual([4, 4, 5, 5, 6, 6, 7, 7]);
+    expect([1, 2, 3, 5, 6, 8, 9, 10].map(gridSizeFor)).toEqual([4, 4, 5, 5, 6, 6, 6, 6]);
   });
 });
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { isMusicEnabled, setMusicEnabled, setMusicIntensity, startMusic, stopMusic } from '../audio/music';
 import { isMuted, setMuted, sfx, unlockAudio } from '../audio/sfx';
 import { useRunStore } from '../state/runStore';
 
@@ -10,13 +11,20 @@ export function SoundEffects() {
   const shop = useRunStore((s) => s.shop);
   const timeLeft = useRunStore((s) => s.manche?.timeLeft ?? 0);
   const [muted, setMutedState] = useState(isMuted());
+  const [music, setMusicState] = useState(isMusicEnabled());
   const soldCount = useRef(0);
   const lastTick = useRef(-1);
 
   useEffect(() => {
-    const unlock = () => unlockAudio();
+    const unlock = () => { unlockAudio(); startMusic(); };
     window.addEventListener('pointerdown', unlock, { once: true });
-    return () => window.removeEventListener('pointerdown', unlock);
+    // onglet en arrière-plan : on coupe la musique, elle reprend au retour
+    const onVisibility = () => { if (document.hidden) stopMusic(); else startMusic(); };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
 
   useEffect(() => {
@@ -42,18 +50,32 @@ export function SoundEffects() {
   }, [shop]);
 
   useEffect(() => {
+    // les 20 dernières secondes accélèrent la musique, le reste du temps elle reste calme
+    setMusicIntensity(phase === 'playing' && timeLeft <= 20 ? 1 - timeLeft / 20 : 0);
+  }, [timeLeft, phase]);
+
+  useEffect(() => {
     if (phase !== 'playing') { lastTick.current = -1; return; }
     const sec = Math.ceil(timeLeft);
     if (sec <= 5 && sec > 0 && sec !== lastTick.current) { lastTick.current = sec; sfx.tick(); }
   }, [timeLeft, phase]);
 
   return (
-    <button
-      className="secondary small mute"
-      aria-label={muted ? 'Activer le son' : 'Couper le son'}
-      onClick={() => { const m = !muted; setMuted(m); setMutedState(m); }}
-    >
-      {muted ? '🔇' : '🔊'}
-    </button>
+    <div className="audio-toggles">
+      <button
+        className="secondary small mute"
+        aria-label={music ? 'Couper la musique' : 'Activer la musique'}
+        onClick={() => { const m = !music; setMusicEnabled(m); setMusicState(m); }}
+      >
+        {music ? '🎵' : '🎵̸'}
+      </button>
+      <button
+        className="secondary small mute"
+        aria-label={muted ? 'Activer les sons' : 'Couper les sons'}
+        onClick={() => { const m = !muted; setMuted(m); setMutedState(m); }}
+      >
+        {muted ? '🔇' : '🔊'}
+      </button>
+    </div>
   );
 }

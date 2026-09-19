@@ -12,7 +12,7 @@ export function ReadyOverlay() {
   return (
     <div className="ready-overlay">
       <span className="ready-title">Manche {run.currentManche} · {manche.grid.size}×{manche.grid.size}</span>
-      {mut && <span className="ready-line mutator">{mut.name} · {mut.description}</span>}
+      {mut && <span className="ready-line mutator">Condition spéciale — {mut.name} : {mut.description}</span>}
       <span className="ready-line">Seuil {manche.threshold} · grille {manche.difficulty.mood} · {Math.round(manche.totalSeconds)} s</span>
       {manche.graceSeconds > 0 && <span className="ready-line ok">+{manche.graceSeconds} s de répit après la vie perdue</span>}
       {manche.quest && <span className="ready-line">Objectif : {manche.quest.label} (+{manche.quest.reward} €)</span>}

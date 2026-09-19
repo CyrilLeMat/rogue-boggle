@@ -19,7 +19,7 @@ const DEFS: QuestDef[] = [
     make: (grid, search) => {
       const len = grid.size + 1;
       if (![...search.words].some((w) => w.length >= len)) return null;
-      return { id: 'long-word', label: `Un mot de ${len} lettres ou plus`, target: 1, progress: 0, reward: 20, done: false };
+      return { id: 'long-word', label: `Un mot de ${len}+ lettres`, target: 1, progress: 0, reward: 20, done: false };
     },
     progress: (q, found) => {
       const len = Number(q.label.match(/\d+/)![0]);
@@ -29,7 +29,7 @@ const DEFS: QuestDef[] = [
   {
     id: 'five-plus',
     make: (_grid, search) => ([...search.words].filter((w) => w.length >= 5).length >= 6
-      ? { id: 'five-plus', label: 'Trois mots de 5 lettres ou plus', target: 3, progress: 0, reward: 15, done: false } : null),
+      ? { id: 'five-plus', label: '3 mots de 5+ lettres', target: 3, progress: 0, reward: 15, done: false } : null),
     progress: (_q, found) => found.filter((f) => f.word.length >= 5).length,
   },
   {
@@ -39,7 +39,7 @@ const DEFS: QuestDef[] = [
       const options = [...letters].filter((l) => [...search.words].filter((w) => w.startsWith(l)).length >= 5);
       if (!options.length) return null;
       const l = rng.pick(options);
-      return { id: 'starts-with', label: `Trois mots commençant par ${l}`, target: 3, progress: 0, reward: 15, done: false };
+      return { id: 'starts-with', label: `3 mots en ${l}`, target: 3, progress: 0, reward: 15, done: false };
     },
     progress: (q, found) => {
       const l = q.label.slice(-1);
@@ -49,14 +49,14 @@ const DEFS: QuestDef[] = [
   {
     id: 'rare-letter',
     make: (_grid, search) => ([...search.words].some((w) => RARE.test(w))
-      ? { id: 'rare-letter', label: 'Un mot avec K, W, X, Y, Z, J ou QU', target: 1, progress: 0, reward: 15, done: false } : null),
+      ? { id: 'rare-letter', label: 'Un mot avec K/W/X/Y/Z/J/QU', target: 1, progress: 0, reward: 15, done: false } : null),
     progress: (_q, found) => found.filter((f) => RARE.test(f.word)).length,
   },
   {
     id: 'count',
     make: (grid) => {
       const n = 8 + 2 * (grid.size - 4);
-      return { id: 'count', label: `${n} mots dans la manche`, target: n, progress: 0, reward: 15, done: false };
+      return { id: 'count', label: `${n} mots`, target: n, progress: 0, reward: 15, done: false };
     },
     progress: (_q, found) => found.length,
   },

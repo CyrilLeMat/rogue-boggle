@@ -1,5 +1,6 @@
-// [tuning] La grille grandit avec la run : 4×4 pour se chauffer, puis 5, 6, 7.
-export const GRID_SIZE_BY_MANCHE: [fromManche: number, size: number][] = [[1, 4], [3, 5], [6, 6], [9, 7]];
+// [tuning] La grille grandit avec la run : 4×4 pour se chauffer, puis 5, puis 6.
+// Le 7×7 n'est pas le trajet normal : il n'arrive que par la condition « Grille géante ».
+export const GRID_SIZE_BY_MANCHE: [fromManche: number, size: number][] = [[1, 4], [3, 5], [6, 6]];
 
 export function gridSizeFor(manche: number): number {
   let size = GRID_SIZE_BY_MANCHE[0][1];

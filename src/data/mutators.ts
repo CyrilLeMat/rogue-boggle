@@ -1,13 +1,14 @@
 import { posKey } from '../engine/adjacency';
-import { FRENCH_STANDARD_WEIGHTS, VOWELS, sampleLetter } from '../engine/gridGenerator';
+import { FRENCH_STANDARD_WEIGHTS, sampleLetter } from '../engine/gridGenerator';
 import type { Mutator } from '../engine/hooks';
-import type { Grid } from '../engine/types';
+import type { Rng } from '../engine/rng';
 
 export const FRACTURE_USES = 2; // [tuning] utilisations avant que la case se brise et change de lettre
 
-function scaleWeights(pred: (letter: string) => boolean, factor: number) {
-  return (w: Record<string, number>) => Object.fromEntries(Object.entries(w).map(([l, v]) => [l, pred(l) ? v * factor : v]));
-}
+// Conditions imposées toutes les CONDITION_EVERY manches (3, 6, 9) : pas de choix, une règle
+// qui change la façon de jouer. Les variantes de pondération (voyelles/consonnes) ont été
+// retirées : elles ne changeaient rien de perceptible.
+export const CONDITION_EVERY = 3;
 
 export const MUTATORS: Mutator[] = [
   {
@@ -35,16 +36,6 @@ export const MUTATORS: Mutator[] = [
     },
   },
   {
-    id: 'dense-voyelles', name: 'Dense voyelles', rarity: 'common',
-    description: 'Deux fois plus de voyelles dans la grille',
-    weights: scaleWeights((l) => VOWELS.has(l), 2),
-  },
-  {
-    id: 'dense-consonnes', name: 'Dense consonnes', rarity: 'common',
-    description: 'Deux fois plus de consonnes dans la grille',
-    weights: scaleWeights((l) => !VOWELS.has(l), 2),
-  },
-  {
     id: 'toxique', name: 'Grille toxique', rarity: 'rare',
     description: '2 cases toxiques ☠ (fond vert, −8 s à chaque utilisation), mais +50 % sur tous les mots',
     applyToGrid: (grid, rng) => {
@@ -57,11 +48,6 @@ export const MUTATORS: Mutator[] = [
     onWordFound: () => ({ percent: 0.5 }),
   },
   {
-    id: 'grande', name: 'Grande grille', rarity: 'common',
-    description: 'Une taille de plus que prévu (et +15 s)',
-    sizeDelta: 1,
-  },
-  {
     id: 'sprint', name: 'Sprint', rarity: 'common',
     description: '−30 s de chrono, seuil −30 %',
     secondsDelta: -30, thresholdMult: 0.7,
@@ -71,15 +57,26 @@ export const MUTATORS: Mutator[] = [
     description: '+45 s de chrono, seuil +50 %',
     secondsDelta: 45, thresholdMult: 1.5,
   },
+  {
+    id: 'geante', name: 'Grille géante', rarity: 'rare',
+    description: 'Une taille de plus que d\'habitude (jusqu\'à 7×7), avec le chrono qui va avec',
+    sizeDelta: 1,
+  },
 ];
 
 export const MUTATOR_BY_ID = new Map(MUTATORS.map((m) => [m.id, m]));
-export const MAX_GRID_SIZE = 8;
+export const MAX_GRID_SIZE = 7;
 
 export function mutatorGridSize(base: number, m: Mutator | null): number {
   return Math.min(MAX_GRID_SIZE, base + (m?.sizeDelta ?? 0));
 }
 
-export function describeGrid(grid: Grid): string {
-  return `${grid.size}×${grid.size}`;
+export function isConditionManche(manche: number): boolean {
+  return manche > 1 && manche % CONDITION_EVERY === 0;
+}
+
+// Évite de répéter la condition précédente quand c'est possible.
+export function pickCondition(rng: Rng, previous: string | null): string {
+  const pool = MUTATORS.filter((m) => m.id !== previous);
+  return rng.pick(pool.length ? pool : MUTATORS).id;
 }

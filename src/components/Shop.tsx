@@ -3,7 +3,7 @@ import { MAX_CONSUMABLES } from '../engine/hooks';
 import { MAX_SAME_CHARM } from '../engine/rules';
 import { shopRerollPrice, type ShopItem } from '../engine/shop';
 import { useRunStore } from '../state/runStore';
-import { L, money } from '../theme/lexicon';
+import { L, SHOP_INTRO, money } from '../theme/lexicon';
 import { RelicCard } from './RelicCard';
 import { ShopArt } from './ShopArt';
 
@@ -36,7 +36,23 @@ export function Shop() {
   const next = useRunStore((s) => s.nextManche);
   const reroll = useRunStore((s) => s.rerollShop);
   const rerolls = useRunStore((s) => s.shopRerolls);
+  const enter = useRunStore((s) => s.enterShop);
   if (!run) return null;
+
+  // La toute première visite de l'année a droit à sa scène.
+  if (!run.seenShop) {
+    return (
+      <div className="panel pick event-intro">
+        <div className="frame event-hero"><ShopArt /></div>
+        <h2>{SHOP_INTRO.title}</h2>
+        <div className="intro-text">
+          {SHOP_INTRO.lines.map((l) => <p key={l}>{l}</p>)}
+        </div>
+        <p className="sage-ask">{SHOP_INTRO.ask}</p>
+        <button className="ready-cta" onClick={enter}>{SHOP_INTRO.cta}</button>
+      </div>
+    );
+  }
   const rerollPrice = shopRerollPrice(rerolls.paid, rerolls.freeLeft);
   const canReroll = run.euros >= rerollPrice;
   const inventoryFull = run.consumables.length >= MAX_CONSUMABLES;

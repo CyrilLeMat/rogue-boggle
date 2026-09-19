@@ -81,6 +81,7 @@ export interface RunState extends RunView {
   nextMutatorId: string | null;
   lastConditionId: string | null;
   seenEnemies: boolean; // la coopérative ne parle de cancres qu'après la première leçon « Le cancre copie »
+  seenShop: boolean;    // la scène d'arrivée ne se joue qu'une fois par année
   sageWins: number;
   eventPlan: EventId[]; // le programme de l'année, tiré à la rentrée
   history: MancheResult[];
@@ -122,6 +123,7 @@ interface Store {
   eventChoose(relicId: string): void;
   eventGiveUp(): void;
   leaveEvent(): void;
+  enterShop(): void;
   buy(index: number): void;
   rerollShop(): void;
   nextManche(): void;
@@ -172,7 +174,7 @@ export const useRunStore = create<Store>((set, get) => ({
       run: {
         seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
-        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, sageWins: 0, eventPlan: planEvents(rng),
+        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
       },
       lastResult: null,
       startChoices,
@@ -553,6 +555,12 @@ export const useRunStore = create<Store>((set, get) => ({
         ? { ...shopRerolls, freeLeft: shopRerolls.freeLeft - 1 }
         : { ...shopRerolls, paid: shopRerolls.paid + 1 },
     });
+  },
+
+  enterShop() {
+    const { run } = get();
+    if (!run || run.seenShop) return;
+    set({ run: { ...run, seenShop: true } });
   },
 
   buy(index) {

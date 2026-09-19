@@ -450,6 +450,7 @@ Punitions : 15 billes (Au coin, Retenue, Classe de cancres), 20 (Cent lignes, Ca
 - La boutique propose **3 objets** : 2 tirés dans relics + consommables, 1 tiré dans malédictions + consommables **[tuning]**.
 - Un relic déjà possédé n'est pas proposé. Un relic avec `requires` n'est proposé que si le prérequis est possédé.
 - Pas de plafond de relics.
+- **Première visite de l'année** : une scène en plein écran (le comptoir, Mathieu qui tient la caisse depuis le CP sans que personne sache pourquoi, « Tu as des billes ? ») avant d'entrer, une seule fois par run (`run.seenShop`).
 - **4 emplacements** : 2 tirés parmi relics + consommables, 1 parmi malédictions + consommables, et **1 charme** toujours présent (5-8 €).
 **La voix de la maîtresse** (`src/theme/lexicon.ts`) : elle commente en direct. Un mot faux ou un doublon déclenche un reproche tiré au hasard mais stable (« N'importe quoi. », « Tu n'as rien dans la tête ou quoi ? »). Un mot **absent du sous-ensemble courant** la rend suspicieuse (« Tu connais ce mot, toi ? », « Tu triches ou quoi ? ») — le flag `f` du dictionnaire sert enfin à ça. Un mot à 20 points ou plus l'impressionne, et un encouragement tombe une fois sur quatre sur les autres. En fin de dictée, elle signe une **appréciation de bulletin** au stylo rouge, calée sur le rapport note obtenue / note attendue et sur les bons points restants.
 

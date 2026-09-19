@@ -20,12 +20,16 @@ export function FoundWords() {
     feedback?.kind === 'duplicate' ? scold(DUPLICATES, feedback.id) :
     feedback?.kind === 'invalid' ? scold(SCOLDS, feedback.id) :
     feedback?.kind === 'tooShort' ? scold(TOO_SHORT, feedback.id) : ' ';
+  const total = found.reduce((s, f) => s + f.score, 0);
   return (
     <div className="found">
       <div key={feedback?.id} className={`feedback ${feedback?.kind ?? ''}`}>
         {msg}
         {praise && <span className={`praise ${score >= 50 ? 'huge' : rare ? 'suspicious' : ''}`}>{praise}</span>}
       </div>
+      {found.length > 0 && (
+        <span className="found-count">{found.length} mot{found.length > 1 ? 's' : ''} · {total} pts</span>
+      )}
       <ul>
         {[...found].reverse().map((f) => (
           <li key={f.word}><span>{f.word}</span><span className="pts">{f.score}</span></li>

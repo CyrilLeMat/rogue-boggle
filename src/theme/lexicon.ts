@@ -192,6 +192,19 @@ export function money(n: number, short = false): string {
 
 export const RARITY_LABEL = { common: 'Courant', rare: 'Rare', legendary: 'Trésor' } as const;
 
+// La première visite à la coopérative, une fois par année scolaire.
+export const SHOP_INTRO = {
+  title: 'La coopérative',
+  lines: [
+    'Au fond du couloir, une porte que tu n\'avais jamais remarquée. Elle est entrouverte.',
+    'Derrière : un comptoir, des étagères jusqu\'au plafond, et Mathieu.',
+    'Mathieu tient la caisse depuis le CP. Personne ne sait pourquoi. Personne ne demande.',
+    '« Tu as des billes ? »',
+  ],
+  ask: 'Ici tout s\'achète : les fournitures, les gommettes, et même les punitions, si tu es de ce genre-là.',
+  cta: 'Sortir ses billes',
+} as const;
+
 // Avant une dictée sur deux : la maîtresse hésite au tableau, et c'est toi qui tranches.
 export const LESSON_SCENES = [
   {

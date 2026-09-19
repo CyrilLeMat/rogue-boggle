@@ -41,7 +41,7 @@ export const L = {
   rejouer: 'Refaire cette année',
   menu: 'Menu',
   relicDepart: 'Qui es-tu, cette année ?',
-  relicDepartSub: 'On ne change pas de peau en cours d\'année. Choisis bien.',
+  relicDepartSub: 'Toute la classe est là. On ne change pas de peau en cours d\'année : choisis bien.',
   pretClassique: 'Dictée classique. Rien que toi, la feuille, et une maîtresse qui croit encore aux règles.',
   repit: 'de répit, la maîtresse a eu pitié',
   manqueList: 'Le maître attendait aussi',

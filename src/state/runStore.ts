@@ -153,7 +153,7 @@ export const useRunStore = create<Store>((set, get) => ({
 
   startRun(seed = randomSeed()) {
     const rng = createRng(seed);
-    const startChoices = rng.shuffle(ARCHETYPES).slice(0, 3).map((a) => a.id);
+    const startChoices = ARCHETYPES.map((a) => a.id);
     set({
       phase: 'intro',
       run: {

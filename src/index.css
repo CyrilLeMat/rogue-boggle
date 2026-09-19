@@ -110,8 +110,8 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .cursed-reveal .word-link { color: var(--lilac); }
 .cursed-reveal.ok { color: var(--ok); }
 
-.archetypes { max-width: 760px; }
-.archetypes .cards { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.archetypes { max-width: 900px; }
+.archetypes .cards { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
 .archetype-card {
   display: flex; flex-direction: column; gap: 6px; align-items: stretch; text-align: left;
   background: #fff; color: var(--text); border: 2px solid var(--cell-2); border-radius: 22px 26px 24px 28px;
@@ -121,9 +121,9 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .archetype-card .frame { box-shadow: 3px 4px 0 #1f1b2e; }
 .archetype-card .frame { line-height: 0; }
 .archetype-card .archetype-art { aspect-ratio: 1; width: 100%; }
-.archetype-name { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; line-height: 1.1; color: var(--accent-deep); }
-.archetype-flavor { font-family: 'Patrick Hand', cursive; font-size: 0.98rem; color: #6d667c; line-height: 1.2; }
-.archetype-effect { font-size: 0.82rem; color: var(--text); font-weight: 700; border-top: 1px dashed #eee3d6; padding-top: 6px; margin-top: auto; }
+.archetype-name { font-family: 'Patrick Hand', cursive; font-size: 1.15rem; line-height: 1.1; color: var(--accent-deep); }
+.archetype-flavor { font-family: 'Patrick Hand', cursive; font-size: 0.92rem; color: #6d667c; line-height: 1.2; }
+.archetype-effect { font-size: 0.78rem; color: var(--text); font-weight: 700; border-top: 1px dashed #eee3d6; padding-top: 6px; margin-top: auto; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .menu { max-width: 620px; gap: 16px; }
@@ -455,6 +455,11 @@ button.small { padding: 6px 14px; font-size: 0.8rem; }
   main { padding: 12px 10px 12px 22px; }
   .title { font-size: 2.4rem; }
   .strip { grid-template-columns: 1fr; }
+  .archetypes .cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .archetype-card { padding: 8px; gap: 4px; border-radius: 16px 20px 18px 22px; }
+  .archetype-name { font-size: 1rem; }
+  .archetype-flavor { display: none; }
+  .archetype-effect { font-size: 0.72rem; padding-top: 4px; }
   .sage-head { grid-template-columns: 1fr; gap: 10px; }
   .sage-frame { max-width: 180px; margin: 0 auto; }
   .sage-speech { text-align: center; }

@@ -60,7 +60,7 @@ Mot **courant** = fréquence films ≥ **3 par million** (9 722 mots ; à 1/mill
 
 ### 3.2 Déroulé d'une manche
 
-**Avant la dictée 1** : le joueur choisit une **personnalité d'élève** parmi 3 tirées au sort (`src/data/archetypes.ts`). Pas un objet : un caractère, avec un portrait, une phrase de caractère et un effet franc assorti d'une contrepartie. C'est ce qui donne son style à l'année. Les personnalités ne sont jamais vendues à la coopérative.
+**Avant la dictée 1** : le joueur choisit une **personnalité d'élève** parmi **les huit** (`src/data/archetypes.ts`), présentées dans un ordre stable pour qu'on apprenne à connaître la classe. Pas un objet : un caractère, avec un portrait, une phrase de caractère et un effet franc assorti d'une contrepartie. C'est ce qui donne son style à l'année. Les personnalités ne sont jamais vendues à la coopérative.
 
 | Personnalité | Effet | Contrepartie |
 |---|---|---|

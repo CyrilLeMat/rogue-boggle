@@ -3,7 +3,7 @@ import { sfx } from '../audio/sfx';
 import type { Pos } from '../engine/types';
 import { findPathForWord } from '../engine/wordFinder';
 import { useRunStore } from '../state/runStore';
-import { L, money } from '../theme/lexicon';
+import { L, SIGNATURE, appreciation, money } from '../theme/lexicon';
 import { MiniGrid } from './MiniGrid';
 
 // Compteur animé : le plancher s'affiche tout de suite, le bonus monte d'un euro à la fois.
@@ -57,6 +57,11 @@ export function MancheRecap() {
       <h2 className={result.success ? 'ok' : 'ko'}>{result.success ? L.reussie : L.ratee}</h2>
       <p className="big">{result.score} <span className="muted">/ {result.threshold}</span></p>
       <p className="muted">Feuille {result.mood}</p>
+      <div className="appreciation">
+        <span className="appreciation-label">Appréciation</span>
+        <p>{appreciation(result.score / Math.max(1, result.threshold), result.success, run.lives)}</p>
+        <span className="signature">{SIGNATURE}</span>
+      </div>
       {!result.success && <p className="ko">{L.vieEnMoins} Il t'en reste {run.lives}.</p>}
 
       <div className="euros-breakdown">

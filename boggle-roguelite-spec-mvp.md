@@ -90,11 +90,19 @@ Quand le thème est tiré, des escargots se promènent sur la grille : **1 en 4�
 
 Chaque mot validé moins de **5 s** après le précédent ajoute un maillon ; le multiplicateur final vaut `1 + 0.1 × maillons` plafonné à **×1.5** (5 maillons) **[tuning]**. Une jauge visible montre le multiplicateur et le temps restant pour enchaîner. Le relic Combo élargit la fenêtre à 8 s et le plafond à ×2. Récompense le rythme, lisible d'un coup d'œil.
 
-### 3.2.4 Le Sage du CM1 (entre deux dictées)
+### 3.2.4 Les événements de couloir (entre deux dictées)
 
-**Une respiration, avec un autre type d'effort** : pas de grille ni d'adjacence, juste des lettres en vrac à remettre dans l'ordre.
+**Des respirations**, après les dictées **2, 4, 6 et 8** (`EVENT_AFTER`), entre le récap et la coopérative. Un événement est tiré au sort, jamais deux fois le même dans l'année. Chacun a son décor dessiné, son ton et son enjeu ; les trois familles se répondent : on joue, on choisit, on parie. Chaque défi chronométré commence par une scène qu'on lit, et le chrono ne part qu'au clic (« Se lever, dignement »), après quoi la scène se replie pour laisser la place à la feuille.
 
-- **Quand** : après les dictées **3 et 7** (`SAGE_AFTER`), entre le récap et la coopérative.
+| Événement | Famille | Mécanique | Enjeu |
+|---|---|---|---|
+| **Le Sage du CM1** | on joue | Mot de 8-12 lettres caché dans une 5×5, les autres cases grisées | 50 à 85 billes, 10 de consolation |
+| **L'inspecteur d'académie** | on joue | Mot de 6-9 lettres annoncé à voix haute, grille **non grisée**, 40 s | Réussi : **+1 bon point** et 25 billes. Raté : −30 billes |
+| **La réserve de fournitures** | on choisit | Une fourniture gratuite parmi trois | Pas de risque |
+| **La partie de billes** | on parie | Mise de 10, 25 ou 50 billes, puis 4 mots en 30 s | Réussi : mise doublée. Raté : mise perdue |
+| **Le concours de récitation** | on joue | Contrainte tirée au sort (mots en R, mots de 5+, que des verbes…), 45 s | 10 billes par mot juste, aucun risque |
+
+- **Quand** : après les dictées **2, 4, 6 et 8**, entre le récap et la coopérative.
 - **L'énigme** : un mot **courant de 8 à 12 lettres**, nom ou adjectif (2 376 candidats ; les formes conjuguées comme « abandonnez » sont exclues, devinette ingrate).
 - **La feuille** : une grille **5×5** où le mot est planté le long d'un chemin auto-évitant tiré au hasard (`carvePath`, retour arrière). Les cases du mot sont normales, **les 13 à 17 autres sont grisées et intraçables** : on connaît les lettres, tout l'effort est de retrouver le chemin. Même geste que le jeu, donc rien de nouveau à apprendre.
 - **Chrono** : `15 + 3 × longueur` s (39 s pour 8 lettres, 51 s pour 12) **[tuning]**.

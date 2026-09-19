@@ -27,11 +27,15 @@ export function sageReward(length: number, secondsLeft: number): number {
 export const SAGE_CONSOLATION = 10;
 
 // Noms et adjectifs courants : « abandonnez » serait une devinette ingrate.
-export function sageWordPool(entries: readonly DictEntry[]): string[] {
+export function commonWordPool(entries: readonly DictEntry[], min: number, max: number): string[] {
   return entries
-    .filter((e) => e.f && e.w.length >= SAGE_MIN_LEN && e.w.length <= SAGE_MAX_LEN)
+    .filter((e) => e.f && e.w.length >= min && e.w.length <= max)
     .filter((e) => e.c.includes('NOM') || e.c.includes('ADJ'))
     .map((e) => e.w);
+}
+
+export function sageWordPool(entries: readonly DictEntry[]): string[] {
+  return commonWordPool(entries, SAGE_MIN_LEN, SAGE_MAX_LEN);
 }
 
 // Chemin auto-évitant de `length` cases, tiré au hasard avec retour arrière.

@@ -65,6 +65,18 @@ function draw(pool: Candidate[], taken: Set<string>, rng: Rng): ShopItem | null 
   return pick.item;
 }
 
+// La réserve de fournitures : mêmes candidats que la coopérative, sans prix.
+export function drawFreeRelics(input: ShopInput, rng: Rng, count: number): string[] {
+  const taken = new Set<string>();
+  const out: string[] = [];
+  const pool = relicCandidates(input).filter((c) => !RELICS.find((r) => r.id === c.item.id)?.charm);
+  for (let i = 0; i < count; i++) {
+    const it = draw(pool, taken, rng);
+    if (it) out.push(it.id);
+  }
+  return out;
+}
+
 export const SHOP_SLOTS = 4;
 
 // 4 emplacements : 2 tirés parmi relics + consommables, 1 parmi malédictions + consommables,

@@ -89,6 +89,12 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .stat.mood-aride .value { color: var(--ko); }
 
 .live-euros { color: var(--gold); font-size: 0.9rem; margin-left: 2px; }
+/* l'appréciation du bulletin : stylo rouge sur la copie */
+.appreciation { position: relative; margin: 12px 0; padding: 10px 14px 22px; background: #fffaf2; border: 2px dashed #f0cfcd; border-radius: 14px 18px 16px 20px; }
+.appreciation-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 800; }
+.appreciation p { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; color: var(--ko); margin: 2px 0 0; line-height: 1.2; transform: rotate(-0.6deg); }
+.signature { position: absolute; right: 14px; bottom: 4px; font-family: 'Patrick Hand', cursive; font-size: 0.95rem; color: var(--ko); opacity: 0.75; transform: rotate(-4deg); }
+
 .euros-breakdown { background: #fbf4ea; border-radius: 18px 22px 20px 24px; padding: 12px 16px; margin: 14px 0; }
 .euro-line { display: flex; justify-content: space-between; padding: 4px 0; }
 .euro-line .euros { color: var(--gold); font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -205,7 +211,14 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .sage-speech h2 { margin-bottom: 6px; }
 .sage-speech p { margin: 4px 0; font-size: 0.92rem; }
 .sage-ask { font-family: 'Patrick Hand', cursive; font-size: 1.2rem; color: var(--accent-deep); margin-top: 8px !important; }
-.sage-timer { margin: 16px 0 10px; }
+.sage-timer { margin: 12px 0 8px; }
+/* une fois le défi lancé, la scène se replie pour laisser la place à la feuille */
+.sage-head.compact { grid-template-columns: 110px 1fr; gap: 12px; align-items: center; }
+.sage-head.compact .sage-speech h2 { font-size: 1.4rem; margin: 0; }
+.sage-head.compact .sage-ask { font-size: 1rem; margin-top: 2px !important; }
+.target-word { text-align: center; letter-spacing: 0.08em; }
+.harvest-count { color: var(--gold); }
+.stakes { margin: 12px 0; }
 .sage-board { max-width: 380px; margin: 0 auto 8px; }
 /* l'indice du sage : la case de départ, bien visible */
 .sage-board .cell.amorce { box-shadow: 0 0 0 3px var(--ok), 0 0 16px 3px rgba(95, 174, 131, 0.5); }
@@ -318,6 +331,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .found { min-height: 200px; }
 .feedback { height: 1.6rem; font-weight: 800; margin-bottom: 8px; animation: pop 0.35s ease-out; }
 .feedback.ok { color: var(--ok); }
+.feedback .praise { display: block; font-family: 'Patrick Hand', cursive; font-size: 0.95rem; color: var(--muted); font-weight: 400; }
 .feedback.duplicate { color: var(--muted); }
 .feedback.invalid, .feedback.tooShort { color: var(--ko); }
 @keyframes pop { from { transform: scale(1.15); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
@@ -406,8 +420,11 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .cell.blurred { filter: blur(6px); opacity: 0.7; }
 .grid[data-targeting] .cell { cursor: crosshair; outline: 2px dashed var(--coral); outline-offset: -4px; }
 .shop .euros { color: var(--gold); font-size: 1.1rem; }
-.shop-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; text-align: left; margin-bottom: 8px; }
-.wallet { display: flex; flex-direction: column; align-items: flex-end; background: #fff8e8; border: 2px solid #f6e7b8; border-radius: 18px 22px 20px 24px; padding: 8px 14px; flex: none; }
+.shop-head { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: center; text-align: left; margin-bottom: 8px; }
+.shop-frame { flex: none; }
+.shop-art { display: block; width: 100%; aspect-ratio: 200 / 150; }
+.shop-intro { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.wallet { display: inline-flex; align-items: baseline; gap: 10px; background: #fff8e8; border: 2px solid #f6e7b8; border-radius: 18px 22px 20px 24px; padding: 6px 16px; }
 .wallet .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 800; }
 .wallet .amount { font-size: 1.6rem; font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
 .shop-slot .relic-card { cursor: default; min-height: 120px; }
@@ -495,9 +512,11 @@ button.small { padding: 6px 14px; font-size: 0.8rem; }
   .note-now { font-size: 2.2rem; }
   .streak-bar { width: 44px; }
   .quest { font-size: 0.8rem; padding: 5px 10px; gap: 6px; }
-  .shop-head { flex-direction: column; align-items: stretch; }
+  .shop-head { grid-template-columns: 1fr; gap: 8px; }
+  .shop-frame { max-width: 200px; margin: 0 auto; }
+  .shop-intro { align-items: center; text-align: center; }
   .audio-toggles { top: auto; bottom: 10px; right: 10px; opacity: 0.85; }
-  .wallet { align-items: center; flex-direction: row; justify-content: space-between; }
+
   .stat .value { font-size: 1rem; }
   .found { min-height: 0; }
   .found ul { max-height: 160px; display: flex; flex-wrap: wrap; gap: 4px 12px; }

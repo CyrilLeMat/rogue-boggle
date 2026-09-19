@@ -18,7 +18,7 @@ import { QuestBadge } from './components/QuestBadge';
 import { ReadyOverlay } from './components/ReadyScreen';
 import { StreakGauge } from './components/StreakGauge';
 import { ScoreBoard } from './components/ScoreBoard';
-import { SageChallenge } from './components/SageChallenge';
+import { EventScreen } from './components/EventScreen';
 import { Shop } from './components/Shop';
 import { SoundEffects } from './components/SoundEffects';
 import { StartPick } from './components/StartPick';
@@ -117,7 +117,7 @@ export default function App() {
       {phase === 'startPick' && <StartPick />}
       {(phase === 'playing' || phase === 'ready') && <Playing />}
       {phase === 'recap' && <MancheRecap />}
-      {phase === 'sage' && <SageChallenge />}
+      {phase === 'event' && <EventScreen />}
       {phase === 'shop' && <Shop />}
       {phase === 'victory' && <EndScreen victory />}
       {phase === 'gameover' && <EndScreen victory={false} />}

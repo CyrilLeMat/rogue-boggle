@@ -5,6 +5,7 @@ import { shopRerollPrice, type ShopItem } from '../engine/shop';
 import { useRunStore } from '../state/runStore';
 import { L, money } from '../theme/lexicon';
 import { RelicCard } from './RelicCard';
+import { ShopArt } from './ShopArt';
 
 // Quatre rayons bien séparés : ce que chaque type d'article fait est dit une fois, en tête de rayon.
 type Section = 'fourniture' | 'trousse' | 'punition' | 'gommette';
@@ -45,11 +46,12 @@ export function Shop() {
   return (
     <div className="panel pick shop">
       <div className="shop-head">
-        <div>
+        <div className="frame shop-frame"><ShopArt /></div>
+        <div className="shop-intro">
           <h2>{L.boutique}</h2>
           <p className="muted">{L.boutiqueSub}</p>
+          <div className="wallet"><span className="label">{L.euros}</span><span className="amount">{run.euros}</span></div>
         </div>
-        <div className="wallet"><span className="label">{L.euros}</span><span className="amount">{run.euros}</span></div>
       </div>
 
       {SECTIONS.map((sec) => {

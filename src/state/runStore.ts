@@ -2,13 +2,18 @@ import { create } from 'zustand';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { isConditionManche, mutatorGridSize, pickCondition } from '../data/mutators';
 import { ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
-import { dictionary, sageWords } from '../data/dictionary';
+import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
 import { ARCHETYPES, STARTING_PURSE } from '../data/archetypes';
 import type { Mood } from '../engine/difficulty';
 import { CRITTER_MOVE_SECONDS, CRITTER_MULTIPLIER, moveCritter, spawnCritters, touchedCritters, type Critter } from '../engine/critter';
 import { pickQuest, updateQuest } from '../engine/quests';
-import { SAGE_CONSOLATION, SAGE_HINT_RATIO, createSageChallenge, isCorrect, isSageManche, sageReward, wordFromPath, type SageChallenge } from '../engine/sage';
+import { SAGE_HINT_RATIO, isCorrect, wordFromPath } from '../engine/sage';
+import {
+  INSPECTOR_PENALTY, INSPECTOR_REWARD, RECITATION_PER_WORD, SAGE_CONSOLATION,
+  createChoice, createHarvest, createHunt, isEventManche, pickEvent, ruleAccepts, sageReward,
+  type EventId, type GameEvent,
+} from '../engine/events';
 import { adjustThreshold, difficultyOf } from '../engine/difficulty';
 import { FRENCH_STANDARD_WEIGHTS, generateGrid, sampleLetter } from '../engine/gridGenerator';
 import { collectModifiers, eurosMultiplier, extraLives, makeContext, mancheSeconds, runGridGenerate, runInvalidWord, runMancheEnd, runMancheStart, runRunEnd, runWordAccepted, streakRules, thresholdMultiplier, uiFlags } from '../engine/hookRunner';
@@ -18,12 +23,12 @@ import { applyModifiers, baseScore } from '../engine/scoring';
 import { candidatesForPath } from '../engine/wordFinder';
 import { createRng, randomSeed, type Rng } from '../engine/rng';
 import { GRACE_SECONDS_AFTER_LOSS, MANCHE_SECONDS, MAX_SAME_CHARM, STARTING_LIVES, STREAK_MAX_LINKS, STREAK_STEP, STREAK_WINDOW, TOTAL_MANCHES, eurosFor, gridSizeFor, mancheSecondsFor, threshold, timeEuros } from '../engine/rules';
-import { generateShopOffer, shopRerollPrice, type ShopInput, type ShopItem } from '../engine/shop';
+import { drawFreeRelics, generateShopOffer, shopRerollPrice, type ShopInput, type ShopItem } from '../engine/shop';
 import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'intro' | 'startPick' | 'ready' | 'playing' | 'recap' | 'sage' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'intro' | 'startPick' | 'ready' | 'playing' | 'recap' | 'event' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -76,6 +81,7 @@ export interface RunState extends RunView {
   lastConditionId: string | null;
   seenEnemies: boolean; // la coopérative ne parle de cancres qu'après la première leçon « Le cancre copie »
   sageWins: number;
+  seenEvents: EventId[];
   history: MancheResult[];
   endBonus: number;
   consumables: OwnedConsumable[];
@@ -91,7 +97,7 @@ interface Store {
   startChoices: string[];
   shop: ShopItem[];
   shopRerolls: { paid: number; freeLeft: number };
-  sage: SageChallenge | null;
+  event: GameEvent | null;
   feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; path?: Pos[]; id: number } | null;
 
   startRun(seed?: string): void;
@@ -106,10 +112,13 @@ interface Store {
   endManche(early?: boolean): void;
   finishEarly(): void;
   continueAfterRecap(): void;
-  sageTick(dt: number): void;
-  sageSubmit(path: Pos[]): void;
-  sageGiveUp(): void;
-  leaveSage(): void;
+  eventStart(): void;
+  eventTick(dt: number): void;
+  eventSubmit(path: Pos[]): void;
+  eventStake(amount: number): void;
+  eventChoose(relicId: string): void;
+  eventGiveUp(): void;
+  leaveEvent(): void;
   buy(index: number): void;
   rerollShop(): void;
   nextManche(): void;
@@ -148,7 +157,7 @@ export const useRunStore = create<Store>((set, get) => ({
   startChoices: [],
   shop: [],
   shopRerolls: { paid: 0, freeLeft: 0 },
-  sage: null,
+  event: null,
   feedback: null,
 
   startRun(seed = randomSeed()) {
@@ -159,7 +168,7 @@ export const useRunStore = create<Store>((set, get) => ({
       run: {
         seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
-        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, sageWins: 0,
+        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, sageWins: 0, seenEvents: [],
       },
       lastResult: null,
       startChoices,
@@ -415,48 +424,94 @@ export const useRunStore = create<Store>((set, get) => ({
       set({ phase: run.lives <= 0 ? 'gameover' : 'victory', run: { ...run, endBonus, score: run.score + endBonus } });
       return;
     }
-    // Le Sage du CM1 s'invite après certaines dictées : une respiration avant la coopérative.
-    if (isSageManche(run.currentManche)) {
-      set({ phase: 'sage', sage: createSageChallenge(sageWords(), run.rng) });
+    // Un événement de couloir s'invite après les dictées 2, 4, 6 et 8, avant la coopérative.
+    if (isEventManche(run.currentManche)) {
+      const id = pickEvent(run.seenEvents, run.rng);
+      set({ phase: 'event', event: buildEvent(id, run), run: { ...run, seenEvents: [...run.seenEvents, id] } });
       return;
     }
     openShop();
   },
 
-  sageTick(dt) {
-    const { sage, phase } = get();
-    if (!sage || phase !== 'sage' || sage.outcome !== 'playing') return;
-    const timeLeft = Math.max(0, sage.timeLeft - dt);
-    let next: SageChallenge = { ...sage, timeLeft };
-    if (!next.hintGiven && timeLeft <= sage.seconds * SAGE_HINT_RATIO) next = { ...next, hintGiven: true };
-    if (timeLeft === 0) next = { ...next, outcome: 'lost', reward: SAGE_CONSOLATION };
-    set({ sage: next });
-    if (next.outcome === 'lost') payoutSage(next);
+  eventStart() {
+    const { event } = get();
+    if (!event || event.started) return;
+    set({ event: { ...event, started: true } });
   },
 
-  sageSubmit(path) {
-    const { sage } = get();
-    if (!sage || sage.outcome !== 'playing' || path.length < 2) return;
-    if (isCorrect(wordFromPath(sage.grid, path), sage.word, dictionary)) {
-      const won: SageChallenge = { ...sage, outcome: 'won', reward: sageReward(sage.word.length, sage.timeLeft) };
-      set({ sage: won });
-      payoutSage(won);
+  eventTick(dt) {
+    const { event, phase } = get();
+    if (!event || phase !== 'event' || event.outcome !== 'playing' || event.seconds === 0 || !event.started) return;
+    // la partie de billes ne démarre qu'une fois la mise posée
+    if (event.kind === 'harvest' && event.id === 'billes' && event.stake === null) return;
+    const timeLeft = Math.max(0, event.timeLeft - dt);
+    let next: GameEvent = { ...event, timeLeft };
+    if (next.kind === 'hunt' && !next.hintGiven && timeLeft <= event.seconds * SAGE_HINT_RATIO) next = { ...next, hintGiven: true };
+    if (timeLeft === 0) next = finishEvent(next);
+    set({ event: next });
+    if (next.outcome !== 'playing') payoutEvent(next);
+  },
+
+  eventSubmit(path) {
+    const { event } = get();
+    if (!event || event.outcome !== 'playing' || path.length < 2) return;
+
+    if (event.kind === 'hunt') {
+      if (!isCorrect(wordFromPath(event.grid, path), event.word, dictionary)) {
+        set({ event: { ...event, attempts: event.attempts + 1 } });
+        return;
+      }
+      const won: GameEvent = event.id === 'sage'
+        ? { ...event, outcome: 'won', reward: sageReward(event.word.length, event.timeLeft) }
+        : { ...event, outcome: 'won', reward: INSPECTOR_REWARD, extraLife: true };
+      set({ event: won });
+      payoutEvent(won);
       return;
     }
-    set({ sage: { ...sage, attempts: sage.attempts + 1 } });
+
+    if (event.kind === 'harvest') {
+      if (event.stake === null && event.id === 'billes') return;
+      const word = wordFromPath(event.grid, path);
+      if (!event.search.words.has(word) || event.found.includes(word)) return;
+      if (!ruleAccepts(event.ruleId, word, dictionary)) return;
+      const found = [...event.found, word];
+      const next: GameEvent = { ...event, found };
+      if (found.length >= event.target && event.id === 'billes') {
+        const won = { ...next, outcome: 'won' as const, reward: (event.stake ?? 0) * 2 };
+        set({ event: won });
+        payoutEvent(won);
+        return;
+      }
+      set({ event: next });
+    }
   },
 
-  sageGiveUp() {
-    const { sage } = get();
-    if (!sage || sage.outcome !== 'playing') return;
-    const lost: SageChallenge = { ...sage, outcome: 'lost', reward: SAGE_CONSOLATION, timeLeft: 0 };
-    set({ sage: lost });
-    payoutSage(lost);
+  eventStake(amount) {
+    const { event, run } = get();
+    if (!run || event?.kind !== 'harvest' || event.stake !== null || !event.stakeOptions.includes(amount)) return;
+    set({ event: { ...event, stake: amount, started: true }, run: { ...run, euros: run.euros - amount } });
   },
 
-  leaveSage() {
-    if (get().phase !== 'sage') return;
-    set({ sage: null });
+  eventChoose(relicId) {
+    const { event, run } = get();
+    if (!run || event?.kind !== 'choice' || !event.offers.includes(relicId) || event.outcome !== 'playing') return;
+    set({
+      event: { ...event, outcome: 'won' },
+      run: { ...run, relicIds: [...run.relicIds, relicId], lives: run.lives + extraLives(resolveRelics([relicId])) },
+    });
+  },
+
+  eventGiveUp() {
+    const { event } = get();
+    if (!event || event.outcome !== 'playing') return;
+    const done = finishEvent({ ...event, timeLeft: 0 });
+    set({ event: done });
+    payoutEvent(done);
+  },
+
+  leaveEvent() {
+    if (get().phase !== 'event') return;
+    set({ event: null });
     openShop();
   },
 
@@ -574,7 +629,7 @@ export const useRunStore = create<Store>((set, get) => ({
   },
 
   backToMenu() {
-    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], shop: [], sage: null });
+    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], shop: [], event: null });
   },
 
   addRelic(id) {
@@ -604,12 +659,38 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   runMancheStart(hooks, ctx);
 }
 
-function payoutSage(c: SageChallenge) {
+// Fin de chrono ou abandon : chaque événement a sa consolation (ou sa note dans le carnet).
+function finishEvent(e: GameEvent): GameEvent {
+  if (e.kind === 'hunt') {
+    return e.id === 'sage'
+      ? { ...e, outcome: 'lost', reward: SAGE_CONSOLATION }
+      : { ...e, outcome: 'lost', reward: -INSPECTOR_PENALTY };
+  }
+  if (e.kind === 'harvest') {
+    if (e.id === 'recitation') return { ...e, outcome: 'won', reward: e.found.length * RECITATION_PER_WORD };
+    return { ...e, outcome: 'lost', reward: 0 }; // la mise est déjà partie
+  }
+  return { ...e, outcome: 'lost' };
+}
+
+function payoutEvent(e: GameEvent) {
   const { run } = useRunStore.getState();
   if (!run) return;
   useRunStore.setState({
-    run: { ...run, euros: run.euros + c.reward, sageWins: run.sageWins + (c.outcome === 'won' ? 1 : 0) },
+    run: {
+      ...run,
+      euros: Math.max(0, run.euros + e.reward),
+      lives: run.lives + (e.extraLife ? 1 : 0),
+      sageWins: run.sageWins + (e.outcome === 'won' && e.kind !== 'choice' ? 1 : 0),
+    },
   });
+}
+
+function buildEvent(id: EventId, run: RunState): GameEvent {
+  if (id === 'sage') return createHunt('sage', sageWords(), run.rng);
+  if (id === 'inspecteur') return createHunt('inspecteur', inspectorWords(), run.rng);
+  if (id === 'reserve') return createChoice(drawFreeRelics(shopInput(run), run.rng, 3));
+  return createHarvest(id, dictionary, run.rng, run.euros);
 }
 
 function openShop() {

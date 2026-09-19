@@ -1,6 +1,5 @@
 import type { Relic } from '../engine/hooks';
-
-const RARITY_LABEL = { common: 'Commun', rare: 'Rare', legendary: 'Légendaire' } as const;
+import { RARITY_LABEL } from '../theme/lexicon';
 
 interface Props { relic: Relic; onPick?: () => void; footer?: string; disabled?: boolean }
 

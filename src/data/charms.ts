@@ -21,40 +21,40 @@ const base = (id: string, name: string, description: string, price: number, extr
 const TEMPLATES: Template[] = [
   {
     kind: 'lettre', params: LETTERS,
-    make: (l) => base(`charme-lettre-${l}`, `Charme ${l}`, `+10 % sur les mots contenant un ${l}`, 5,
+    make: (l) => base(`charme-lettre-${l}`, `Gommette ${l}`, `+10 % sur les mots contenant un ${l}`, 8,
       { onWordFound: (w) => (w.includes(l) ? { percent: 0.1 } : undefined) }),
   },
   {
     kind: 'longueur', params: ['3', '4', '5'],
-    make: (n) => base(`charme-longueur-${n}`, `Charme ${n} lettres`, `+15 % sur les mots de ${n} lettres`, 5,
+    make: (n) => base(`charme-longueur-${n}`, `Gommette ${n} lettres`, `+15 % sur les mots de ${n} lettres`, 8,
       { onWordFound: (w) => (w.length === Number(n) ? { percent: 0.15 } : undefined) }),
   },
   {
     kind: 'categorie', params: Object.keys(CATEGORIES),
-    make: (c) => base(`charme-categorie-${c}`, `Charme ${CATEGORIES[c]}`, `+10 % sur ${CATEGORIES[c]}`, 6,
+    make: (c) => base(`charme-categorie-${c}`, `Gommette ${CATEGORIES[c]}`, `+10 % sur ${CATEGORIES[c]}`, 9,
       { onWordFound: (w, ctx) => (ctx.categoriesOf(w).has(c as 'NOM') ? { percent: 0.1 } : undefined) }),
   },
   {
     kind: 'finale', params: FINALS,
-    make: (l) => base(`charme-finale-${l}`, `Charme final ${l}`, `+10 % sur les mots finissant par ${l}`, 5,
+    make: (l) => base(`charme-finale-${l}`, `Gommette finale ${l}`, `+10 % sur les mots finissant par ${l}`, 8,
       { onWordFound: (w) => (w.endsWith(l) ? { percent: 0.1 } : undefined) }),
   },
   {
     kind: 'initiale', params: ['voyelle', 'consonne'],
-    make: (k) => base(`charme-initiale-${k}`, `Charme ${k}`, `+10 % sur les mots commençant par une ${k}`, 5,
+    make: (k) => base(`charme-initiale-${k}`, `Gommette ${k}`, `+10 % sur les mots commençant par une ${k}`, 8,
       { onWordFound: (w) => ('AEIOUY'.includes(w[0]) === (k === 'voyelle') ? { percent: 0.1 } : undefined) }),
   },
   {
     kind: 'plat', params: ['1'],
-    make: () => base('charme-plat-1', 'Charme +1', '+1 pt sur chaque mot', 6, { onWordFound: () => ({ flat: 1 }) }),
+    make: () => base('charme-plat-1', 'Gommette +1', '+1 pt sur chaque mot', 9, { onWordFound: () => ({ flat: 1 }) }),
   },
   {
     kind: 'chrono', params: ['3'],
-    make: () => base('charme-chrono-3', 'Charme 3 s', '+3 s de chrono à chaque manche', 6, { mancheSeconds: (s) => s + 3 }),
+    make: () => base('charme-chrono-3', 'Gommette 3 s', '+3 s de chrono à chaque dictée', 9, { mancheSeconds: (s) => s + 3 }),
   },
   {
     kind: 'long', params: ['6'],
-    make: () => base('charme-long-6', 'Charme longueur', '+20 % sur les mots de 6 lettres ou plus', 8,
+    make: () => base('charme-long-6', 'Gommette longueur', '+20 % sur les mots de 6 lettres ou plus', 12,
       { onWordFound: (w) => (w.length >= 6 ? { percent: 0.2 } : undefined) }),
   },
 ];

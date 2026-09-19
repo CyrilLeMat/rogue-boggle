@@ -4,6 +4,7 @@ import { areAdjacent, posKey } from '../engine/adjacency';
 import { LETTER_VALUES } from '../engine/gridGenerator';
 import type { Enemy } from '../engine/hooks';
 import type { Grid as GridModel, Pos } from '../engine/types';
+import type { WordPreview } from '../state/runStore';
 
 // couleur de case = palier de valeur de la lettre (1 / 2-3 / 4 / 8+)
 const valueTier = (letter: string) => {
@@ -16,53 +17,47 @@ interface Props {
   onSubmit(path: Pos[]): void;
   disabled?: boolean;
   highlightCells?: Set<number>;          // Mémoire
-  radarCell?: number | null;             // Radar
   oracleCell?: number | null;            // Oracle : première lettre du mot le plus long
   oracleLength?: number;
   cursedCell?: number | null;            // Mot maudit : première lettre du mot désigné
   luckyLetter?: string | null;           // Lettre porte-bonheur : toutes ses cases
+  amorceCell?: number | null;            // Amorce sûre : case de départ du mot amorcé
   inspiredCells?: Set<number>;           // Inspiration : cases du mot le plus long
-  hintsFor?: (pos: Pos) => string[];     // Dictionnaire vivant (appui long)
   blurRadius?: number;                   // Vision trouble : flou au-delà de ce rayon autour du curseur
   targeting?: boolean;                   // consommable ciblé : un clic choisit une case au lieu de tracer
   onPickCell?: (pos: Pos) => void;
   critters?: Pos[];                      // les escargots, rendus en overlay pour glisser d'une case à l'autre
   onDoubleTap?: (pos: Pos) => void;      // Reroll de lettre sans passer par le bouton
   enemies?: Enemy[];                     // thème Chasse : cases occupées + barre de PV
+  onPathChange?: (path: Pos[]) => void;  // pour la prévisualisation du score
+  preview?: WordPreview | null;
+  flash?: { id: number; path: Pos[]; score: number; bonus?: string } | null; // dernier mot validé : lettres qui s'allument, score qui s'envole
 }
 
 const DOUBLE_TAP_MS = 350;
 
 const samePos = (a: Pos, b: Pos) => a[0] === b[0] && a[1] === b[1];
-const LONG_PRESS_MS = 500;
 
-export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, oracleCell, oracleLength, cursedCell, luckyLetter, inspiredCells, hintsFor, blurRadius, targeting, onPickCell, critters = [], onDoubleTap, enemies = [] }: Props) {
+export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, oracleLength, cursedCell, luckyLetter, amorceCell, inspiredCells, blurRadius, targeting, onPickCell, critters = [], onDoubleTap, enemies = [], onPathChange, preview, flash }: Props) {
   const enemyAt = (r: number, c: number) => enemies.find((e) => e.hp > 0 && e.cells.some((p) => p[0] === r && p[1] === c));
   const [path, setPathState] = useState<Pos[]>([]);
   const lastTap = useRef<{ pos: Pos; at: number } | null>(null);
   const [hover, setHover] = useState<Pos | null>(null);
-  const [hint, setHint] = useState<{ pos: Pos; words: string[] } | null>(null);
   const dragging = useRef(false);
-  const pressTimer = useRef<number | null>(null);
   // La ref est la source de vérité : plusieurs événements souris peuvent arriver
   // avant un rendu, l'état React sert uniquement à l'affichage.
   const pathRef = useRef<Pos[]>([]);
-  const setPath = (p: Pos[]) => { pathRef.current = p; setPathState(p); };
-
-  const clearPress = () => {
-    if (pressTimer.current !== null) { window.clearTimeout(pressTimer.current); pressTimer.current = null; }
-  };
+  const setPath = (p: Pos[]) => { pathRef.current = p; setPathState(p); onPathChange?.(p); };
 
   const finish = useCallback(() => {
-    clearPress();
     if (!dragging.current) return;
     dragging.current = false;
     const p = pathRef.current;
     pathRef.current = [];
     setPathState([]);
-    if (hint) { setHint(null); return; }
+    onPathChange?.([]);
     if (p.length > 1) onSubmit(p); // un tap simple sur une case ne soumet rien
-  }, [onSubmit, hint]);
+  }, [onSubmit, onPathChange]);
 
   useEffect(() => {
     window.addEventListener('pointerup', finish);
@@ -113,14 +108,8 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
   const start = (pos: Pos) => {
     if (disabled) return;
     dragging.current = true;
-    setHint(null);
     setPath([pos]);
     sfx.select(0);
-    if (hintsFor) {
-      pressTimer.current = window.setTimeout(() => {
-        if (dragging.current && pathRef.current.length === 1) setHint({ pos, words: hintsFor(pos) });
-      }, LONG_PRESS_MS);
-    }
   };
 
   const enter = (pos: Pos) => {
@@ -129,7 +118,6 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
     const last = p[p.length - 1];
     if (!last) return;
     if (samePos(last, pos)) return;
-    clearPress();
     if (p.length >= 2 && samePos(p[p.length - 2], pos)) { setPath(p.slice(0, -1)); sfx.unselect(); return; }
     if (p.some((q) => samePos(q, pos))) return;
     if (!areAdjacent(last, pos)) return;
@@ -140,10 +128,23 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
   const inPath = (r: number, c: number) => path.findIndex((p) => p[0] === r && p[1] === c);
   const word = path.map(([r, c]) => (grid.cells[r][c].isJoker ? '?' : grid.cells[r][c].letter)).join('');
   const cellPct = 100 / grid.size;
+  const flashIndex = (r: number, c: number) => flash?.path.findIndex((p) => p[0] === r && p[1] === c) ?? -1;
+  const flashLast = flash?.path[flash.path.length - 1];
+  const state = path.length < 2 ? 'idle' : !preview || preview.word === null ? 'unknown' : preview.duplicate ? 'dup' : 'ok';
 
   return (
     <div className="grid-wrap">
-      <div className="current-word">{word || ' '}</div>
+      <div className={`current-word ${state}`}>
+        <span className="cw-word">{state === 'ok' && preview?.word ? preview.word : word || ' '}</span>
+        {state === 'ok' && preview && (
+          <span className="cw-score">
+            <span className="cw-total">+{preview.score}</span>
+            <span className="cw-parts">{preview.parts.map((p) => <span key={p.label} className={`cw-part ${p.label}`}>{p.value} <small>{p.label}</small></span>)}</span>
+          </span>
+        )}
+        {state === 'dup' && <span className="cw-note">déjà trouvé</span>}
+        {state === 'unknown' && word.length >= 3 && <span className="cw-note">…</span>}
+      </div>
       <div
         className="grid"
         style={{
@@ -175,9 +176,20 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
             />
           )}
         </svg>
+        {flash && flashLast && (
+          <div
+            key={`pop-${flash.id}`}
+            className={`score-pop ${flash.score >= 30 ? 'big' : ''} ${flash.score >= 80 ? 'huge' : ''}`}
+            style={{ left: `${(flashLast[1] + 0.5) * cellPct}%`, top: `${(flashLast[0] + 0.5) * cellPct}%` }}
+          >
+            +{flash.score}
+            {flash.bonus && <small>{flash.bonus}</small>}
+          </div>
+        )}
         {grid.cells.map((row, r) =>
           row.map((cell, c) => {
             const idx = inPath(r, c);
+            const fi = flashIndex(r, c);
             const key = posKey(r, c);
             const cls = [
               'cell',
@@ -187,9 +199,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
               cell.isJoker && 'joker',
               cell.isToxic && 'toxic',
               highlightCells?.has(key) && 'used',
-              radarCell === key && 'radar',
-              oracleCell === key && 'oracle',
-              cursedCell === key && 'cursed',
+              amorceCell === key && 'amorce',
               luckyLetter && !cell.isJoker && cell.letter[0] === luckyLetter && 'lucky',
               inspiredCells?.has(key) && 'inspired',
               (cell.cracks ?? 0) > 0 && 'cracked',
@@ -200,11 +210,11 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
             return (
               <div key={`${r}-${c}-${cell.gen ?? 0}`} className={cls} data-pos={`${r}-${c}`}>
                 <span className="letter">{cell.isJoker ? '★' : cell.letter}</span>
-                <span className="value">{cell.isJoker ? 1 : LETTER_VALUES[cell.letter] ?? 1}</span>
+                {!cell.isJoker && (LETTER_VALUES[cell.letter] ?? 1) >= 2 && <span className="value">{LETTER_VALUES[cell.letter]}</span>}
+                {fi >= 0 && flash && <span key={`flash-${flash.id}`} className="flash-ring" style={{ animationDelay: `${fi * 45}ms` }} />}
                 {cell.isToxic && <span className="badge badge-toxic" title="Case toxique : −8 s si utilisée">☠</span>}
                 {oracleCell === key && <span className="badge badge-oracle" title="Oracle : ici commence le mot le plus long">{oracleLength}</span>}
                 {cursedCell === key && <span className="badge badge-cursed" title="Mot maudit : il commence ici">✦</span>}
-                {luckyLetter && !cell.isJoker && cell.letter[0] === luckyLetter && <span className="badge badge-lucky">♣</span>}
                 {(() => { const e = enemyAt(r, c); return e && e.cells[0][0] === r && e.cells[0][1] === c ? (
                   <span className="enemy-tag" title={`${e.hp} / ${e.maxHp} PV`}>
                     <span className="enemy-icon">👾</span>
@@ -212,9 +222,6 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
                     <span className="hp-text">{e.hp}</span>
                   </span>
                 ) : null; })()}
-                {hint && samePos(hint.pos, [r, c]) && (
-                  <div className="hint">{hint.words.length ? hint.words.join(' · ') : 'rien'}</div>
-                )}
               </div>
             );
           }),

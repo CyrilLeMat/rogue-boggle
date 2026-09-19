@@ -28,7 +28,7 @@ function setup(relicIds: string[], g = grid(['P O R', 'X T E', 'V I S'])) {
   const manche: MancheView = {
     grid: g, search: findAllWords(g, dict.trie), threshold: 100, difficulty: { potential: 0, factor: 1, mood: 'normale' }, found: [], timeLeft: 60, timeLeftBeforeWord: 60, elapsed: 30,
     cursedWord: null, cursedStart: null, radarCell: null, relicState: {}, bonuses: [],
-    streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null,
+    streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null, amorce: null,
     inspiration: null, gridDirty: false, mutatorId: null, enemies: [], killsThisManche: 0,
   };
   const ctx = makeContext(createRng('t'), run, manche, dict);
@@ -36,9 +36,9 @@ function setup(relicIds: string[], g = grid(['P O R', 'X T E', 'V I S'])) {
 }
 
 describe('relics data', () => {
-  it('has 36 unique ids and valid requires', () => {
-    expect(RELICS.length).toBe(36);
-    expect(new Set(RELICS.map((r) => r.id)).size).toBe(36);
+  it('has 35 unique ids and valid requires', () => {
+    expect(RELICS.length).toBe(35);
+    expect(new Set(RELICS.map((r) => r.id)).size).toBe(35);
     for (const r of RELICS) if (r.requires) expect(RELIC_BY_ID.has(r.requires)).toBe(true);
   });
 });
@@ -122,18 +122,23 @@ describe('side-effect relics', () => {
   });
   it('Épargne pays 5 % of held euros', () => {
     const { ctx, relics } = setup(['epargne']); // run.euros = 40
-    expect(runMancheEnd(relics, ctx, true, 20)).toBe(22);
-    expect(runMancheEnd(relics, ctx, false, 10)).toBe(12);
+    expect(runMancheEnd(relics, ctx, true, 15)).toBe(17);
+    expect(runMancheEnd(relics, ctx, false, 8)).toBe(10);
   });
-  it('Économe and Alchimiste', () => {
-    const { ctx, relics } = setup(['econome', 'alchimiste']);
-    expect(runMancheEnd(relics, ctx, true, 20)).toBe(26);
-    expect(runMancheEnd(relics, ctx, false, 20)).toBe(20);
+  it('Alchimiste converts euros at run end', () => {
+    const { ctx, relics } = setup(['alchimiste']);
     expect(runRunEnd(relics, ctx)).toBe(80);
   });
-  it('Radar picks a cell of a 7+ word or null', () => {
-    const { ctx, manche } = setup(['radar']);
-    RELIC_BY_ID.get('radar')!.onMancheStart!(ctx);
-    expect(manche.radarCell).toBeNull(); // aucun mot de 7+ dans ce mini-dico
+  it('Amorce reveals a prefix of a long word, or nothing when the grid has none', () => {
+    const { ctx, manche } = setup(['amorce']);
+    RELIC_BY_ID.get('amorce')!.onMancheStart!(ctx);
+    expect(manche.amorce).toBeNull(); // pas de mot de 7+ dans ce mini-dico
+    const dictLong = buildDictionary([{ w: 'PORTIERE', c: ['NOM'], f: true }]);
+    const g = grid(['P O R', 'E I T', 'R E X']);
+    const run: RunView = { score: 0, euros: 0, lives: 3, currentManche: 1, relicIds: ['amorce', 'amorce-sure'], killCount: 0 };
+    const m: MancheView = { ...manche, grid: g, search: findAllWords(g, dictLong.trie) };
+    const ctx2 = makeContext(createRng('a'), run, m, dictLong);
+    RELIC_BY_ID.get('amorce-sure')!.onMancheStart!(ctx2);
+    expect(m.amorce).toEqual({ prefix: 'PORT', length: 8, start: 0 });
   });
 });

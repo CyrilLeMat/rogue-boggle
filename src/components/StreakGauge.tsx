@@ -14,8 +14,8 @@ export function StreakGauge() {
   const nextMult = 1 + STREAK_STEP * Math.min(manche.streak.links, rules.maxLinks);
   const pct = alive ? Math.max(0, 1 - since / rules.window) * 100 : 0;
   return (
-    <div className={`streak ${alive ? 'alive' : ''}`} title="Enchaîne les mots pour faire monter la série">
-      <span className="streak-label">Série</span>
+    <div className={`streak ${alive ? 'alive' : ''}`} title="Enchaîne les mots sans reprendre ton souffle">
+      <span className="streak-label">Élan</span>
       <span className="streak-mult">×{(alive ? nextMult : 1).toFixed(1)}</span>
       <span className="streak-bar"><span style={{ width: `${pct}%` }} /></span>
       {alive && <span className="streak-links">{manche.streak.links}</span>}

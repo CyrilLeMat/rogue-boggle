@@ -1,6 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { activeHooks } from './data/registry';
-import { dictionary } from './data/dictionary';
 import { posKey } from './engine/adjacency';
 import { uiFlags } from './engine/hookRunner';
 import type { Pos } from './engine/types';
@@ -12,6 +11,7 @@ import { RelicBar } from './components/RelicBar';
 import { FoundWords } from './components/FoundWords';
 import { Grid } from './components/Grid';
 import { GridLegend } from './components/GridLegend';
+import { Intro } from './components/Intro';
 import { MancheRecap } from './components/MancheRecap';
 import { QuestBadge } from './components/QuestBadge';
 import { ReadyOverlay } from './components/ReadyScreen';
@@ -22,16 +22,18 @@ import { SoundEffects } from './components/SoundEffects';
 import { StartPick } from './components/StartPick';
 import { Timer } from './components/Timer';
 import { useRunStore } from './state/runStore';
+import { GAME_SUBTITLE, GAME_TITLE, TAGLINE } from './theme/lexicon';
 
 function Menu() {
   const start = useRunStore((s) => s.startRun);
   const [seed, setSeed] = useState('');
   return (
     <div className="panel menu">
-      <h1>Rogue Boggle</h1>
-      <p className="muted">10 manches, 3 vies, un seuil qui grimpe. Trace des mots à la souris.</p>
-      <input placeholder="seed (optionnel)" value={seed} onChange={(e) => setSeed(e.target.value)} />
-      <button onClick={() => start(seed || undefined)}>Lancer une run</button>
+      <h1 className="title">{GAME_TITLE}</h1>
+      <p className="subtitle">{GAME_SUBTITLE}</p>
+      <p className="tagline">{TAGLINE}</p>
+      <input placeholder="année (seed, optionnel)" value={seed} onChange={(e) => setSeed(e.target.value)} />
+      <button onClick={() => start(seed || undefined)}>Entrer en classe</button>
     </div>
   );
 }
@@ -43,6 +45,11 @@ function Playing() {
   const curseIds = useRunStore((s) => s.manche?.curseIds ?? []);
   const submit = useRunStore((s) => s.submitPath);
   const pickCell = useRunStore((s) => s.pickCell);
+  const previewPath = useRunStore((s) => s.previewPath);
+  const feedback = useRunStore((s) => s.feedback);
+  const [preview, setPreview] = useState<ReturnType<typeof previewPath>>(null);
+  const onPathChange = useCallback((p: Pos[]) => setPreview(previewPath(p)), [previewPath]);
+  const flash = feedback?.kind === 'ok' && feedback.path ? { id: feedback.id, path: feedback.path, score: feedback.score ?? 0, bonus: feedback.bonus } : null;
   const rerollCell = useRunStore((s) => s.rerollCell);
   const hasReroll = useRunStore((s) => (s.run?.consumables ?? []).some((c) => c.id === 'reroll' && c.charges > 0));
   const mutatorId = useRunStore((s) => s.manche?.mutatorId ?? null);
@@ -54,15 +61,6 @@ function Playing() {
     return set;
   }, [flags.highlightUsedCells, manche]);
   if (!manche) return null;
-  const hintsFor = flags.longPressHints
-    ? ([r, c]: Pos) => {
-        const cell = manche.grid.cells[r][c];
-        if (cell.isJoker) return [];
-        return [...manche.search.words]
-          .filter((w) => w.length === 3 && w.startsWith(cell.letter) && dictionary.common.has(w))
-          .slice(0, 3);
-      }
-    : undefined;
   return (
     <div className={`playing ${phase === 'ready' ? 'is-ready' : ''}`}>
       <ScoreBoard />
@@ -78,13 +76,12 @@ function Playing() {
           grid={manche.grid}
           onSubmit={submit}
           highlightCells={usedCells}
-          radarCell={flags.radarLongWord ? manche.radarCell : null}
           oracleCell={flags.showLongestLength ? manche.search.longestStart : null}
+          amorceCell={manche.amorce?.start ?? null}
           oracleLength={manche.search.longestLength}
           inspiredCells={manche.inspiration && manche.inspiration.until > manche.elapsed ? new Set(manche.inspiration.cells) : undefined}
           cursedCell={manche.cursedWord ? manche.cursedStart : null}
           luckyLetter={manche.luckyLetter}
-          hintsFor={hintsFor}
           blurRadius={flags.blurOutsideCursor ? 2 : undefined}
           targeting={manche.targeting !== null}
           onPickCell={pickCell}
@@ -92,6 +89,9 @@ function Playing() {
           disabled={phase === 'ready'}
           onDoubleTap={hasReroll ? rerollCell : undefined}
           enemies={manche.enemies}
+          onPathChange={onPathChange}
+          preview={preview}
+          flash={flash}
         />
         <div>
           <ConsumableBar />
@@ -111,6 +111,7 @@ export default function App() {
     <main>
       <SoundEffects />
       {phase === 'menu' && <Menu />}
+      {phase === 'intro' && <Intro />}
       {phase === 'startPick' && <StartPick />}
       {(phase === 'playing' || phase === 'ready') && <Playing />}
       {phase === 'recap' && <MancheRecap />}

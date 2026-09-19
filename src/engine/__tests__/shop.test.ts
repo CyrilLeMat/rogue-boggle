@@ -38,10 +38,10 @@ describe('generateShopOffer', () => {
     expect(new Set(next.map((o) => o.id)).size).toBe(4);
     expect(next[2].kind).not.toBe('relic');
   });
-  it('reroll price: free first, then 5, 10, 15', () => {
+  it('reroll price: free first, then 10, 20, 30', () => {
     expect(shopRerollPrice(0, 2)).toBe(0);
-    expect(shopRerollPrice(0, 0)).toBe(5);
-    expect(shopRerollPrice(2, 0)).toBe(15);
+    expect(shopRerollPrice(0, 0)).toBe(10);
+    expect(shopRerollPrice(2, 0)).toBe(30);
   });
   it('never offers owned relics or consumables and unlocks Double joker after Case joker', () => {
     const owned = RELICS.filter((r) => !r.enemyRelic && r.id !== 'double-joker').map((r) => r.id);

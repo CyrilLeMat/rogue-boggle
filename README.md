@@ -1,6 +1,8 @@
-# Rogue Boggle
+# Rogue Boggle — Ultimate Dictée de CE2 Edition
 
-Boggle roguelite solo : 10 manches, 3 vies, un seuil qui grimpe, des relics, une boutique, des escargots.
+Boggle roguelite solo raconté comme si ta place en sixième en dépendait : dix dictées, trois bons points,
+une note à atteindre, des fournitures à acheter à la coopérative avec tes billes, des cancres qui copient,
+des escargots en leçon de choses.
 Jouable au doigt ou à la souris. Spécification complète dans `boggle-roguelite-spec-mvp.md`.
 
 ## Développement

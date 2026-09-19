@@ -29,8 +29,8 @@ export function ConsumableBar() {
         );
       })}
       {inspired && <span className="targeting-hint">Mot de {inspired.length} lettres, commence par {inspired.first}</span>}
-      {targeting && !rerollChoice && <span className="targeting-hint">Touche une case à changer…</span>}
-      {!targeting && owned.some((o) => o.id === 'reroll' && o.charges > 0) && <span className="muted small-hint">double-tap sur une case = reroll</span>}
+      {targeting && !rerollChoice && <span className="targeting-hint">Touche la case à gommer…</span>}
+      {!targeting && owned.some((o) => o.id === 'reroll' && o.charges > 0) && <span className="muted small-hint">double-tap sur une case = gomme</span>}
       {rerollChoice && (
         <span className="reroll-choice">
           {rerollChoice.letters.map((l) => <button key={l} className="small" onClick={() => choose(l)}>{l}</button>)}

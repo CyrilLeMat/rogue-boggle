@@ -128,10 +128,10 @@ describe('grid size schedule', () => {
 
 describe('euros', () => {
   it('floor, 1 per point over threshold, capped, nothing extra on failure', () => {
-    expect(eurosFor(60, 60, true)).toEqual({ base: 20, bonus: 0, total: 20 });
-    expect(eurosFor(95, 60, true)).toEqual({ base: 20, bonus: 35, total: 55 });
-    expect(eurosFor(1000, 60, true)).toEqual({ base: 20, bonus: 80, total: 100 });
-    expect(eurosFor(30, 60, false)).toEqual({ base: 10, bonus: 0, total: 10 });
+    expect(eurosFor(60, 60, true)).toEqual({ base: 15, bonus: 0, total: 15 });
+    expect(eurosFor(95, 60, true)).toEqual({ base: 15, bonus: 35, total: 50 });
+    expect(eurosFor(1000, 60, true)).toEqual({ base: 15, bonus: 60, total: 75 });
+    expect(eurosFor(30, 60, false)).toEqual({ base: 8, bonus: 0, total: 8 });
   });
   it('1 euro per 5 seconds left when finishing early', () => {
     expect([0, 4, 5, 47, 90].map(timeEuros)).toEqual([0, 0, 1, 9, 18]);

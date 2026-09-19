@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { isConditionManche, mutatorGridSize, pickCondition } from '../data/mutators';
-import { ENEMY_BOUNTY, ENEMY_HP_RATIO, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, spawnEnemy } from '../engine/enemies';
+import { ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
 import { RELICS } from '../data/relics';
@@ -13,6 +13,8 @@ import { FRENCH_STANDARD_WEIGHTS, generateGrid, sampleLetter } from '../engine/g
 import { collectModifiers, makeContext, mancheSeconds, runGridGenerate, runInvalidWord, runMancheEnd, runMancheStart, runRunEnd, runWordAccepted, streakRules, uiFlags } from '../engine/hookRunner';
 import { MAX_CONSUMABLES, type MancheView, type RunView } from '../engine/hooks';
 import { resolvePath, type FoundWord, type SubmitResult } from '../engine/manche';
+import { applyModifiers, baseScore } from '../engine/scoring';
+import { candidatesForPath } from '../engine/wordFinder';
 import { createRng, randomSeed, type Rng } from '../engine/rng';
 import { GRACE_SECONDS_AFTER_LOSS, MANCHE_SECONDS, MAX_SAME_CHARM, STARTING_LIVES, STREAK_MAX_LINKS, STREAK_STEP, STREAK_WINDOW, TOTAL_MANCHES, eurosFor, gridSizeFor, mancheSecondsFor, threshold, timeEuros } from '../engine/rules';
 import { generateShopOffer, shopRerollPrice, type ShopInput, type ShopItem } from '../engine/shop';
@@ -20,7 +22,7 @@ import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'startPick' | 'ready' | 'playing' | 'recap' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'intro' | 'startPick' | 'ready' | 'playing' | 'recap' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -45,6 +47,14 @@ export interface MancheResult {
 
 export interface OwnedConsumable { id: string; charges: number }
 
+export interface WordPreview {
+  word: string | null;      // null : aucun mot valide sur ce chemin
+  score: number;
+  base: number;
+  parts: { label: string; value: string }[]; // détail du calcul, dans l'ordre
+  duplicate: boolean;
+}
+
 export type MancheState = MancheView & {
   score: number;
   totalSeconds: number;
@@ -63,6 +73,7 @@ export interface RunState extends RunView {
   lostLifeLastManche: boolean;
   nextMutatorId: string | null;
   lastConditionId: string | null;
+  seenEnemies: boolean; // la coopérative ne parle de cancres qu'après la première leçon « Le cancre copie »
   history: MancheResult[];
   endBonus: number;
   consumables: OwnedConsumable[];
@@ -78,14 +89,16 @@ interface Store {
   startChoices: string[];
   shop: ShopItem[];
   shopRerolls: { paid: number; freeLeft: number };
-  feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; id: number } | null;
+  feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; path?: Pos[]; id: number } | null;
 
   startRun(seed?: string): void;
+  acceptChallenge(): void; // prologue → fourniture de rentrée
   pickStartRelic(id: string): void;
   startManche(): void;
   rerollGrid(): void; // Sourcier, depuis l'écran « prêt »
   beginPlay(): void; // écran « prêt » → chrono lancé
   submitPath(path: Pos[]): void;
+  previewPath(path: Pos[]): WordPreview | null; // score qu'aurait le tracé en cours, sans effet de bord
   tick(dt: number): void;
   endManche(early?: boolean): void;
   finishEarly(): void;
@@ -114,7 +127,7 @@ function freshManche(run: RunState): MancheState {
     difficulty: { potential: 0, factor: 1, mood: 'normale' },
     found: [], timeLeft: MANCHE_SECONDS, timeLeftBeforeWord: MANCHE_SECONDS, totalSeconds: MANCHE_SECONDS, elapsed: 0,
     cursedWord: null, cursedStart: null, radarCell: null, relicState: {}, bonuses: [], score: 0,
-    streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null,
+    streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null, amorce: null,
     inspiration: null, gridDirty: false, mutatorId: run.nextMutatorId, enemies: [], killsThisManche: 0,
     curseIds: [], targeting: null, rerollChoice: null, critters: [], graceSeconds: 0, gridRerollsLeft: 0,
   };
@@ -136,16 +149,20 @@ export const useRunStore = create<Store>((set, get) => ({
     const pool = RELICS.filter((r) => r.rarity === 'common' && !r.enemyRelic && !r.requires && r.id !== 'bouclier');
     const startChoices = rng.shuffle(pool).slice(0, 3).map((r) => r.id);
     set({
-      phase: 'startPick',
+      phase: 'intro',
       run: {
         seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
-        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null,
+        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false,
       },
       lastResult: null,
       startChoices,
       shop: [],
     });
+  },
+
+  acceptChallenge() {
+    if (get().phase === 'intro') set({ phase: 'startPick' });
   },
 
   pickStartRelic(id) {
@@ -174,7 +191,7 @@ export const useRunStore = create<Store>((set, get) => ({
       phase: 'ready',
       manche: draft,
       feedback: null,
-      run: { ...run, pendingCurseIds: [], consumables },
+      run: { ...run, pendingCurseIds: [], consumables, seenEnemies: run.seenEnemies || draft.enemies.length > 0 },
     });
   },
 
@@ -183,13 +200,47 @@ export const useRunStore = create<Store>((set, get) => ({
     if (!run || !manche || phase !== 'ready' || manche.gridRerollsLeft <= 0) return;
     const mut = manche.mutatorId ? resolveMutator(manche.mutatorId) : null;
     const hooks = activeHooks(run.relicIds, manche.curseIds, manche.mutatorId);
-    const draft: MancheState = { ...manche, relicState: {}, bonuses: [], cursedWord: null, cursedStart: null, radarCell: null, luckyLetter: null, gridRerollsLeft: manche.gridRerollsLeft - 1 };
+    const draft: MancheState = { ...manche, relicState: {}, bonuses: [], cursedWord: null, cursedStart: null, radarCell: null, luckyLetter: null, amorce: null, gridRerollsLeft: manche.gridRerollsLeft - 1 };
     buildGrid(draft, run, hooks, mut);
     set({ manche: draft });
   },
 
   beginPlay() {
     if (get().phase === 'ready') set({ phase: 'playing' });
+  },
+
+  previewPath(path) {
+    const { manche, phase, run } = get();
+    if (!manche || !run || phase !== 'playing' || path.length < 2) return null;
+    const hooks = activeHooks(run.relicIds, manche.curseIds, manche.mutatorId);
+    const ctx = makeContext(run.rng, run, cloneManche(manche), dictionary);
+    const already = new Set(manche.found.map((f) => f.word));
+    const touched = touchedCritters(path, manche.critters);
+    const rules = streakRules(hooks, { window: STREAK_WINDOW, maxLinks: STREAK_MAX_LINKS });
+    const links = manche.elapsed - manche.streak.lastAt <= rules.window ? manche.streak.links + 1 : 1;
+    const streakMult = 1 + STREAK_STEP * Math.min(links - 1, rules.maxLinks);
+    const candidates = candidatesForPath(manche.grid, path, dictionary.trie);
+    if (!candidates.length) return { word: null, score: 0, base: 0, parts: [], duplicate: false };
+    const fresh = candidates.filter((w) => !already.has(w));
+    if (!fresh.length) return { word: candidates[0], score: 0, base: 0, parts: [], duplicate: true };
+    let best: WordPreview | null = null;
+    for (const word of fresh) {
+      const base = baseScore(word, manche.grid, path);
+      const mods = collectModifiers(word, hooks, ctx);
+      const flat = mods.reduce((s, m) => s + (m.flat ?? 0), 0);
+      const mult = mods.reduce((p, m) => p * (1 + (m.percent ?? 0)), 1);
+      const finals = mods.reduce((p, m) => p * (m.final ?? 1), 1);
+      const parts: WordPreview['parts'] = [{ label: 'base', value: String(base) }];
+      if (flat) parts.push({ label: 'bonus', value: `+${flat}` });
+      if (mult !== 1) parts.push({ label: 'fournitures', value: `×${mult.toFixed(2).replace(/\.?0+$/, '')}` });
+      if (finals !== 1) parts.push({ label: 'spécial', value: `×${finals}` });
+      if (touched.length) parts.push({ label: 'escargot', value: `×${CRITTER_MULTIPLIER}${touched.length > 1 ? `×${touched.length}` : ''}` });
+      if (streakMult > 1) parts.push({ label: 'élan', value: `×${streakMult.toFixed(1)}` });
+      const extra = [...touched.map(() => ({ final: CRITTER_MULTIPLIER })), ...(streakMult > 1 ? [{ final: streakMult }] : [])];
+      const score = applyModifiers(base, [...mods, ...extra]);
+      if (!best || score > best.score) best = { word, score, base, parts, duplicate: false };
+    }
+    return best;
   },
 
   submitPath(path) {
@@ -207,7 +258,7 @@ export const useRunStore = create<Store>((set, get) => ({
     const streakMult = 1 + STREAK_STEP * Math.min(links - 1, rules.maxLinks);
     if (streakMult > 1) extra.push({ final: streakMult });
     const result = resolvePath(manche.grid, path, dictionary, already, (w) => collectModifiers(w, hooks, ctx, extra), manche.elapsed);
-    const fb = { kind: result.kind, id: ++feedbackId } as NonNullable<Store['feedback']>;
+    const fb = { kind: result.kind, id: ++feedbackId, path } as NonNullable<Store['feedback']>;
     if (result.kind === 'ok') {
       fb.word = result.found.word;
       fb.score = result.found.score;
@@ -219,7 +270,7 @@ export const useRunStore = create<Store>((set, get) => ({
         notes.push(`escargot ×${CRITTER_MULTIPLIER}${touched.length > 1 ? ` ×${touched.length}` : ''}`);
         draft.critters = draft.critters.map((c, i) => (touched.includes(i) ? moveCritter(c, draft.grid, run.snailRng, path) : c));
       }
-      if (streakMult > 1) notes.push(`série ×${streakMult.toFixed(1)}`);
+      if (streakMult > 1) notes.push(`élan ×${streakMult.toFixed(1)}`);
       // Chasse : dégâts à l'ennemi traversé (ou 25 % via Harpon), primes à la mort
       if (draft.enemies.some((e) => e.hp > 0)) {
         let bounty = 0;
@@ -231,7 +282,7 @@ export const useRunStore = create<Store>((set, get) => ({
           if (dmg <= 0) return e;
           for (const h of hooks) if (h.onDamage) dmg = h.onDamage(result.found.word, e, dmg, ctx);
           const hp = Math.max(0, e.hp - dmg);
-          notes.push(hp > 0 ? `${ENEMY_NAMES[e.typeId]} −${dmg} PV` : `${ENEMY_NAMES[e.typeId]} vaincu`);
+          notes.push(hp > 0 ? `${ENEMY_NAMES[e.typeId]} −${dmg}` : `${ENEMY_NAMES[e.typeId]} calmé`);
           if (hp === 0) {
             let b = ENEMY_BOUNTY;
             for (const h of hooks) if (h.onEnemyKilled) b = h.onEnemyKilled(e, b, ctx);
@@ -242,13 +293,13 @@ export const useRunStore = create<Store>((set, get) => ({
         });
         if (killedNow > 0) {
           draft.killsThisManche += killedNow;
-          notes.push(`prime +${bounty} €`);
+          notes.push(`prime +${bounty} billes`);
           set({ run: { ...run, euros: run.euros + bounty, killCount: run.killCount + killedNow } });
         }
       }
       if (draft.quest && !draft.quest.done) {
         draft.quest = updateQuest(draft.quest, draft.found);
-        if (draft.quest.done) notes.push(`objectif +${draft.quest.reward} €`);
+        if (draft.quest.done) notes.push(`consigne +${draft.quest.reward} billes`);
       }
       if (notes.length) fb.bonus = notes.join(' · ');
       const before = draft.bonuses.length;
@@ -282,7 +333,11 @@ export const useRunStore = create<Store>((set, get) => ({
       const others = manche.critters.filter((o) => o !== c).map((o) => o.pos);
       return { ...moveCritter(c, manche.grid, run.snailRng, others), nextMoveAt: c.nextMoveAt + CRITTER_MOVE_SECONDS };
     });
-    set({ manche: { ...manche, timeLeft, elapsed, critters } });
+    const enemies = manche.enemies.map((e) => {
+      if (e.hp <= 0 || elapsed < e.nextMoveAt) return e;
+      return { ...moveEnemy(e, manche.grid, manche.search, run.snailRng, manche.enemies.filter((o) => o !== e && o.hp > 0)), nextMoveAt: e.nextMoveAt + ENEMY_MOVE_SECONDS };
+    });
+    set({ manche: { ...manche, timeLeft, elapsed, critters, enemies } });
     if (timeLeft === 0) get().endManche();
   },
 
@@ -415,7 +470,7 @@ export const useRunStore = create<Store>((set, get) => ({
       set({
         manche: { ...manche, enemies, killsThisManche: manche.killsThisManche + killed },
         run: { ...run, consumables: spend(), euros: run.euros + killed * ENEMY_BOUNTY, killCount: run.killCount + killed },
-        feedback: { kind: 'ok', word: 'Grenade', score: GRENADE_DAMAGE, bonus: killed ? 'ennemi vaincu · prime +30 €' : undefined, id: ++feedbackId },
+        feedback: { kind: 'ok', word: 'Boulette géante', score: GRENADE_DAMAGE, bonus: killed ? 'cancre calmé · prime +30 billes' : undefined, id: ++feedbackId },
       });
     } else if (def.kind === 'inspiration') {
       const longest = [...manche.search.words].sort((a, b) => b.length - a.length)[0];
@@ -486,12 +541,10 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   draft.threshold = adjustThreshold(threshold(run.currentManche) * (mut?.thresholdMult ?? 1), draft.difficulty.factor);
   draft.critters = mut?.snails ? spawnCritters(grid, run.snailRng) : [];
   draft.quest = mut?.quest ? pickQuest(grid, search, run.rng) : null;
-  if (mut?.enemy) {
-    const enemy = spawnEnemy(grid, search, run.rng, Math.max(20, Math.round(draft.threshold * ENEMY_HP_RATIO)));
-    draft.enemies = enemy ? [enemy] : [];
-  } else {
-    draft.enemies = [];
-  }
+  // Le cancre copie : 1 cancre ; punition Classe de cancres : +2 (même hors leçon) ; Cancres têtus : endurance ×1.5
+  const count = (mut?.enemy ? 1 : 0) + (draft.curseIds.includes('infestation') ? 2 : 0);
+  const hpMult = draft.curseIds.includes('peau-dure') ? 1.5 : 1;
+  draft.enemies = count ? spawnEnemies(grid, search, run.rng, enemyHp(draft.threshold, count, hpMult), count) : [];
   runMancheStart(hooks, ctx);
 }
 
@@ -501,7 +554,7 @@ function shopInput(run: RunState): ShopInput {
     relicIds: run.relicIds,
     consumableIds: run.consumables.map((c) => c.id),
     pendingCurseIds: run.pendingCurseIds,
-    enemiesEnabled: true,
+    enemiesEnabled: run.seenEnemies,
     tookEnemyMutator: run.tookEnemyMutator,
   };
 }

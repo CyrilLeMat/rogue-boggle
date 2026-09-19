@@ -10,20 +10,20 @@ export const FRACTURE_USES = 2; // [tuning] utilisations avant que la case se br
 // La manche 1 est du Boggle pur.
 export const MUTATORS: Mutator[] = [
   {
-    id: 'escargots', name: 'Escargots', rarity: 'common', snails: true,
-    description: 'Des escargots se promènent sur la grille : un mot qui passe par leur case compte double',
+    id: 'escargots', name: 'Leçon de choses', rarity: 'common', snails: true,
+    description: 'Des escargots se promènent sur la feuille : un mot qui passe par leur case compte double',
   },
   {
-    id: 'objectif', name: 'Objectif', rarity: 'common', quest: true,
-    description: 'Un mini-objectif à remplir dans la manche, payé en euros',
+    id: 'objectif', name: 'Consigne du jour', rarity: 'common', quest: true,
+    description: 'Une consigne à remplir pendant la dictée, payée en billes',
   },
   {
-    id: 'chasse', name: 'Chasse', rarity: 'rare', enemy: true,
-    description: 'Un ennemi campe sur la grille. Trace des mots à travers sa case pour lui infliger ton score. Abattu : +30 €. Survivant : −15 €',
+    id: 'chasse', name: 'Le cancre copie', rarity: 'rare', enemy: true,
+    description: 'Un cancre copie sur ta feuille (il change de place toutes les 8 s). Trace 3 ou 4 mots à travers sa case pour le faire taire. Calmé : +30 billes. Toujours là : −15 billes',
   },
   {
-    id: 'fracture', name: 'Sol qui s\'effondre', rarity: 'rare',
-    description: 'Chaque case utilisée dans un mot se fissure ; à la 2e utilisation elle se brise et révèle une nouvelle lettre. Réfléchis avant de tracer',
+    id: 'fracture', name: 'Tableau effacé', rarity: 'rare',
+    description: 'Chaque case utilisée dans un mot se craquelle ; à la 2e utilisation elle est effacée et une nouvelle lettre est écrite. Réfléchis avant de tracer',
     onWordAccepted: (found, ctx) => {
       const grid = ctx.manche.grid;
       const cells = grid.cells.map((row) => row.map((c) => ({ ...c })));
@@ -46,8 +46,8 @@ export const MUTATORS: Mutator[] = [
     },
   },
   {
-    id: 'toxique', name: 'Grille toxique', rarity: 'rare',
-    description: '2 cases toxiques ☠ (fond vert, −8 s à chaque utilisation), mais +50 % sur tous les mots',
+    id: 'toxique', name: 'Taches d\'encre', rarity: 'rare',
+    description: '2 taches d\'encre (−8 s à chaque utilisation), mais +50 % sur tous les mots',
     applyToGrid: (grid, rng) => {
       const cells = grid.cells.map((row) => row.map((c) => ({ ...c })));
       const picked = new Set<number>();
@@ -58,18 +58,18 @@ export const MUTATORS: Mutator[] = [
     onWordFound: () => ({ percent: 0.5 }),
   },
   {
-    id: 'sprint', name: 'Sprint', rarity: 'common',
-    description: '−30 s de chrono, seuil −30 %',
+    id: 'sprint', name: 'Calcul mental', rarity: 'common',
+    description: '−30 s de chrono, note à atteindre −30 %',
     secondsDelta: -30, thresholdMult: 0.7,
   },
   {
-    id: 'marathon', name: 'Marathon', rarity: 'common', minManche: 4,
-    description: '+45 s de chrono, seuil +40 %',
+    id: 'marathon', name: 'Rédaction', rarity: 'common', minManche: 4,
+    description: '+45 s de chrono, note à atteindre +40 %',
     secondsDelta: 45, thresholdMult: 1.4,
   },
   {
-    id: 'geante', name: 'Grille géante', rarity: 'rare', minManche: 4,
-    description: 'Une taille de plus que d\'habitude (jusqu\'à 7×7), avec le chrono qui va avec',
+    id: 'geante', name: 'Grande carte', rarity: 'rare', minManche: 4,
+    description: 'Une feuille d\'une taille de plus (jusqu\'à 7×7), avec le chrono qui va avec',
     sizeDelta: 1,
   },
 ];

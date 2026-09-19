@@ -6,7 +6,7 @@ export function FoundWords() {
   const msg =
     feedback?.kind === 'ok' ? `${feedback.word} +${feedback.score}${feedback.bonus ? ` · ${feedback.bonus}` : ''}` :
     feedback?.kind === 'duplicate' ? `${feedback.word} déjà trouvé` :
-    feedback?.kind === 'invalid' ? 'Mot inconnu' :
+    feedback?.kind === 'invalid' ? 'Faute. Ce mot n\'existe pas.' :
     feedback?.kind === 'tooShort' ? '3 lettres minimum' : ' ';
   return (
     <div className="found">

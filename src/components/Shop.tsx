@@ -3,10 +3,23 @@ import { MAX_CONSUMABLES } from '../engine/hooks';
 import { MAX_SAME_CHARM } from '../engine/rules';
 import { shopRerollPrice, type ShopItem } from '../engine/shop';
 import { useRunStore } from '../state/runStore';
+import { L, money } from '../theme/lexicon';
 import { RelicCard } from './RelicCard';
 
-const KIND_LABEL: Record<ShopItem['kind'], string> = { relic: 'Relic', consumable: 'Consommable', curse: 'Malédiction' };
-const labelOf = (item: ShopItem) => (item.kind === 'relic' && relic(item.id).charm ? 'Charme' : KIND_LABEL[item.kind]);
+// Quatre rayons bien séparés : ce que chaque type d'article fait est dit une fois, en tête de rayon.
+type Section = 'fourniture' | 'trousse' | 'punition' | 'gommette';
+const SECTIONS: { key: Section; icon: string; title: string; hint: string }[] = [
+  { key: 'fourniture', icon: '📚', title: L.relic + 's', hint: 'Permanentes : elles restent dans ton cartable toute l\'année.' },
+  { key: 'trousse', icon: '✏️', title: L.consommable, hint: 'À utiliser pendant la dictée, rechargé à chaque copie. 3 places max.' },
+  { key: 'punition', icon: '📝', title: L.malediction + 's', hint: 'Une seule dictée, la prochaine : un gros malus contre un gros bonus.' },
+  { key: 'gommette', icon: '⭐', title: L.charme + 's', hint: `Petits bonus pas chers, cumulables jusqu'à ×${MAX_SAME_CHARM}.` },
+];
+
+function sectionOf(item: ShopItem): Section {
+  if (item.kind === 'consumable') return 'trousse';
+  if (item.kind === 'curse') return 'punition';
+  return relic(item.id).charm ? 'gommette' : 'fourniture';
+}
 
 function cardOf(item: ShopItem) {
   if (item.kind === 'relic') return relic(item.id);
@@ -27,39 +40,55 @@ export function Shop() {
   const canReroll = run.euros >= rerollPrice;
   const inventoryFull = run.consumables.length >= MAX_CONSUMABLES;
   const owned = (id: string) => run.relicIds.filter((r) => r === id).length;
+  const indexed = shop.map((item, i) => ({ item, i }));
+
   return (
     <div className="panel pick shop">
       <div className="shop-head">
         <div>
-          <h2>Boutique</h2>
-          <p className="muted">Manche {run.currentManche} terminée · achète ce que tu veux, puis passe à la suite.</p>
+          <h2>{L.boutique}</h2>
+          <p className="muted">{L.boutiqueSub}</p>
         </div>
-        <div className="wallet"><span className="label">Portefeuille</span><span className="amount">{run.euros} €</span></div>
+        <div className="wallet"><span className="label">{L.euros}</span><span className="amount">{run.euros}</span></div>
       </div>
-      <div className="cards">
-        {shop.map((item, i) => {
-          const def = cardOf(item);
-          const blockedInventory = item.kind === 'consumable' && inventoryFull;
-          const tooPoor = run.euros < item.price;
-          const count = item.kind === 'relic' ? owned(item.id) : 0;
-          const capped = 'charm' in def && !!def.charm && count >= MAX_SAME_CHARM;
-          const canBuy = !item.sold && !tooPoor && !blockedInventory && !capped;
-          return (
-            <div key={`${i}-${item.id}`} className={`shop-slot kind-${item.kind} ${'charm' in def && def.charm ? 'kind-charm' : ''} ${item.sold ? 'sold' : ''}`}>
-              <span className="kind">{labelOf(item)}{count ? ` · déjà ×${count}` : ''}</span>
-              <RelicCard relic={def} />
-              <button className={`buy ${canBuy ? '' : 'secondary'}`} disabled={!canBuy} onClick={() => buy(i)}>
-                {item.sold ? '✓ Acheté' : capped ? `Maximum ×${MAX_SAME_CHARM}` : blockedInventory ? 'Inventaire plein' : tooPoor ? `${item.price} € · pas assez` : `Acheter · ${item.price} €`}
-              </button>
+
+      {SECTIONS.map((sec) => {
+        const items = indexed.filter(({ item }) => sectionOf(item) === sec.key);
+        if (!items.length) return null;
+        return (
+          <section key={sec.key} className={`shelf shelf-${sec.key}`}>
+            <header className="shelf-head">
+              <span className="shelf-icon">{sec.icon}</span>
+              <div><h3>{sec.title}</h3><p>{sec.hint}</p></div>
+            </header>
+            <div className="shelf-items">
+              {items.map(({ item, i }) => {
+                const def = cardOf(item);
+                const blockedInventory = item.kind === 'consumable' && inventoryFull;
+                const tooPoor = run.euros < item.price;
+                const count = item.kind === 'relic' ? owned(item.id) : 0;
+                const capped = 'charm' in def && !!def.charm && count >= MAX_SAME_CHARM;
+                const canBuy = !item.sold && !tooPoor && !blockedInventory && !capped;
+                return (
+                  <div key={`${i}-${item.id}`} className={`shop-slot ${item.sold ? 'sold' : ''}`}>
+                    {count > 0 && <span className="kind">déjà ×{count}</span>}
+                    <RelicCard relic={def} />
+                    <button className={`buy ${canBuy ? '' : 'secondary'}`} disabled={!canBuy} onClick={() => buy(i)}>
+                      {item.sold ? `✓ ${L.achete}` : capped ? `${L.maxExemplaires} (×${MAX_SAME_CHARM})` : blockedInventory ? L.inventairePlein : tooPoor ? `${money(item.price)} · ${L.pasAssez}` : `${L.acheter} · ${money(item.price)}`}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
+          </section>
+        );
+      })}
+
       <div className="row">
         <button className="secondary" onClick={reroll} disabled={!canReroll}>
-          ↻ Changer les articles · {rerollPrice === 0 ? `gratuit (${rerolls.freeLeft})` : `${rerollPrice} €`}
+          ↻ {L.changerArticles} · {rerollPrice === 0 ? `gratuit (${rerolls.freeLeft})` : money(rerollPrice)}
         </button>
-        <button onClick={next}>Passer à la manche {run.currentManche + 1} →</button>
+        <button onClick={next}>{L.manche} {run.currentManche + 1} →</button>
       </div>
     </div>
   );

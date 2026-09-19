@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
+import { L } from '../theme/lexicon';
 
 export function EndScreen({ victory }: { victory: boolean }) {
   const run = useRunStore((s) => s.run);
@@ -15,14 +16,14 @@ export function EndScreen({ victory }: { victory: boolean }) {
   };
   return (
     <div className="panel end">
-      <h1>{victory ? 'Félicitations !' : 'Game over'}</h1>
-      <p className="muted">{victory ? '10 manches survécues.' : `Tombé à la manche ${run.currentManche}.`}</p>
+      <h1 className="title">{victory ? L.victoire : L.gameover}</h1>
+      <p className="muted">{victory ? L.victoireSub : L.gameoverSub(run.currentManche)}</p>
       <p className="big">{run.score} pts</p>
-      {run.endBonus > 0 && <p className="ok">dont +{run.endBonus} pts de bonus de fin de run</p>}
-      <p className="muted">{allWords.length} mots · {run.euros} € non dépensés</p>
+      {run.endBonus > 0 && <p className="ok">dont +{run.endBonus} pts de bonus de fin d'année</p>}
+      <p className="muted">{allWords.length} mots · {run.euros} {L.nonDepenses}</p>
 
       <table className="run-table">
-        <thead><tr><th>M</th><th>Grille</th><th>Score</th><th>Seuil</th><th>Meilleur mot</th><th>€</th></tr></thead>
+        <thead><tr><th>Dictée</th><th>Feuille</th><th>Note</th><th>Attendu</th><th>Meilleur mot</th><th>Billes</th></tr></thead>
         <tbody>
           {run.history.map((h) => (
             <tr key={h.manche} className={h.success ? '' : 'ko'}>
@@ -43,14 +44,14 @@ export function EndScreen({ victory }: { victory: boolean }) {
         </div>
       )}
 
-      <h3>Mots marquants</h3>
+      <h3>{L.motsMarquants}</h3>
       <ul>{best.map((w) => <li key={w.word + w.at}>{w.word} <span className="pts">{w.score}</span></li>)}</ul>
 
-      <p className="muted seed-line">Seed <code>{run.seed}</code> <button className="secondary small" onClick={copySeed}>{copied ? 'copiée' : 'copier'}</button></p>
+      <p className="muted seed-line">{L.seed} <code>{run.seed}</code> <button className="secondary small" onClick={copySeed}>{copied ? 'copiée' : 'copier'}</button></p>
       <div className="row">
-        <button onClick={() => restart()}>Nouvelle run</button>
-        <button className="secondary" onClick={() => restart(run.seed)}>Rejouer cette seed</button>
-        <button className="secondary" onClick={back}>Menu</button>
+        <button onClick={() => restart()}>{L.nouvelleRun}</button>
+        <button className="secondary" onClick={() => restart(run.seed)}>{L.rejouer}</button>
+        <button className="secondary" onClick={back}>{L.menu}</button>
       </div>
     </div>
   );

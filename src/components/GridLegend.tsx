@@ -10,17 +10,20 @@ export function GridLegend() {
   const flags = uiFlags(relics(relicIds));
   const lines: { icon: string; cls: string; text: string }[] = [];
   if (flags.showLongestLength && manche.search.longestStart !== null) {
-    lines.push({ icon: String(manche.search.longestLength), cls: 'oracle', text: `Oracle : le mot le plus long fait ${manche.search.longestLength} lettres et commence sur la case cerclée d'or` });
+    lines.push({ icon: String(manche.search.longestLength), cls: 'oracle', text: `Petit Larousse : le mot le plus long fait ${manche.search.longestLength} lettres et commence sur la case marquée de ce chiffre` });
+  }
+  if (manche.amorce) {
+    lines.push({ icon: '…', cls: 'amorce', text: `Antisèche : un mot de ${manche.amorce.length} lettres commence par ${manche.amorce.prefix}${manche.amorce.start !== null ? ', sur la case marquée d\'un point vert' : ''}` });
   }
   if (manche.cursedWord && manche.cursedStart !== null && !manche.found.some((f) => f.word === manche.cursedWord)) {
-    lines.push({ icon: '✦', cls: 'cursed', text: `Mot maudit : ${manche.cursedWord.length} lettres, il commence sur la case cerclée de violet (+60 pts)` });
+    lines.push({ icon: '✦', cls: 'cursed', text: `Mot mystère : ${manche.cursedWord.length} lettres, il commence sur la case marquée ✦ (+60 pts)` });
   }
-  if (manche.luckyLetter) lines.push({ icon: '♣', cls: 'lucky', text: `Lettre porte-bonheur : les mots qui commencent par ${manche.luckyLetter} comptent double` });
-  if (manche.grid.cells.flat().some((c) => c.isToxic)) lines.push({ icon: '☠', cls: 'toxic', text: 'Case toxique : −8 s à chaque utilisation' });
-  if (flags.radarLongWord && manche.radarCell !== null) lines.push({ icon: '◌', cls: 'radar', text: 'Radar : la case qui brille appartient à un mot de 7 lettres ou plus' });
+  if (manche.luckyLetter) lines.push({ icon: manche.luckyLetter, cls: 'lucky', text: `Lettre soulignée : les mots qui commencent par ${manche.luckyLetter} (cases jaunes) comptent double` });
+  if (manche.grid.cells.flat().some((c) => c.isToxic)) lines.push({ icon: '●', cls: 'toxic', text: 'Tache d\'encre : −8 s à chaque utilisation' });
   if (manche.critters.length) lines.push({ icon: '🐌', cls: '', text: `Escargot : un mot qui passe par sa case compte double` });
   const alive = manche.enemies.filter((e) => e.hp > 0);
-  if (alive.length) lines.push({ icon: '👾', cls: 'enemy', text: `Ennemi (${alive[0].hp} PV) : trace des mots à travers sa case, chaque mot lui retire son score. Abattu : +30 €, survivant : −15 €` });
+  if (alive.length === 1) lines.push({ icon: '🧒', cls: 'enemy', text: `Cancre (${alive[0].hp} d'endurance) : il change de place toutes les 8 s ; trace des mots à travers sa case, chaque mot lui retire son score. Calmé : +30 billes, toujours là : −15 billes` });
+  if (alive.length > 1) lines.push({ icon: '🧒', cls: 'enemy', text: `${alive.length} cancres (${alive[0].maxHp} d'endurance chacun) : ils changent de place toutes les 8 s ; un mot qui traverse leur case leur retire son score. Calmé : +30 billes, toujours là : −15 billes` });
   if (lines.length === 0) return null;
   return (
     <ul className="legend">

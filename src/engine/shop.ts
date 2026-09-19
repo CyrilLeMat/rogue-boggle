@@ -14,7 +14,7 @@ export interface ShopItem {
   sold: boolean;
 }
 
-export const SHOP_REROLL_BASE_PRICE = 5; // [tuning] 5, 10, 15… dans la même visite
+export const SHOP_REROLL_BASE_PRICE = 10; // [tuning] 10, 20, 30… dans la même visite
 
 export function shopRerollPrice(paidRerolls: number, freeLeft: number): number {
   return freeLeft > 0 ? 0 : SHOP_REROLL_BASE_PRICE * (paidRerolls + 1);

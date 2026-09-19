@@ -1,5 +1,6 @@
 import { timeEuros } from '../engine/rules';
 import { useRunStore } from '../state/runStore';
+import { L, money } from '../theme/lexicon';
 
 export function FinishButton() {
   const manche = useRunStore((s) => s.manche);
@@ -12,9 +13,9 @@ export function FinishButton() {
       className={`finish ${reached ? '' : 'secondary'}`}
       disabled={!reached}
       onClick={finish}
-      title={reached ? 'Termine la manche maintenant et empoche les secondes restantes' : 'Atteins le seuil pour pouvoir terminer en avance'}
+      title={reached ? 'Rends ta copie maintenant et empoche les secondes restantes' : 'Atteins la note pour pouvoir rendre en avance'}
     >
-      {reached ? `Terminer la manche · +${gain} €` : 'Terminer (seuil non atteint)'}
+      {reached ? `${L.terminer} · +${money(gain)}` : L.terminerBloque}
     </button>
   );
 }

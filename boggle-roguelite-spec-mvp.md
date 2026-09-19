@@ -56,7 +56,7 @@ Mot **courant** = fréquence films ≥ **3 par million** (9 722 mots ; à 1/mill
 - Le potentiel est calculé sur la **grille brute**, avant les `onGridGenerate` des relics (jokers) : améliorer sa grille ne doit jamais durcir le seuil. Les mutateurs (taille, pondération) sont en revanche pris en compte via la référence de leur taille.
 - **Garde qualité** renforcée : potentiel minimum = 60 % de la référence (≈ p10). Si 20 essais échouent, on garde la meilleure grille tirée.
 - **Score de run** : cumul de toutes les manches, affiché en permanence, jamais dépensé. Sert au classement entre runs.
-- **Euros** : **plancher 20 €** si la manche est réussie (10 € si ratée), **+1 € par point au-dessus du seuil**, bonus plafonné à **80 €** **[tuning]**. Les relics/malédictions (Économe, Dette de temps) s'appliquent sur le total. Le récap montre le plancher, puis le bonus qui monte avec un compteur animé ; pendant la manche, le tableau de bord affiche en direct les euros en cours de gain dès que le seuil est franchi. Sert exclusivement en boutique.
+- **Billes** : **plancher 15** si la dictée est réussie (8 si ratée), **+1 par point au-dessus de la note**, bonus plafonné à **60** **[tuning]**. Les relics/malédictions (Économe, Dette de temps) s'appliquent sur le total. Le récap montre le plancher, puis le bonus qui monte avec un compteur animé ; pendant la manche, le tableau de bord affiche en direct les euros en cours de gain dès que le seuil est franchi. Sert exclusivement en boutique.
 
 ### 3.2 Déroulé d'une manche
 
@@ -401,13 +401,15 @@ src/
 
 ## 6. Économie et boutique
 
-| Rareté | Prix relic | Prix consommable | Poids de tirage |
+| Rareté | Prix fourniture | Prix trousse | Poids de tirage |
 |---|---|---|---|
-| Commun | 20 | 10 | 60 |
-| Rare | 50 | 30 | 30 |
-| Légendaire | 100 | 60 | 10 |
+| Courant | 30 | 15 | 60 |
+| Rare | 75 | 45 | 30 |
+| Trésor | 150 | 90 | 10 |
 
-Malédictions : 10 € (Vision trouble, Dette de temps, Infestation), 15 € (Un seul essai, Peau dure).
+Punitions : 15 billes (Au coin, Retenue, Classe de cancres), 20 (Cent lignes, Cancres têtus). Gommettes : 8 à 12. Nouvel arrivage : 10, 20, 30… **Tout ×1.5 après playtest (« j'achète trop, c'est trop facile »)**, avec un plancher de gains abaissé à 15 (8 en échec) et un dépassement plafonné à 60.
+
+**Cancres à la coopérative** : les fournitures d'attaque, les punitions de cancres et la Boulette géante n'apparaissent qu'une fois que le joueur a vécu une leçon « Le cancre copie » (`run.seenEnemies`). Avant, il ne saurait pas ce qu'il achète.
 
 - La boutique propose **3 objets** : 2 tirés dans relics + consommables, 1 tiré dans malédictions + consommables **[tuning]**.
 - Un relic déjà possédé n'est pas proposé. Un relic avec `requires` n'est proposé que si le prérequis est possédé.
@@ -436,9 +438,9 @@ Malédictions : 10 € (Vision trouble, Dette de temps, Infestation), 15 € (Un
 | 7 | Bouclier de case | Neutralise la 1re case toxique utilisée par manche | Commun | onCellUsed | |
 | 8 | Mémoire | Cases utilisées restent colorées ; quand toutes les cases **sauf 2 (4×4, 5×5) ou 3 (6×6, 7×7)** ont servi : +100 pts (1×/manche) | Commun | ui + onWordAccepted → addBonus | 100 % jugé trop dur en playtest |
 | 9 | Oracle | Marque la case de la première lettre du mot le plus long (anneau doré) **avec son nombre de lettres écrit dans la case** | Commun | ui + allWords.longestStart | Retour playtest ×2 : longueur seule, puis « 1 » peu lisible |
-| 10 | Radar | Halo sur une case appartenant à un mot de 7+ lettres | Rare | ui + allWords | Rien si aucun mot 7+ |
-| 11 | Dictionnaire vivant | Appui long sur une case → 3 mots courants de 3 lettres commençant par elle, présents dans la grille | Légendaire | ui + allWords | Sous-ensemble `courant` |
-| 12 | Économe | +30 % d'euros par manche réussie | Commun | onMancheEnd | |
+| 10 | ~~Radar~~ → **Amorce** | Révèle les 3 premières lettres d'un mot de 8+ lettres de la grille (à défaut du plus long ≥ 7) | Rare | onMancheStart | Désencombrement : remplace Radar, idée joueur |
+| 11 | ~~Dictionnaire vivant~~ → **Amorce sûre** | L'amorce donne 4 lettres et marque la case de départ (point vert) | Légendaire | `requires: amorce` | L'appui long entrait en conflit avec le double-tap |
+| 12 | ~~Économe~~ | Retiré : 4 relics d'argent se marchaient dessus, Épargne et Alchimiste suffisent | | | |
 | 13 | Reroll ciblé | Le consommable Reroll propose 3 lettres au choix | Légendaire | ui | |
 | 14 | Case joker | Une case joker par grille | Rare | onGridGenerate | Lettre joker = 1 pt |
 | 15 | Double joker | Deux cases jokers | Légendaire | onGridGenerate | `requires: case-joker` |
@@ -478,7 +480,7 @@ Un thème partage les hooks de mot d'un relic et peut en plus changer la taille,
 |---|---|---|
 | A | Escargots | Voir 3.2.1 |
 | B | Objectif | Voir 3.2.3 |
-| C | Chasse | Un ennemi (voir 7.5) : Limace 1 case, Tank 2 cases en 6×6+, PV = seuil × 0.6. Abattu : +30 € ; survivant : −15 € sur les gains |
+| C | Le cancre copie | Un cancre mobile (voir 7.5), 1 case. **Endurance = note × 0.25 / √(nombre de cancres)**, min 12 : ~3-4 mots pour un seul, budget partagé à plusieurs (0.6 × note chacun était injouable). Calmé : +30 billes ; toujours là : −15 billes |
 | 1 | Grille géante | +1 de taille par rapport à la manche, plafonné à **7×7**, chrono adapté. Seule voie vers le 7×7 |
 | 5 | Grille toxique | 2 cases toxiques visibles (marquées) : chaque utilisation dans un mot validé coûte -8 s ; +50 % sur tous les mots de la manche |
 | 8 | **Terre fracturée** | Chaque case utilisée dans un mot valide se **fissure** (rendu visuel) ; à la **2e utilisation** elle se brise et révèle une nouvelle lettre (animation). Les mots trouvables sont recalculés. Pousse à réfléchir avant de tracer : une lettre clé peut disparaître. Idée joueur |
@@ -549,6 +551,17 @@ Un thème partage les hooks de mot d'un relic et peut en plus changer la taille,
 | Ennemis | 6 + 1 boss |
 
 ---
+
+## 7.7 Plan après bilan (2026-09-19)
+
+Bilan partagé : la boucle, l'économie, les thèmes et le pipeline tiennent ; il manque le payoff visible, des choix, une fin, un univers. Ordre retenu :
+
+1. **Juice + prévisualisation du score** : score du mot en cours affiché pendant le tracé avec le détail (base × relics × escargot × série), lettres qui s'allument à la validation, chiffre qui s'envole, compteur qui grimpe.
+2. **Désencombrement** : un seul code visuel par information, fusion des relics redondantes (4 d'information → 2, 4 d'argent → 2).
+3. **Univers « La Dictée »** (choisi parmi six pistes françaises : marché, dictée, cafés Belle Époque, Tour de France, bistrot, BnF) : une école communale racontée avec des enjeux dramatiques absurdes — c'est le ton. Titre : **Rogue Boggle — Ultimate Dictée de CE2 Edition**. Lexique (`src/theme/lexicon.ts`) : manche = dictée, seuil = note à atteindre, vies = bons points ★, euros = billes, boutique = coopérative, relics = fournitures (Bescherelle, Bled, Petit Robert, Grevisse, plume Sergent-Major, buvard, antisèche…), charmes = gommettes, malédictions = punitions (au coin, retenue, cent lignes), thèmes = leçons (leçon de choses, consigne du jour, le cancre copie, tableau effacé, taches d'encre, calcul mental, rédaction, grande carte), ennemi = cancre, mot maudit = mot mystère, série = élan, game over = redoublement, victoire = passage en sixième. Look : papier à grands carreaux, marge rouge, encre violette, titres manuscrits (Patrick Hand). **Fait.** Icônes SVG maison : à faire.
+4. Boss manches 5 et 10, choix de route (2 thèmes proposés avec récompense), relics qui grandissent, daily.
+
+**Désencombrement fait** : Amorce / Amorce sûre remplacent Radar et Dictionnaire vivant ; Économe retiré ; plus d'anneaux Oracle/Mot maudit (pastille seule), plus de trèfle porte-bonheur (teinte seule), chiffre de valeur seulement sur les lettres ≥ 2 pts ; score de run retiré de l'écran de jeu.
 
 ## 8. Hors scope MVP (v2+)
 

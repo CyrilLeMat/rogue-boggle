@@ -38,10 +38,10 @@ export function threshold(manche: number): number {
 
 // [tuning] Plancher garanti (un petit achat toujours possible), puis 1 € par point
 // au-dessus du seuil, plafonné pour ne pas vider la boutique en fin de run.
-export const EURO_FLOOR = 20;
-export const EURO_FLOOR_FAIL = 10;
+export const EURO_FLOOR = 15;
+export const EURO_FLOOR_FAIL = 8;
 export const EURO_PER_POINT = 1;
-export const EURO_BONUS_CAP = 80;
+export const EURO_BONUS_CAP = 60;
 
 // [tuning] Terminer la manche en avance : 1 € par tranche de 5 s restantes.
 export const EURO_PER_SECONDS_LEFT = 5;

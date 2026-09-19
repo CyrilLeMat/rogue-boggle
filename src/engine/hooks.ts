@@ -20,6 +20,7 @@ export interface MancheView {
   cursedStart: number | null; // posKey de la première lettre du mot maudit
   streak: { links: number; lastAt: number }; // série de mots rapprochés
   luckyLetter: string | null; // Lettre porte-bonheur : tirée parmi les lettres de la grille
+  amorce: { prefix: string; length: number; start: number | null } | null; // relic Amorce
   inspiration: { cells: number[]; until: number; length: number; first: string } | null; // consommable Inspiration
   enemies: Enemy[];
   killsThisManche: number;
@@ -60,14 +61,12 @@ export interface Quest {
   done: boolean;
 }
 
-export interface Enemy { id: string; typeId: string; cells: [number, number][]; hp: number; maxHp: number }
+export interface Enemy { id: string; typeId: string; cells: [number, number][]; hp: number; maxHp: number; nextMoveAt: number }
 
 export type UiFlags = Partial<{
   blurOutsideCursor: boolean;  // Vision trouble : grille floutée hors rayon 2 autour du curseur
   highlightUsedCells: boolean; // Mémoire
-  radarLongWord: boolean;      // Radar
   showLongestLength: boolean;  // Oracle
-  longPressHints: boolean;     // Dictionnaire vivant
   targetedReroll: boolean;     // Reroll ciblé
 }>;
 
@@ -128,6 +127,7 @@ export interface Mutator extends Relic {
   applyToGrid?: (grid: Grid, rng: Rng) => Grid;
 }
 
-export const RARITY_PRICE: Record<Rarity, number> = { common: 20, rare: 50, legendary: 100 };
-export const CONSUMABLE_PRICE: Record<Rarity, number> = { common: 10, rare: 30, legendary: 60 };
+// [tuning] ×1.5 après playtest : « j'achète trop, c'est trop facile »
+export const RARITY_PRICE: Record<Rarity, number> = { common: 30, rare: 75, legendary: 150 };
+export const CONSUMABLE_PRICE: Record<Rarity, number> = { common: 15, rare: 45, legendary: 90 };
 export const RARITY_WEIGHT: Record<Rarity, number> = { common: 60, rare: 30, legendary: 10 };

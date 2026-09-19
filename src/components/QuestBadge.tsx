@@ -6,7 +6,7 @@ export function QuestBadge() {
   return (
     <div className={`quest ${quest.done ? 'done' : ''}`}>
       <span className="quest-label">{quest.done ? '✓ ' : ''}{quest.label}</span>
-      <span className="quest-progress">{quest.progress}/{quest.target} · {quest.reward} €</span>
+      <span className="quest-progress">{quest.progress}/{quest.target} · {quest.reward} b.</span>
     </div>
   );
 }

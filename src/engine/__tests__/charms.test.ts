@@ -11,8 +11,8 @@ describe('charms', () => {
     for (let i = 0; i < 40; i++) {
       const c = randomCharm(rng);
       expect(isCharmId(c.id)).toBe(true);
-      expect(c.price).toBeGreaterThanOrEqual(5);
-      expect(c.price).toBeLessThanOrEqual(8);
+      expect(c.price).toBeGreaterThanOrEqual(8);
+      expect(c.price).toBeLessThanOrEqual(12);
       expect(relic(c.id).description).toBe(c.description);
       expect(charmFromId(c.id)?.id).toBe(c.id);
     }
@@ -30,7 +30,7 @@ describe('charms', () => {
       const offer = generateShopOffer({ manche: 1, relicIds: [], consumableIds: [], enemiesEnabled: false, tookEnemyMutator: false }, createRng('s' + i));
       expect(offer.length).toBe(4);
       expect(isCharmId(offer[3].id)).toBe(true);
-      expect(offer[3].price).toBeLessThanOrEqual(8);
+      expect(offer[3].price).toBeLessThanOrEqual(12);
     }
   });
 });

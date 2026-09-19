@@ -203,6 +203,9 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .cartable-list li.mutator strong { color: #6f9ed1; }
 .cartable-list li.charm strong { color: var(--gold); }
 
+.gallery { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 20px 0; }
+.gallery .scene-pick .intro-text p { animation: none; opacity: 1; }
+.gallery .scene-card { cursor: default; }
 .scene-pick { max-width: 680px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .scene-frame { width: 100%; max-width: 480px; box-shadow: 5px 6px 0 #1f1b2e; }
 .scene-art { display: block; width: 100%; aspect-ratio: 320 / 180; }

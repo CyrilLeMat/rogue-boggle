@@ -14,6 +14,7 @@ import { Grid } from './components/Grid';
 import { GridLegend } from './components/GridLegend';
 import { Intro } from './components/Intro';
 import { ScenePick } from './components/ScenePick';
+import { ScenesGallery } from './components/ScenesGallery';
 import { MancheRecap } from './components/MancheRecap';
 import { QuestBadge } from './components/QuestBadge';
 import { ReadyOverlay } from './components/ReadyScreen';
@@ -111,6 +112,7 @@ function Playing() {
 
 export default function App() {
   const phase = useRunStore((s) => s.phase);
+  if (new URLSearchParams(location.search).has('planches')) return <main><ScenesGallery /></main>;
   return (
     <main>
       <SoundEffects />

@@ -5,14 +5,24 @@ import type { Rng } from '../engine/rng';
 
 export const FRACTURE_USES = 2; // [tuning] utilisations avant que la case se brise et change de lettre
 
-// Conditions imposées toutes les CONDITION_EVERY manches (3, 6, 9) : pas de choix, une règle
-// qui change la façon de jouer. Les variantes de pondération (voyelles/consonnes) ont été
-// retirées : elles ne changeaient rien de perceptible.
-export const CONDITION_EVERY = 3;
-
+// Un THÈME par manche à partir de la manche 2, jamais deux fois le même d'affilée :
+// une seule couche spéciale à la fois (retour playtest : tout s'empilait).
+// La manche 1 est du Boggle pur.
 export const MUTATORS: Mutator[] = [
   {
-    id: 'fracture', name: 'Terre fracturée', rarity: 'rare',
+    id: 'escargots', name: 'Escargots', rarity: 'common', snails: true,
+    description: 'Des escargots se promènent sur la grille : un mot qui passe par leur case compte double',
+  },
+  {
+    id: 'objectif', name: 'Objectif', rarity: 'common', quest: true,
+    description: 'Un mini-objectif à remplir dans la manche, payé en euros',
+  },
+  {
+    id: 'chasse', name: 'Chasse', rarity: 'rare', enemy: true,
+    description: 'Un ennemi campe sur la grille. Trace des mots à travers sa case pour lui infliger ton score. Abattu : +30 €. Survivant : −15 €',
+  },
+  {
+    id: 'fracture', name: 'Sol qui s\'effondre', rarity: 'rare',
     description: 'Chaque case utilisée dans un mot se fissure ; à la 2e utilisation elle se brise et révèle une nouvelle lettre. Réfléchis avant de tracer',
     onWordAccepted: (found, ctx) => {
       const grid = ctx.manche.grid;
@@ -53,12 +63,12 @@ export const MUTATORS: Mutator[] = [
     secondsDelta: -30, thresholdMult: 0.7,
   },
   {
-    id: 'marathon', name: 'Marathon', rarity: 'common',
-    description: '+45 s de chrono, seuil +50 %',
-    secondsDelta: 45, thresholdMult: 1.5,
+    id: 'marathon', name: 'Marathon', rarity: 'common', minManche: 4,
+    description: '+45 s de chrono, seuil +40 %',
+    secondsDelta: 45, thresholdMult: 1.4,
   },
   {
-    id: 'geante', name: 'Grille géante', rarity: 'rare',
+    id: 'geante', name: 'Grille géante', rarity: 'rare', minManche: 4,
     description: 'Une taille de plus que d\'habitude (jusqu\'à 7×7), avec le chrono qui va avec',
     sizeDelta: 1,
   },
@@ -72,11 +82,11 @@ export function mutatorGridSize(base: number, m: Mutator | null): number {
 }
 
 export function isConditionManche(manche: number): boolean {
-  return manche > 1 && manche % CONDITION_EVERY === 0;
+  return manche > 1;
 }
 
-// Évite de répéter la condition précédente quand c'est possible.
-export function pickCondition(rng: Rng, previous: string | null): string {
-  const pool = MUTATORS.filter((m) => m.id !== previous);
+// Thème de la manche : jamais le précédent, et certains thèmes attendent la manche 4.
+export function pickCondition(rng: Rng, previous: string | null, manche = 2): string {
+  const pool = MUTATORS.filter((m) => m.id !== previous && (m.minManche ?? 0) <= manche);
   return rng.pick(pool.length ? pool : MUTATORS).id;
 }

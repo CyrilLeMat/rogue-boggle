@@ -16,7 +16,7 @@ function manche(g: Grid): MancheView {
     grid: g, search: findAllWords(g, dict.trie), threshold: 10, difficulty: { potential: 0, factor: 1, mood: 'normale' },
     found: [], timeLeft: 60, timeLeftBeforeWord: 60, elapsed: 0, cursedWord: null, cursedStart: null, radarCell: null,
     relicState: {}, bonuses: [], streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null,
-    inspiration: null, gridDirty: false, mutatorId: 'fracture',
+    inspiration: null, gridDirty: false, mutatorId: 'fracture', enemies: [], killsThisManche: 0,
   };
 }
 
@@ -40,13 +40,16 @@ describe('mutators', () => {
     expect(m.grid.cells[1][1].letter).toBe('E'); // hors chemin : intact
     expect(m.gridDirty).toBe(true);
   });
-  it('grid size is capped at 7 and conditions land on manches 3, 6, 9', () => {
+  it('grid size is capped at 7, one theme per manche from manche 2, late themes wait', () => {
     expect(mutatorGridSize(6, MUTATOR_BY_ID.get('geante')!)).toBe(7);
     expect(mutatorGridSize(7, MUTATOR_BY_ID.get('geante')!)).toBe(7);
-    expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].filter(isConditionManche)).toEqual([3, 6, 9]);
-    const c = pickCondition(createRng('c'), 'fracture');
-    expect(c).not.toBe('fracture');
-    expect(MUTATOR_BY_ID.has(c)).toBe(true);
+    expect([1, 2, 3, 10].filter(isConditionManche)).toEqual([2, 3, 10]);
+    for (let i = 0; i < 30; i++) {
+      const c = pickCondition(createRng('c' + i), 'fracture', 2);
+      expect(c).not.toBe('fracture');
+      expect(['geante', 'marathon']).not.toContain(c);
+      expect(MUTATOR_BY_ID.has(c)).toBe(true);
+    }
   });
   it('Grille toxique marks two cells', () => {
     const g = MUTATOR_BY_ID.get('toxique')!.applyToGrid!({ size: 4, cells: Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => makeCell('A'))) }, createRng('t'));

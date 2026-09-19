@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { isConditionManche, mutatorGridSize, pickCondition } from '../data/mutators';
+import { ENEMY_BOUNTY, ENEMY_HP_RATIO, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, spawnEnemy } from '../engine/enemies';
 import { dictionary } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
 import { RELICS } from '../data/relics';
@@ -13,9 +14,9 @@ import { collectModifiers, makeContext, mancheSeconds, runGridGenerate, runInval
 import { MAX_CONSUMABLES, type MancheView, type RunView } from '../engine/hooks';
 import { resolvePath, type FoundWord, type SubmitResult } from '../engine/manche';
 import { createRng, randomSeed, type Rng } from '../engine/rng';
-import { GRACE_SECONDS_AFTER_LOSS, MANCHE_SECONDS, STARTING_LIVES, STREAK_MAX_LINKS, STREAK_STEP, STREAK_WINDOW, TOTAL_MANCHES, eurosFor, gridSizeFor, mancheSecondsFor, threshold, timeEuros } from '../engine/rules';
+import { GRACE_SECONDS_AFTER_LOSS, MANCHE_SECONDS, MAX_SAME_CHARM, STARTING_LIVES, STREAK_MAX_LINKS, STREAK_STEP, STREAK_WINDOW, TOTAL_MANCHES, eurosFor, gridSizeFor, mancheSecondsFor, threshold, timeEuros } from '../engine/rules';
 import { generateShopOffer, shopRerollPrice, type ShopInput, type ShopItem } from '../engine/shop';
-import type { Pos } from '../engine/types';
+import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
@@ -32,11 +33,14 @@ export interface MancheResult {
   eurosBonus: number;
   eurosTime: number;  // manche terminée en avance
   eurosQuest: number; // objectif de manche rempli
+  eurosEnemy: number; // primes (+) ou pénalité de survivant (−)
   questLabel: string | null;
   gridSize: number;
   bestWord: FoundWord | null;
   words: FoundWord[];
   missed: string[];
+  grid: Grid;                 // grille finale de la manche, pour le récap
+  cursedWord: string | null;  // révélé après coup
 }
 
 export interface OwnedConsumable { id: string; charges: number }
@@ -111,7 +115,7 @@ function freshManche(run: RunState): MancheState {
     found: [], timeLeft: MANCHE_SECONDS, timeLeftBeforeWord: MANCHE_SECONDS, totalSeconds: MANCHE_SECONDS, elapsed: 0,
     cursedWord: null, cursedStart: null, radarCell: null, relicState: {}, bonuses: [], score: 0,
     streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null,
-    inspiration: null, gridDirty: false, mutatorId: run.nextMutatorId,
+    inspiration: null, gridDirty: false, mutatorId: run.nextMutatorId, enemies: [], killsThisManche: 0,
     curseIds: [], targeting: null, rerollChoice: null, critters: [], graceSeconds: 0, gridRerollsLeft: 0,
   };
 }
@@ -216,6 +220,32 @@ export const useRunStore = create<Store>((set, get) => ({
         draft.critters = draft.critters.map((c, i) => (touched.includes(i) ? moveCritter(c, draft.grid, run.snailRng, path) : c));
       }
       if (streakMult > 1) notes.push(`série ×${streakMult.toFixed(1)}`);
+      // Chasse : dégâts à l'ennemi traversé (ou 25 % via Harpon), primes à la mort
+      if (draft.enemies.some((e) => e.hp > 0)) {
+        let bounty = 0;
+        let killedNow = 0;
+        draft.enemies = draft.enemies.map((e) => {
+          if (e.hp <= 0) return e;
+          const hit = enemyTouched(path, e);
+          let dmg = hit ? result.found.score : ctx.hasRelic('harpon') ? Math.round(result.found.score * HARPOON_RATIO) : 0;
+          if (dmg <= 0) return e;
+          for (const h of hooks) if (h.onDamage) dmg = h.onDamage(result.found.word, e, dmg, ctx);
+          const hp = Math.max(0, e.hp - dmg);
+          notes.push(hp > 0 ? `${ENEMY_NAMES[e.typeId]} −${dmg} PV` : `${ENEMY_NAMES[e.typeId]} vaincu`);
+          if (hp === 0) {
+            let b = ENEMY_BOUNTY;
+            for (const h of hooks) if (h.onEnemyKilled) b = h.onEnemyKilled(e, b, ctx);
+            bounty += b;
+            killedNow++;
+          }
+          return { ...e, hp };
+        });
+        if (killedNow > 0) {
+          draft.killsThisManche += killedNow;
+          notes.push(`prime +${bounty} €`);
+          set({ run: { ...run, euros: run.euros + bounty, killCount: run.killCount + killedNow } });
+        }
+      }
       if (draft.quest && !draft.quest.done) {
         draft.quest = updateQuest(draft.quest, draft.found);
         if (draft.quest.done) notes.push(`objectif +${draft.quest.reward} €`);
@@ -272,7 +302,9 @@ export const useRunStore = create<Store>((set, get) => ({
     const breakdown = eurosFor(manche.score, t, success);
     const eurosTime = early && success ? timeEuros(manche.timeLeft) : 0;
     const eurosQuest = manche.quest?.done ? manche.quest.reward : 0;
-    const euros = runMancheEnd(hooks, ctx, success, breakdown.total + eurosTime + eurosQuest);
+    const survivors = manche.enemies.filter((e) => e.hp > 0).length;
+    const eurosEnemy = -Math.min(survivors * ENEMY_SURVIVOR_PENALTY, breakdown.total + eurosTime + eurosQuest);
+    const euros = runMancheEnd(hooks, ctx, success, breakdown.total + eurosTime + eurosQuest + eurosEnemy);
     const foundSet = new Set(manche.found.map((f) => f.word));
     const missed = [...manche.search.words]
       .filter((w) => !foundSet.has(w))
@@ -280,10 +312,11 @@ export const useRunStore = create<Store>((set, get) => ({
       .slice(0, 5);
     const result: MancheResult = {
       manche: run.currentManche, score: manche.score, threshold: t, mood: manche.difficulty.mood, success,
-      euros, eurosBase: breakdown.base, eurosBonus: breakdown.bonus, eurosTime, eurosQuest,
+      euros, eurosBase: breakdown.base, eurosBonus: breakdown.bonus, eurosTime, eurosQuest, eurosEnemy,
       questLabel: manche.quest?.label ?? null, gridSize: manche.grid.size,
       bestWord: manche.found.reduce<FoundWord | null>((b, f) => (!b || f.score > b.score ? f : b), null),
       words: manche.found, missed,
+      grid: manche.grid, cursedWord: manche.cursedWord,
     };
     set({
       phase: 'recap',
@@ -340,7 +373,9 @@ export const useRunStore = create<Store>((set, get) => ({
     const next: RunState = { ...run, euros: run.euros - item.price };
     if (item.kind === 'relic') {
       const def = resolveRelics([item.id])[0];
-      if (run.relicIds.includes(item.id) && !def.stackable) return;
+      const count = run.relicIds.filter((r) => r === item.id).length;
+      if (count > 0 && !def.stackable) return;
+      if (def.charm && count >= MAX_SAME_CHARM) return;
       next.relicIds = [...run.relicIds, item.id];
     }
     if (item.kind === 'curse') next.pendingCurseIds = [...run.pendingCurseIds, item.id];
@@ -355,7 +390,7 @@ export const useRunStore = create<Store>((set, get) => ({
     const { run } = get();
     if (!run) return;
     const manche = run.currentManche + 1;
-    const condition = isConditionManche(manche) ? pickCondition(run.rng, run.lastConditionId) : null;
+    const condition = isConditionManche(manche) ? pickCondition(run.rng, run.lastConditionId, manche) : null;
     set({ run: { ...run, currentManche: manche, nextMutatorId: condition, lastConditionId: condition ?? run.lastConditionId }, shop: [] });
     get().startManche();
   },
@@ -373,6 +408,15 @@ export const useRunStore = create<Store>((set, get) => ({
     const spend = () => run.consumables.map((c) => (c.id === id ? { ...c, charges: c.charges - 1 } : c));
     if (def.kind === 'freeze') {
       set({ manche: { ...manche, timeLeft: manche.timeLeft + FREEZE_SECONDS }, run: { ...run, consumables: spend() } });
+    } else if (def.kind === 'grenade') {
+      if (!manche.enemies.some((e) => e.hp > 0)) return;
+      const enemies = manche.enemies.map((e) => ({ ...e, hp: Math.max(0, e.hp - GRENADE_DAMAGE) }));
+      const killed = enemies.filter((e, i) => e.hp === 0 && manche.enemies[i].hp > 0).length;
+      set({
+        manche: { ...manche, enemies, killsThisManche: manche.killsThisManche + killed },
+        run: { ...run, consumables: spend(), euros: run.euros + killed * ENEMY_BOUNTY, killCount: run.killCount + killed },
+        feedback: { kind: 'ok', word: 'Grenade', score: GRENADE_DAMAGE, bonus: killed ? 'ennemi vaincu · prime +30 €' : undefined, id: ++feedbackId },
+      });
     } else if (def.kind === 'inspiration') {
       const longest = [...manche.search.words].sort((a, b) => b.length - a.length)[0];
       const path = longest ? findPathForWord(manche.grid, longest) : null;
@@ -440,8 +484,14 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   draft.search = search;
   draft.difficulty = difficultyOf(rawPotential, size);
   draft.threshold = adjustThreshold(threshold(run.currentManche) * (mut?.thresholdMult ?? 1), draft.difficulty.factor);
-  draft.critters = spawnCritters(grid, run.snailRng);
-  draft.quest = pickQuest(grid, search, run.rng);
+  draft.critters = mut?.snails ? spawnCritters(grid, run.snailRng) : [];
+  draft.quest = mut?.quest ? pickQuest(grid, search, run.rng) : null;
+  if (mut?.enemy) {
+    const enemy = spawnEnemy(grid, search, run.rng, Math.max(20, Math.round(draft.threshold * ENEMY_HP_RATIO)));
+    draft.enemies = enemy ? [enemy] : [];
+  } else {
+    draft.enemies = [];
+  }
   runMancheStart(hooks, ctx);
 }
 
@@ -451,7 +501,7 @@ function shopInput(run: RunState): ShopInput {
     relicIds: run.relicIds,
     consumableIds: run.consumables.map((c) => c.id),
     pendingCurseIds: run.pendingCurseIds,
-    enemiesEnabled: false,
+    enemiesEnabled: true,
     tookEnemyMutator: run.tookEnemyMutator,
   };
 }

@@ -29,7 +29,7 @@ function setup(relicIds: string[], g = grid(['P O R', 'X T E', 'V I S'])) {
     grid: g, search: findAllWords(g, dict.trie), threshold: 100, difficulty: { potential: 0, factor: 1, mood: 'normale' }, found: [], timeLeft: 60, timeLeftBeforeWord: 60, elapsed: 30,
     cursedWord: null, cursedStart: null, radarCell: null, relicState: {}, bonuses: [],
     streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null,
-    inspiration: null, gridDirty: false, mutatorId: null,
+    inspiration: null, gridDirty: false, mutatorId: null, enemies: [], killsThisManche: 0,
   };
   const ctx = makeContext(createRng('t'), run, manche, dict);
   return { run, manche, ctx, relics: relics(relicIds) };

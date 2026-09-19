@@ -21,6 +21,8 @@ export interface MancheView {
   streak: { links: number; lastAt: number }; // série de mots rapprochés
   luckyLetter: string | null; // Lettre porte-bonheur : tirée parmi les lettres de la grille
   inspiration: { cells: number[]; until: number; length: number; first: string } | null; // consommable Inspiration
+  enemies: Enemy[];
+  killsThisManche: number;
   gridDirty: boolean; // un hook a modifié des lettres : le store recalcule les mots trouvables
   mutatorId: string | null;
   quest: Quest | null;
@@ -115,6 +117,10 @@ export const MAX_CONSUMABLES = 3;
 
 // Un mutateur modifie la manche à venir ; il partage les hooks de mot d'un relic.
 export interface Mutator extends Relic {
+  snails?: boolean;   // thème Escargots
+  quest?: boolean;    // thème Objectif
+  enemy?: boolean;    // thème Chasse
+  minManche?: number; // pas avant cette manche
   sizeDelta?: number;
   secondsDelta?: number;
   thresholdMult?: number;

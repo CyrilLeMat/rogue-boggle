@@ -1,5 +1,6 @@
 import { consumable, curse, relic } from '../data/registry';
 import { MAX_CONSUMABLES } from '../engine/hooks';
+import { MAX_SAME_CHARM } from '../engine/rules';
 import { shopRerollPrice, type ShopItem } from '../engine/shop';
 import { useRunStore } from '../state/runStore';
 import { RelicCard } from './RelicCard';
@@ -40,14 +41,15 @@ export function Shop() {
           const def = cardOf(item);
           const blockedInventory = item.kind === 'consumable' && inventoryFull;
           const tooPoor = run.euros < item.price;
-          const canBuy = !item.sold && !tooPoor && !blockedInventory;
           const count = item.kind === 'relic' ? owned(item.id) : 0;
+          const capped = 'charm' in def && !!def.charm && count >= MAX_SAME_CHARM;
+          const canBuy = !item.sold && !tooPoor && !blockedInventory && !capped;
           return (
             <div key={`${i}-${item.id}`} className={`shop-slot kind-${item.kind} ${'charm' in def && def.charm ? 'kind-charm' : ''} ${item.sold ? 'sold' : ''}`}>
               <span className="kind">{labelOf(item)}{count ? ` · déjà ×${count}` : ''}</span>
               <RelicCard relic={def} />
               <button className={`buy ${canBuy ? '' : 'secondary'}`} disabled={!canBuy} onClick={() => buy(i)}>
-                {item.sold ? '✓ Acheté' : blockedInventory ? 'Inventaire plein' : tooPoor ? `${item.price} € · pas assez` : `Acheter · ${item.price} €`}
+                {item.sold ? '✓ Acheté' : capped ? `Maximum ×${MAX_SAME_CHARM}` : blockedInventory ? 'Inventaire plein' : tooPoor ? `${item.price} € · pas assez` : `Acheter · ${item.price} €`}
               </button>
             </div>
           );

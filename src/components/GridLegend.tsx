@@ -19,6 +19,8 @@ export function GridLegend() {
   if (manche.grid.cells.flat().some((c) => c.isToxic)) lines.push({ icon: '☠', cls: 'toxic', text: 'Case toxique : −8 s à chaque utilisation' });
   if (flags.radarLongWord && manche.radarCell !== null) lines.push({ icon: '◌', cls: 'radar', text: 'Radar : la case qui brille appartient à un mot de 7 lettres ou plus' });
   if (manche.critters.length) lines.push({ icon: '🐌', cls: '', text: `Escargot : un mot qui passe par sa case compte double` });
+  const alive = manche.enemies.filter((e) => e.hp > 0);
+  if (alive.length) lines.push({ icon: '👾', cls: 'enemy', text: `Ennemi (${alive[0].hp} PV) : trace des mots à travers sa case, chaque mot lui retire son score. Abattu : +30 €, survivant : −15 €` });
   if (lines.length === 0) return null;
   return (
     <ul className="legend">

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'rea
 import { sfx } from '../audio/sfx';
 import { areAdjacent, posKey } from '../engine/adjacency';
 import { LETTER_VALUES } from '../engine/gridGenerator';
+import type { Enemy } from '../engine/hooks';
 import type { Grid as GridModel, Pos } from '../engine/types';
 
 // couleur de case = palier de valeur de la lettre (1 / 2-3 / 4 / 8+)
@@ -27,6 +28,7 @@ interface Props {
   onPickCell?: (pos: Pos) => void;
   critters?: Pos[];                      // les escargots, rendus en overlay pour glisser d'une case à l'autre
   onDoubleTap?: (pos: Pos) => void;      // Reroll de lettre sans passer par le bouton
+  enemies?: Enemy[];                     // thème Chasse : cases occupées + barre de PV
 }
 
 const DOUBLE_TAP_MS = 350;
@@ -34,7 +36,8 @@ const DOUBLE_TAP_MS = 350;
 const samePos = (a: Pos, b: Pos) => a[0] === b[0] && a[1] === b[1];
 const LONG_PRESS_MS = 500;
 
-export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, oracleCell, oracleLength, cursedCell, luckyLetter, inspiredCells, hintsFor, blurRadius, targeting, onPickCell, critters = [], onDoubleTap }: Props) {
+export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, oracleCell, oracleLength, cursedCell, luckyLetter, inspiredCells, hintsFor, blurRadius, targeting, onPickCell, critters = [], onDoubleTap, enemies = [] }: Props) {
+  const enemyAt = (r: number, c: number) => enemies.find((e) => e.hp > 0 && e.cells.some((p) => p[0] === r && p[1] === c));
   const [path, setPathState] = useState<Pos[]>([]);
   const lastTap = useRef<{ pos: Pos; at: number } | null>(null);
   const [hover, setHover] = useState<Pos | null>(null);
@@ -191,6 +194,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
               inspiredCells?.has(key) && 'inspired',
               (cell.cracks ?? 0) > 0 && 'cracked',
               (cell.gen ?? 0) > 0 && 'fresh',
+              enemyAt(r, c) && 'enemy',
               isBlurred(r, c) && 'blurred',
             ].filter(Boolean).join(' ');
             return (
@@ -201,6 +205,13 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, radarCell, orac
                 {oracleCell === key && <span className="badge badge-oracle" title="Oracle : ici commence le mot le plus long">{oracleLength}</span>}
                 {cursedCell === key && <span className="badge badge-cursed" title="Mot maudit : il commence ici">✦</span>}
                 {luckyLetter && !cell.isJoker && cell.letter[0] === luckyLetter && <span className="badge badge-lucky">♣</span>}
+                {(() => { const e = enemyAt(r, c); return e && e.cells[0][0] === r && e.cells[0][1] === c ? (
+                  <span className="enemy-tag" title={`${e.hp} / ${e.maxHp} PV`}>
+                    <span className="enemy-icon">👾</span>
+                    <span className="hp"><span style={{ width: `${(e.hp / e.maxHp) * 100}%` }} /></span>
+                    <span className="hp-text">{e.hp}</span>
+                  </span>
+                ) : null; })()}
                 {hint && samePos(hint.pos, [r, c]) && (
                   <div className="hint">{hint.words.length ? hint.words.join(' · ') : 'rien'}</div>
                 )}

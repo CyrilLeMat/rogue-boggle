@@ -39,7 +39,7 @@ Pas de meta-progression inter-run au MVP (tout le contenu est disponible dès la
 - **Écran « prêt »** entre la boutique et la manche : grille visible mais floutée, résumé (seuil, humeur, objectif, chrono), le chrono démarre au premier toucher.
 - **Run** : 10 manches. Manche 10 réussie → écran de félicitations (score final, relics, mots marquants). Pas de mode endless au MVP.
 - **Vies** : 3. Seuil non atteint à la fin du chrono → -1 vie, **on passe quand même à la manche suivante**. 0 vie → game over.
-- **Seuil** : porte sur le **score de la manche** (pas le cumul). Courbe de base `seuil(n) = 60 × 1.2^(n-1)` **[tuning]** → 60, 70, 90, 100, 120, 150, 180, 220, 260, 310, puis **ajustée à la difficulté de la grille** (3.1.1) et arrondie à la dizaine.
+- **Seuil** : porte sur le **score de la manche** (pas le cumul). Courbe de base `seuil(n) = 60 × 1.25^(n-1)` **[tuning]** → 60, 80, 90, 120, 150, 180, 230, 290, 360, 450 (×1.2 s'est révélé trivial en fin de run une fois les multiplicateurs empilés), puis **ajustée à la difficulté de la grille** (3.1.1) et arrondie à la dizaine.
 
 **Pourquoi ×1.2** : simulation de 150 runs par profil (`scripts/sim-runs.ts`). Un humain trouve un nombre à peu près constant de mots par manche (12-15 pour un joueur moyen, ~90 pts), donc une courbe exponentielle rapide exige des relics un multiplicateur énorme (×7 à la manche 10 avec ×1.3). Avec ×1.2 et le chrono par taille, un bon joueur finit la run sans relic une fois sur deux, un joueur moyen atteint la manche 6-7 et a besoin de la boutique : c'est le bon endroit pour les relics.
 
@@ -62,24 +62,24 @@ Mot **courant** = fréquence films ≥ **3 par million** (9 722 mots ; à 1/mill
 
 **Avant la manche 1** : le joueur choisit son **relic de départ** parmi 3 communs tirés au sort (hors relics d'attaque et relics à prérequis). Il donne une direction à la run dès la première grille.
 
-1. **Condition imposée** aux manches **3, 6 et 9** : une règle tirée au sort dans le pool (section 7.2), jamais deux fois la même d'affilée, annoncée sur l'écran « prêt ». Pas de choix : le choix de mutateur parmi 3 a été testé puis retiré (les variantes de pondération n'avaient pas d'intérêt perceptible, une contrainte imposée est plus lisible). Manches 5 et 10 (quand les ennemis existeront) : « Antre du boss ».
+1. **Un thème par manche** à partir de la manche 2 (section 7.2), tiré au sort, jamais deux fois le même d'affilée, annoncé sur l'écran « prêt ». La manche 1 est du Boggle pur. **Une seule couche spéciale à la fois** : retour playtest, escargots + objectif + mot maudit + condition s'empilaient trop. Les escargots et l'objectif de manche ne sont donc plus permanents, ce sont des thèmes. Le choix de mutateur parmi 3 a été testé puis retiré.
 2. Génération de la grille (mutateur + relics `onGridGenerate` + malédictions actives).
 3. Manche chronométrée. Dès que le seuil est atteint, un bouton **« Terminer la manche »** permet de s'arrêter : chaque tranche de **5 s restantes rapporte 1 €** **[tuning]**, affiché en direct sur le bouton. Rester jusqu'au bout reste rentable si on dépasse le seuil de plus de 1 pt par 5 s.
 4. **Récap** : mots trouvés, score de la manche vs seuil, 5 meilleurs mots manqués (satisfaction Boggle classique), euros gagnés (plancher, dépassement animé, objectif, fin anticipée, relics).
    **Écran de fin** : tableau manche par manche (grille, score, seuil, meilleur mot, euros), relics, mots marquants, seed copiable et « Rejouer cette seed ».
 5. **Boutique** (section 6), puis manche suivante.
 
-### 3.2.1 Les escargots (présents dès la manche 1)
+### 3.2.1 Les escargots (thème « Escargots »)
 
-Des escargots se promènent sur la grille : **1 en 4×4, 2 en 5×5 et 6×6, 3 en 7×7** (sinon la cible s'efface avec la taille : ~25 % des mots touchés en 4×4, 8 % en 7×7 avec un seul). Chacun occupe une case, avance d'une case adjacente toutes les **6 s** **[tuning]** (décalés entre eux), jamais sur un joker ni sur un autre escargot. Un mot dont le chemin passe par une de leurs cases reçoit un **×2 final par escargot touché**, après quoi l'escargot saute sur une case voisine hors du chemin. Pas de PV : c'est une cible mobile permanente, indépendante de la couche ennemis (7.5). Leurs déplacements tirent dans un **RNG dédié** (`seed + '-snail'`) : ils dépendent du timing du joueur et ne doivent pas désynchroniser grilles et boutiques d'une même seed.
+Quand le thème est tiré, des escargots se promènent sur la grille : **1 en 4×4, 2 en 5×5 et 6×6, 3 en 7×7** (sinon la cible s'efface avec la taille : ~25 % des mots touchés en 4×4, 8 % en 7×7 avec un seul). Chacun occupe une case, avance d'une case adjacente toutes les **6 s** **[tuning]** (décalés entre eux), jamais sur un joker ni sur un autre escargot. Un mot dont le chemin passe par une de leurs cases reçoit un **×2 final par escargot touché**, après quoi l'escargot saute sur une case voisine hors du chemin. Pas de PV : c'est une cible mobile permanente, indépendante de la couche ennemis (7.5). Leurs déplacements tirent dans un **RNG dédié** (`seed + '-snail'`) : ils dépendent du timing du joueur et ne doivent pas désynchroniser grilles et boutiques d'une même seed.
 
 ### 3.2.2 La série
 
 Chaque mot validé moins de **5 s** après le précédent ajoute un maillon ; le multiplicateur final vaut `1 + 0.1 × maillons` plafonné à **×1.5** (5 maillons) **[tuning]**. Une jauge visible montre le multiplicateur et le temps restant pour enchaîner. Le relic Combo élargit la fenêtre à 8 s et le plafond à ×2. Récompense le rythme, lisible d'un coup d'œil.
 
-### 3.2.3 L'objectif de manche
+### 3.2.3 L'objectif de manche (thème « Objectif »)
 
-Un mini-objectif est tiré à chaque manche parmi ceux réalisables dans la grille, payé en euros à la fin : un mot de (taille+1) lettres (+20 €), trois mots de 5+ lettres (+15 €), trois mots commençant par une lettre donnée (+15 €), un mot avec lettre rare (+15 €), N mots dans la manche (+15 €, N = 8 + 2 par palier de taille). Progression affichée à côté de la jauge de série.
+Quand le thème est tiré, un mini-objectif est tiré parmi ceux réalisables dans la grille, payé en euros à la fin : un mot de (taille+1) lettres (+20 €), trois mots de 5+ lettres (+15 €), trois mots commençant par une lettre donnée (+15 €), un mot avec lettre rare (+15 €), N mots dans la manche (+15 €, N = 8 + 2 par palier de taille). Progression affichée à côté de la jauge de série.
 
 ### 3.3 Saisie — souris uniquement
 
@@ -413,7 +413,7 @@ Malédictions : 10 € (Vision trouble, Dette de temps, Infestation), 15 € (Un
 - Un relic déjà possédé n'est pas proposé. Un relic avec `requires` n'est proposé que si le prérequis est possédé.
 - Pas de plafond de relics.
 - **4 emplacements** : 2 tirés parmi relics + consommables, 1 parmi malédictions + consommables, et **1 charme** toujours présent (5-8 €).
-- **Charmes** : petits relics empilables générés depuis des gabarits paramétrés (`src/data/charms.ts`), l'id encode le gabarit : `charme-lettre-E` (+10 % sur les mots contenant un E), `charme-longueur-4` (+15 % sur les 4 lettres), `charme-categorie-NOM` (+10 % sur les noms), `charme-finale-S`, `charme-initiale-voyelle`, `charme-plat-1` (+1 pt par mot), `charme-chrono-3` (+3 s par manche), `charme-long-6` (+20 % sur 6+). Plusieurs exemplaires se cumulent (multiplicatif). Réponse au retour « pas grand-chose à dépenser ».
+- **Charmes** (3 exemplaires max d'un même charme **[tuning]**, garde-fou contre les fins de run triviales) : petits relics empilables générés depuis des gabarits paramétrés (`src/data/charms.ts`), l'id encode le gabarit : `charme-lettre-E` (+10 % sur les mots contenant un E), `charme-longueur-4` (+15 % sur les 4 lettres), `charme-categorie-NOM` (+10 % sur les noms), `charme-finale-S`, `charme-initiale-voyelle`, `charme-plat-1` (+1 pt par mot), `charme-chrono-3` (+3 s par manche), `charme-long-6` (+20 % sur 6+). Plusieurs exemplaires se cumulent (multiplicatif). Réponse au retour « pas grand-chose à dépenser ».
 - **Changer les articles** : bouton en boutique, **5 €** le premier changement de la visite, puis 10, 15… **[tuning]**. Les 4 emplacements sont retirés, achetés ou non : un joueur riche enchaîne achats et changements (avec 1 000 €, une dizaine d'objets par visite). Le relic **Brocanteur** offre 2 changements gratuits par visite.
 - Consommables : 3 emplacements max, achat = recharge des charges.
 - Malédictions : achetées en boutique, appliquées à la **prochaine manche uniquement**.
@@ -470,21 +470,24 @@ Les relics 24-29 ne sont proposés en boutique qu'à partir de la manche 2, et l
 
 **Coupé du MVP** : Chasseur de chaîne / Famille lexicale (lemmatisation), Grammairien (multi-catégories).
 
-### 7.2 Conditions de manche (5) — imposées aux manches 3, 6, 9
+### 7.2 Thèmes de manche (8) — un par manche dès la manche 2
 
-Une condition partage les hooks de mot d'un relic et peut en plus changer la taille, le chrono, le seuil et post-traiter la grille. Elle apparaît comme une puce bleue dans la barre des relics et sur l'écran « prêt ». **Retirés** : Dense voyelles, Dense consonnes (imperceptibles), Grille XXL.
+Un thème partage les hooks de mot d'un relic et peut en plus changer la taille, le chrono, le seuil, post-traiter la grille, ou activer une couche (escargots, objectif, ennemi). Il apparaît comme une puce bleue dans la barre des relics et sur l'écran « prêt ». **Retirés** : Dense voyelles, Dense consonnes (imperceptibles), Grille XXL.
 
 | # | Nom | Effet |
 |---|---|---|
+| A | Escargots | Voir 3.2.1 |
+| B | Objectif | Voir 3.2.3 |
+| C | Chasse | Un ennemi (voir 7.5) : Limace 1 case, Tank 2 cases en 6×6+, PV = seuil × 0.6. Abattu : +30 € ; survivant : −15 € sur les gains |
 | 1 | Grille géante | +1 de taille par rapport à la manche, plafonné à **7×7**, chrono adapté. Seule voie vers le 7×7 |
 | 5 | Grille toxique | 2 cases toxiques visibles (marquées) : chaque utilisation dans un mot validé coûte -8 s ; +50 % sur tous les mots de la manche |
 | 8 | **Terre fracturée** | Chaque case utilisée dans un mot valide se **fissure** (rendu visuel) ; à la **2e utilisation** elle se brise et révèle une nouvelle lettre (animation). Les mots trouvables sont recalculés. Pousse à réfléchir avant de tracer : une lettre clé peut disparaître. Idée joueur |
 | 9 | Sprint | −30 s, seuil −30 % |
-| 10 | Marathon | +45 s, seuil +50 % |
+| 10 | Marathon | +45 s, seuil +40 %. Pas avant la manche 4, comme Grille géante |
 | 6 | Grille infestée | 2 à 3 ennemis tirés dans le pool (hors boss). Chaque ennemi survivant en fin de manche mord : -10 € sur les euros de la manche (min 0) |
 | 7 | Antre du boss | Manches 5 et 10 uniquement, toujours proposé. 1 boss. Tué → prime + **choix d'un relic gratuit parmi 3**. Survivant → -1 vie en plus de l'éventuel échec de seuil |
 
-**Coupé** : Sauts, Double grille (adjacence inter-grilles non définie, moteur à part). Le pool reste petit : avec un tirage de 3, le joueur reverra vite les mêmes. Candidats faciles pour élargir après le premier playtest : « Sprint » (60 s, seuil -30 %), « Lettres chères » (poids des lettres ≥ 4 pts ×3), « Marathon » (150 s, seuil +50 %).
+**Coupé** : Sauts, Double grille (adjacence inter-grilles non définie, moteur à part).
 
 ### 7.3 Consommables (5)
 
@@ -507,6 +510,8 @@ Une condition partage les hooks de mot d'un relic et peut en plus changer la tai
 | 5 | Peau dure | 15 | Tous les ennemis ont PV ×2 | Primes ×3, chaque mort donne +5 s |
 
 ### 7.5 Ennemis — couche optionnelle
+
+**État : première version implémentée** via le thème « Chasse » (7.2) : un ennemi statique (Limace 1 case, Tank 2 cases sur 6×6+), dégâts = score final du mot traversant, Harpon (25 % à distance), Bretteur, Vampire, Chasseur de primes, Collectionneur de crânes et Grenade actifs. Les relics d'attaque sont proposés en boutique à partir de la manche 2. Le reste de cette section (types mobiles, boss, mutateur Infestation) reste à faire.
 
 **Principe** : un ennemi occupe une ou plusieurs cases contiguës, affiché par-dessus la grille avec une barre de PV. Un mot validé dont le chemin passe par une de ses cases lui inflige **le score final du mot** en dégâts. Les cases d'un ennemi restent traçables normalement (sauf Mur). Le mot compte aussi pour le seuil : blesser un ennemi n'a aucun coût, c'est le placement qui contraint.
 

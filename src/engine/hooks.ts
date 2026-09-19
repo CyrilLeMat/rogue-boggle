@@ -84,6 +84,13 @@ export interface Relic {
   gridRerolls?: number; // Sourcier : nouvelles grilles possibles sur l'écran « prêt »
   streakWindow?: number; // Combo : fenêtre de série élargie
   streakMaxLinks?: number;
+  streakStep?: number;   // gain de multiplicateur par maillon d'élan
+  // Personnalités d'élève (src/data/archetypes.ts)
+  archetype?: boolean;   // jamais vendu à la coopérative
+  flavor?: string;       // la phrase de caractère
+  extraLives?: number;   // bons points supplémentaires à la rentrée
+  thresholdMult?: number; // la maîtresse en attend plus (ou moins) de toi
+  eurosMult?: number;    // billes gagnées en fin de dictée
   onWordFound?: (word: string, ctx: RunContext) => ScoreModifier | void;      // pur : appelé pour chaque candidat
   onWordAccepted?: (found: FoundWord, ctx: RunContext) => void;               // effets de bord (chrono…)
   onGridGenerate?: (grid: Grid, ctx: RunContext) => Grid;

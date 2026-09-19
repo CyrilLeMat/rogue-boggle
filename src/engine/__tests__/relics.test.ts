@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { ARCHETYPES, ARCHETYPE_BY_ID } from '../../data/archetypes';
 import { RELICS, RELIC_BY_ID } from '../../data/relics';
-import { relics } from '../../data/registry';
+import { relic, relics } from '../../data/registry';
 import { buildDictionary } from '../dictionary';
 import type { MancheView, RunView } from '../hooks';
-import { collectModifiers, makeContext, runGridGenerate, runMancheEnd, runRunEnd, runWordAccepted } from '../hookRunner';
+import { collectModifiers, eurosMultiplier, extraLives, makeContext, mancheSeconds, runGridGenerate, runMancheEnd, runRunEnd, runWordAccepted, streakRules, thresholdMultiplier } from '../hookRunner';
 import { makeCell } from '../gridGenerator';
 import { createRng } from '../rng';
 import { applyModifiers } from '../scoring';
@@ -140,5 +141,30 @@ describe('side-effect relics', () => {
     const ctx2 = makeContext(createRng('a'), run, m, dictLong);
     RELIC_BY_ID.get('amorce-sure')!.onMancheStart!(ctx2);
     expect(m.amorce).toEqual({ prefix: 'PORT', length: 8, start: 0 });
+  });
+});
+
+describe('archetypes', () => {
+  it('are never sold at the coopérative and each has flavor + effect text', () => {
+    for (const a of ARCHETYPES) {
+      expect(a.archetype).toBe(true);
+      expect(a.flavor).toBeTruthy();
+      expect(a.description).toBeTruthy();
+      expect(RELIC_BY_ID.has(a.id)).toBe(false); // absent du pool de boutique
+      expect(relic(a.id).name).toBe(a.name);     // mais résolu par le registre
+    }
+  });
+  it('the chouchou trades score for billes, the redoublant lives for a harder note', () => {
+    const chouchou = ARCHETYPE_BY_ID.get('chouchou')!;
+    expect(applyModifiers(100, [chouchou.onWordFound!('MOT', {} as never)!])).toBe(125);
+    expect(eurosMultiplier([chouchou])).toBe(0.75);
+    const redoublant = ARCHETYPE_BY_ID.get('redoublant')!;
+    expect(extraLives([redoublant])).toBe(1);
+    expect(thresholdMultiplier([redoublant])).toBe(1.12);
+  });
+  it('the petit dernier doubles the streak step and shortens the clock', () => {
+    const petit = ARCHETYPE_BY_ID.get('petit-dernier')!;
+    expect(streakRules([petit], { window: 5, maxLinks: 5, step: 0.1 })).toEqual({ window: 7, maxLinks: 5, step: 0.2 });
+    expect(mancheSeconds(90, [petit])).toBe(80);
   });
 });

@@ -4,14 +4,14 @@ import { isConditionManche, mutatorGridSize, pickCondition } from '../data/mutat
 import { ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
-import { RELICS } from '../data/relics';
+import { ARCHETYPES, STARTING_PURSE } from '../data/archetypes';
 import type { Mood } from '../engine/difficulty';
 import { CRITTER_MOVE_SECONDS, CRITTER_MULTIPLIER, moveCritter, spawnCritters, touchedCritters, type Critter } from '../engine/critter';
 import { pickQuest, updateQuest } from '../engine/quests';
 import { SAGE_CONSOLATION, SAGE_HINT_RATIO, createSageChallenge, isCorrect, isSageManche, sageReward, wordFromPath, type SageChallenge } from '../engine/sage';
 import { adjustThreshold, difficultyOf } from '../engine/difficulty';
 import { FRENCH_STANDARD_WEIGHTS, generateGrid, sampleLetter } from '../engine/gridGenerator';
-import { collectModifiers, makeContext, mancheSeconds, runGridGenerate, runInvalidWord, runMancheEnd, runMancheStart, runRunEnd, runWordAccepted, streakRules, uiFlags } from '../engine/hookRunner';
+import { collectModifiers, eurosMultiplier, extraLives, makeContext, mancheSeconds, runGridGenerate, runInvalidWord, runMancheEnd, runMancheStart, runRunEnd, runWordAccepted, streakRules, thresholdMultiplier, uiFlags } from '../engine/hookRunner';
 import { MAX_CONSUMABLES, type MancheView, type RunView } from '../engine/hooks';
 import { resolvePath, type FoundWord, type SubmitResult } from '../engine/manche';
 import { applyModifiers, baseScore } from '../engine/scoring';
@@ -153,9 +153,7 @@ export const useRunStore = create<Store>((set, get) => ({
 
   startRun(seed = randomSeed()) {
     const rng = createRng(seed);
-    // Bouclier de case est inutile sans mutateur toxique : pas en choix de départ.
-    const pool = RELICS.filter((r) => r.rarity === 'common' && !r.enemyRelic && !r.requires && r.id !== 'bouclier');
-    const startChoices = rng.shuffle(pool).slice(0, 3).map((r) => r.id);
+    const startChoices = rng.shuffle(ARCHETYPES).slice(0, 3).map((a) => a.id);
     set({
       phase: 'intro',
       run: {
@@ -176,7 +174,16 @@ export const useRunStore = create<Store>((set, get) => ({
   pickStartRelic(id) {
     const { run, startChoices } = get();
     if (!run || !startChoices.includes(id)) return;
-    set({ run: { ...run, relicIds: [id] }, startChoices: [] });
+    const hooks = resolveRelics([id]);
+    set({
+      run: {
+        ...run,
+        relicIds: [id],
+        lives: run.lives + extraLives(hooks),
+        euros: run.euros + (STARTING_PURSE[id] ?? 0),
+      },
+      startChoices: [],
+    });
     get().startManche();
   },
 
@@ -224,9 +231,9 @@ export const useRunStore = create<Store>((set, get) => ({
     const ctx = makeContext(run.rng, run, cloneManche(manche), dictionary);
     const already = new Set(manche.found.map((f) => f.word));
     const touched = touchedCritters(path, manche.critters);
-    const rules = streakRules(hooks, { window: STREAK_WINDOW, maxLinks: STREAK_MAX_LINKS });
+    const rules = streakRules(hooks, { window: STREAK_WINDOW, maxLinks: STREAK_MAX_LINKS, step: STREAK_STEP });
     const links = manche.elapsed - manche.streak.lastAt <= rules.window ? manche.streak.links + 1 : 1;
-    const streakMult = 1 + STREAK_STEP * Math.min(links - 1, rules.maxLinks);
+    const streakMult = 1 + rules.step * Math.min(links - 1, rules.maxLinks);
     const candidates = candidatesForPath(manche.grid, path, dictionary.trie);
     if (!candidates.length) return { word: null, score: 0, base: 0, parts: [], duplicate: false };
     const fresh = candidates.filter((w) => !already.has(w));
@@ -261,9 +268,9 @@ export const useRunStore = create<Store>((set, get) => ({
     const touched = touchedCritters(path, manche.critters);
     const extra: { final: number }[] = touched.map(() => ({ final: CRITTER_MULTIPLIER }));
     // série : un maillon de plus si le mot précédent est assez récent
-    const rules = streakRules(hooks, { window: STREAK_WINDOW, maxLinks: STREAK_MAX_LINKS });
+    const rules = streakRules(hooks, { window: STREAK_WINDOW, maxLinks: STREAK_MAX_LINKS, step: STREAK_STEP });
     const links = manche.elapsed - manche.streak.lastAt <= rules.window ? manche.streak.links + 1 : 1;
-    const streakMult = 1 + STREAK_STEP * Math.min(links - 1, rules.maxLinks);
+    const streakMult = 1 + rules.step * Math.min(links - 1, rules.maxLinks);
     if (streakMult > 1) extra.push({ final: streakMult });
     const result = resolvePath(manche.grid, path, dictionary, already, (w) => collectModifiers(w, hooks, ctx, extra), manche.elapsed);
     const fb = { kind: result.kind, id: ++feedbackId, path } as NonNullable<Store['feedback']>;
@@ -367,7 +374,8 @@ export const useRunStore = create<Store>((set, get) => ({
     const eurosQuest = manche.quest?.done ? manche.quest.reward : 0;
     const survivors = manche.enemies.filter((e) => e.hp > 0).length;
     const eurosEnemy = -Math.min(survivors * ENEMY_SURVIVOR_PENALTY, breakdown.total + eurosTime + eurosQuest);
-    const euros = runMancheEnd(hooks, ctx, success, breakdown.total + eurosTime + eurosQuest + eurosEnemy);
+    const raw = breakdown.total + eurosTime + eurosQuest + eurosEnemy;
+    const euros = Math.round(runMancheEnd(hooks, ctx, success, raw) * eurosMultiplier(hooks));
     const foundSet = new Set(manche.found.map((f) => f.word));
     const missed = [...manche.search.words]
       .filter((w) => !foundSet.has(w))
@@ -586,7 +594,7 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   draft.grid = grid;
   draft.search = search;
   draft.difficulty = difficultyOf(rawPotential, size);
-  draft.threshold = adjustThreshold(threshold(run.currentManche) * (mut?.thresholdMult ?? 1), draft.difficulty.factor);
+  draft.threshold = adjustThreshold(threshold(run.currentManche) * (mut?.thresholdMult ?? 1) * thresholdMultiplier(resolveRelics(run.relicIds)), draft.difficulty.factor);
   draft.critters = mut?.snails ? spawnCritters(grid, run.snailRng) : [];
   draft.quest = mut?.quest ? pickQuest(grid, search, run.rng) : null;
   // Le cancre copie : 1 cancre ; punition Classe de cancres : +2 (même hors leçon) ; Cancres têtus : endurance ×1.5

@@ -8,10 +8,10 @@ export function StreakGauge() {
   const manche = useRunStore((s) => s.manche);
   const relicIds = useRunStore((s) => s.run?.relicIds ?? []);
   if (!manche) return null;
-  const rules = streakRules(relics(relicIds), { window: STREAK_WINDOW, maxLinks: STREAK_MAX_LINKS });
+  const rules = streakRules(relics(relicIds), { window: STREAK_WINDOW, maxLinks: STREAK_MAX_LINKS, step: STREAK_STEP });
   const since = manche.elapsed - manche.streak.lastAt;
   const alive = manche.streak.links > 0 && since <= rules.window;
-  const nextMult = 1 + STREAK_STEP * Math.min(manche.streak.links, rules.maxLinks);
+  const nextMult = 1 + rules.step * Math.min(manche.streak.links, rules.maxLinks);
   const pct = alive ? Math.max(0, 1 - since / rules.window) * 100 : 0;
   return (
     <div className={`streak ${alive ? 'alive' : ''}`} title="Enchaîne les mots sans reprendre ton souffle">

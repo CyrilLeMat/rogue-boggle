@@ -60,7 +60,20 @@ Mot **courant** = fréquence films ≥ **3 par million** (9 722 mots ; à 1/mill
 
 ### 3.2 Déroulé d'une manche
 
-**Avant la manche 1** : le joueur choisit son **relic de départ** parmi 3 communs tirés au sort (hors relics d'attaque et relics à prérequis). Il donne une direction à la run dès la première grille.
+**Avant la dictée 1** : le joueur choisit une **personnalité d'élève** parmi 3 tirées au sort (`src/data/archetypes.ts`). Pas un objet : un caractère, avec un portrait, une phrase de caractère et un effet franc assorti d'une contrepartie. C'est ce qui donne son style à l'année. Les personnalités ne sont jamais vendues à la coopérative.
+
+| Personnalité | Effet | Contrepartie |
+|---|---|---|
+| Le chouchou de la maîtresse | +25 % sur tous les mots | −25 % de billes (les autres te rackettent) |
+| Le fond de la classe | Le mot le plus long est souligné 6 s au début de chaque dictée | — |
+| Le footballeur | +25 s de chrono | −15 % sur les mots (la tête est au match) |
+| Le redoublant | +1 bon point à la rentrée | Note à atteindre +12 % |
+| Le petit dernier | Élan ×2 plus rapide, fenêtre 7 s | −10 s de chrono |
+| Le rat de billes | +50 % de billes | −10 % sur les mots |
+| La rêveuse | +60 % sur les mots de 6+ lettres | −40 % sur les mots de 3 lettres |
+| Le cancre repenti | 20 billes d'avance | — (profil neutre) |
+
+Leviers ajoutés au type `Relic` pour les servir : `extraLives`, `thresholdMult`, `eurosMult`, `streakStep`, plus `archetype` et `flavor`.
 
 1. **Un thème par manche** à partir de la manche 2 (section 7.2), tiré au sort, jamais deux fois le même d'affilée, annoncé sur l'écran « prêt ». La manche 1 est du Boggle pur. **Une seule couche spéciale à la fois** : retour playtest, escargots + objectif + mot maudit + condition s'empilaient trop. Les escargots et l'objectif de manche ne sont donc plus permanents, ce sont des thèmes. Le choix de mutateur parmi 3 a été testé puis retiré.
 2. Génération de la grille (mutateur + relics `onGridGenerate` + malédictions actives).

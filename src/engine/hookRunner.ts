@@ -69,12 +69,17 @@ export function runRunEnd(relics: Relic[], ctx: RunContext): number {
   return relics.reduce((bonus, r) => bonus + (r.onRunEnd?.(ctx) ?? 0), 0);
 }
 
-export function streakRules(relics: Relic[], base: { window: number; maxLinks: number }) {
+export function streakRules(relics: Relic[], base: { window: number; maxLinks: number; step: number }) {
   return relics.reduce((acc, r) => ({
     window: Math.max(acc.window, r.streakWindow ?? 0),
     maxLinks: Math.max(acc.maxLinks, r.streakMaxLinks ?? 0),
+    step: Math.max(acc.step, r.streakStep ?? 0),
   }), base);
 }
+
+export const thresholdMultiplier = (relics: Relic[]) => relics.reduce((m, r) => m * (r.thresholdMult ?? 1), 1);
+export const eurosMultiplier = (relics: Relic[]) => relics.reduce((m, r) => m * (r.eurosMult ?? 1), 1);
+export const extraLives = (relics: Relic[]) => relics.reduce((n, r) => n + (r.extraLives ?? 0), 0);
 
 export function uiFlags(relics: Relic[]) {
   return relics.reduce((acc, r) => ({ ...acc, ...r.ui }), {} as NonNullable<Relic['ui']>);

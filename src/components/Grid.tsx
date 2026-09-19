@@ -32,13 +32,16 @@ interface Props {
   onPathChange?: (path: Pos[]) => void;  // pour la prévisualisation du score
   preview?: WordPreview | null;
   flash?: { id: number; path: Pos[]; score: number; bonus?: string } | null; // dernier mot validé : lettres qui s'allument, score qui s'envole
+  lockedCells?: Set<number>;             // Sage : cases grisées, hors du tracé
+  plain?: boolean;                       // Sage : ni couleur par valeur ni chiffre (pas de score ici)
 }
 
 const DOUBLE_TAP_MS = 350;
 
 const samePos = (a: Pos, b: Pos) => a[0] === b[0] && a[1] === b[1];
 
-export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, oracleLength, cursedCell, luckyLetter, amorceCell, inspiredCells, blurRadius, targeting, onPickCell, critters = [], onDoubleTap, enemies = [], onPathChange, preview, flash }: Props) {
+export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, oracleLength, cursedCell, luckyLetter, amorceCell, inspiredCells, blurRadius, targeting, onPickCell, critters = [], onDoubleTap, enemies = [], onPathChange, preview, flash, lockedCells, plain }: Props) {
+  const isLocked = (r: number, c: number) => lockedCells?.has(posKey(r, c)) ?? false;
   const enemyAt = (r: number, c: number) => enemies.find((e) => e.hp > 0 && e.cells.some((p) => p[0] === r && p[1] === c));
   const [path, setPathState] = useState<Pos[]>([]);
   const lastTap = useRef<{ pos: Pos; at: number } | null>(null);
@@ -106,7 +109,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
     blurRadius !== undefined && (!focus || Math.max(Math.abs(focus[0] - r), Math.abs(focus[1] - c)) > blurRadius);
 
   const start = (pos: Pos) => {
-    if (disabled) return;
+    if (disabled || isLocked(pos[0], pos[1])) return;
     dragging.current = true;
     setPath([pos]);
     sfx.select(0);
@@ -118,6 +121,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
     const last = p[p.length - 1];
     if (!last) return;
     if (samePos(last, pos)) return;
+    if (isLocked(pos[0], pos[1])) return;
     if (p.length >= 2 && samePos(p[p.length - 2], pos)) { setPath(p.slice(0, -1)); sfx.unselect(); return; }
     if (p.some((q) => samePos(q, pos))) return;
     if (!areAdjacent(last, pos)) return;
@@ -136,7 +140,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
     <div className="grid-wrap">
       <div className={`current-word ${state}`}>
         <span className="cw-word">{state === 'ok' && preview?.word ? preview.word : word || ' '}</span>
-        {state === 'ok' && preview && (
+        {state === 'ok' && preview && preview.score > 0 && (
           <span className="cw-score">
             <span className="cw-total">+{preview.score}</span>
             <span className="cw-parts">{preview.parts.map((p) => <span key={p.label} className={`cw-part ${p.label}`}>{p.value} <small>{p.label}</small></span>)}</span>
@@ -193,7 +197,8 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
             const key = posKey(r, c);
             const cls = [
               'cell',
-              !cell.isJoker && valueTier(cell.letter),
+              !cell.isJoker && !plain && valueTier(cell.letter),
+              isLocked(r, c) && 'dim',
               idx >= 0 && 'selected',
               idx === path.length - 1 && idx >= 0 && 'head',
               cell.isJoker && 'joker',
@@ -210,7 +215,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
             return (
               <div key={`${r}-${c}-${cell.gen ?? 0}`} className={cls} data-pos={`${r}-${c}`}>
                 <span className="letter">{cell.isJoker ? '★' : cell.letter}</span>
-                {!cell.isJoker && (LETTER_VALUES[cell.letter] ?? 1) >= 2 && <span className="value">{LETTER_VALUES[cell.letter]}</span>}
+                {!plain && !cell.isJoker && (LETTER_VALUES[cell.letter] ?? 1) >= 2 && <span className="value">{LETTER_VALUES[cell.letter]}</span>}
                 {fi >= 0 && flash && <span key={`flash-${flash.id}`} className="flash-ring" style={{ animationDelay: `${fi * 45}ms` }} />}
                 {cell.isToxic && <span className="badge badge-toxic" title="Case toxique : −8 s si utilisée">☠</span>}
                 {oracleCell === key && <span className="badge badge-oracle" title="Oracle : ici commence le mot le plus long">{oracleLength}</span>}

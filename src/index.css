@@ -183,28 +183,21 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .cartable-list li.charm strong { color: var(--gold); }
 
 .sage { max-width: 680px; }
-.sage-head { display: grid; grid-template-columns: 220px 1fr; gap: 16px; align-items: start; text-align: left; }
+.sage-head { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; text-align: left; }
 .sage-frame { flex: none; }
 .sage-art { background: #efe7da; }
 .sage-murmur { animation: reveal 0.6s ease-out 0.6s both; }
 .sage-speech h2 { margin-bottom: 6px; }
 .sage-speech p { margin: 4px 0; font-size: 0.92rem; }
-.sage-ask { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); margin-top: 8px !important; }
-.sage-timer { margin: 16px 0 12px; }
-.sage-answer { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 12px; background: #2f5d4b; border-radius: 10px; margin-bottom: 14px; }
-.sage-answer.wrong { animation: shake 0.3s ease-in-out 2; }
-.sage-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 12px; }
-.tile {
-  width: 46px; height: 52px; padding: 0; border-radius: 8px; font-size: 1.5rem; font-weight: 800;
-  font-family: 'Nunito', sans-serif; display: inline-flex; align-items: center; justify-content: center;
-  background: #fdf6e8; color: var(--text); border: 2px solid #d8c9a8; box-shadow: 0 3px 0 #d8c9a8;
-}
-.tile:hover:not(:disabled) { background: #fff; transform: translateY(-2px); }
-.tile.pool.used { opacity: 0.25; box-shadow: none; transform: none; }
-.tile.slot { background: rgba(255, 255, 255, 0.08); border: 2px dashed rgba(246, 241, 228, 0.5); box-shadow: none; color: #f6f1e4; }
-.tile.slot.filled { background: #fdf6e8; color: var(--text); border-style: solid; border-color: #d8c9a8; }
-.tile.slot.locked { border-color: var(--gold); background: #fff3c4; }
-.sage-answer.long .tile, .sage-pool.long .tile { width: 38px; height: 44px; font-size: 1.2rem; }
+.sage-ask { font-family: 'Patrick Hand', cursive; font-size: 1.2rem; color: var(--accent-deep); margin-top: 8px !important; }
+.sage-timer { margin: 16px 0 10px; }
+.sage-board { max-width: 380px; margin: 0 auto 8px; }
+/* l'indice du sage : la case de départ, bien visible */
+.sage-board .cell.amorce { box-shadow: 0 0 0 3px var(--ok), 0 0 16px 3px rgba(95, 174, 131, 0.5); }
+.sage-board .cell.amorce::after { width: 10px; height: 10px; }
+/* cases muettes : présentes, lisibles, mais hors du chemin */
+.cell.dim { background: #ece7de !important; color: #b5aea3; box-shadow: none; cursor: default; }
+.cell.dim:hover { transform: none; }
 .sage-outcome { margin: 10px 0; }
 .sage-outcome .big { margin: 0 0 6px; letter-spacing: 0.12em; }
 .sage-outcome .euros { color: var(--gold); font-weight: 800; font-size: 1.2rem; }
@@ -447,12 +440,11 @@ button.small { padding: 6px 14px; font-size: 0.8rem; }
   main { padding: 12px 10px 12px 22px; }
   .title { font-size: 2.4rem; }
   .strip { grid-template-columns: 1fr; }
-  .sage-head { grid-template-columns: 1fr; }
-  .sage-frame { max-width: 220px; margin: 0 auto; }
+  .sage-head { grid-template-columns: 1fr; gap: 10px; }
+  .sage-frame { max-width: 180px; margin: 0 auto; }
   .sage-speech { text-align: center; }
-  .tile { width: 40px; height: 46px; font-size: 1.25rem; }
-  .sage-answer.long .tile, .sage-pool.long .tile { width: 30px; height: 36px; font-size: 1rem; }
-  .sage-answer { padding: 8px; gap: 4px; }
+  .sage-speech p { font-size: 0.85rem; margin: 2px 0; }
+  .sage-ask { font-size: 1.05rem; }
   .frame.seen, .frame.later { display: none; }
   .frame.current { transform: none; }
   .intro-text { font-size: 1.15rem; min-height: 0; }

@@ -8,7 +8,7 @@ import { RELICS } from '../data/relics';
 import type { Mood } from '../engine/difficulty';
 import { CRITTER_MOVE_SECONDS, CRITTER_MULTIPLIER, moveCritter, spawnCritters, touchedCritters, type Critter } from '../engine/critter';
 import { pickQuest, updateQuest } from '../engine/quests';
-import { SAGE_CONSOLATION, SAGE_HINT_RATIO, applyHint, createSageChallenge, formedWord, isCorrect, isSageManche, sageReward, type SageChallenge } from '../engine/sage';
+import { SAGE_CONSOLATION, SAGE_HINT_RATIO, createSageChallenge, isCorrect, isSageManche, sageReward, wordFromPath, type SageChallenge } from '../engine/sage';
 import { adjustThreshold, difficultyOf } from '../engine/difficulty';
 import { FRENCH_STANDARD_WEIGHTS, generateGrid, sampleLetter } from '../engine/gridGenerator';
 import { collectModifiers, makeContext, mancheSeconds, runGridGenerate, runInvalidWord, runMancheEnd, runMancheStart, runRunEnd, runWordAccepted, streakRules, uiFlags } from '../engine/hookRunner';
@@ -107,8 +107,7 @@ interface Store {
   finishEarly(): void;
   continueAfterRecap(): void;
   sageTick(dt: number): void;
-  sagePlace(letterIndex: number): void;
-  sageUndo(position?: number): void;
+  sageSubmit(path: Pos[]): void;
   sageGiveUp(): void;
   leaveSage(): void;
   buy(index: number): void;
@@ -421,32 +420,22 @@ export const useRunStore = create<Store>((set, get) => ({
     if (!sage || phase !== 'sage' || sage.outcome !== 'playing') return;
     const timeLeft = Math.max(0, sage.timeLeft - dt);
     let next: SageChallenge = { ...sage, timeLeft };
-    if (!next.hintGiven && timeLeft <= sage.seconds * SAGE_HINT_RATIO) next = applyHint(next);
+    if (!next.hintGiven && timeLeft <= sage.seconds * SAGE_HINT_RATIO) next = { ...next, hintGiven: true };
     if (timeLeft === 0) next = { ...next, outcome: 'lost', reward: SAGE_CONSOLATION };
     set({ sage: next });
     if (next.outcome === 'lost') payoutSage(next);
   },
 
-  sagePlace(letterIndex) {
+  sageSubmit(path) {
     const { sage } = get();
-    if (!sage || sage.outcome !== 'playing' || sage.placed.includes(letterIndex)) return;
-    const next: SageChallenge = { ...sage, placed: [...sage.placed, letterIndex] };
-    if (next.placed.length === sage.word.length && isCorrect(formedWord(next), sage.word, dictionary)) {
-      const won: SageChallenge = { ...next, outcome: 'won', reward: sageReward(sage.word.length, sage.timeLeft) };
+    if (!sage || sage.outcome !== 'playing' || path.length < 2) return;
+    if (isCorrect(wordFromPath(sage.grid, path), sage.word, dictionary)) {
+      const won: SageChallenge = { ...sage, outcome: 'won', reward: sageReward(sage.word.length, sage.timeLeft) };
       set({ sage: won });
       payoutSage(won);
       return;
     }
-    set({ sage: next });
-  },
-
-  // Sans argument : retire la dernière. Avec : retire cette position (pratique sur un mot de 12 lettres).
-  sageUndo(position) {
-    const { sage } = get();
-    if (!sage || sage.outcome !== 'playing' || !sage.placed.length) return;
-    const at = position ?? sage.placed.length - 1;
-    if (sage.hintGiven && at === 0) return; // l'indice du sage reste en place
-    set({ sage: { ...sage, placed: sage.placed.filter((_, i) => i !== at) } });
+    set({ sage: { ...sage, attempts: sage.attempts + 1 } });
   },
 
   sageGiveUp() {

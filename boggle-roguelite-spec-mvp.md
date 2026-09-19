@@ -82,10 +82,11 @@ Chaque mot validé moins de **5 s** après le précédent ajoute un maillon ; le
 **Une respiration, avec un autre type d'effort** : pas de grille ni d'adjacence, juste des lettres en vrac à remettre dans l'ordre.
 
 - **Quand** : après les dictées **3 et 7** (`SAGE_AFTER`), entre le récap et la coopérative.
-- **L'énigme** : un mot **courant de 8 à 12 lettres**, nom ou adjectif (2 376 candidats ; les formes conjuguées comme « abandonnez » sont exclues, devinette ingrate). Lettres mélangées, mélange garanti différent du mot.
+- **L'énigme** : un mot **courant de 8 à 12 lettres**, nom ou adjectif (2 376 candidats ; les formes conjuguées comme « abandonnez » sont exclues, devinette ingrate).
+- **La feuille** : une grille **5×5** où le mot est planté le long d'un chemin auto-évitant tiré au hasard (`carvePath`, retour arrière). Les cases du mot sont normales, **les 13 à 17 autres sont grisées et intraçables** : on connaît les lettres, tout l'effort est de retrouver le chemin. Même geste que le jeu, donc rien de nouveau à apprendre.
 - **Chrono** : `15 + 3 × longueur` s (39 s pour 8 lettres, 51 s pour 12) **[tuning]**.
-- **Jouer** : taper une tuile la pose, taper une lettre placée la retire (n'importe laquelle, pratique sur 12 lettres), le clavier fonctionne aussi (lettres + retour arrière). À **mi-temps**, le sage pose lui-même la première lettre et la verrouille.
-- **Validation** : dès que toutes les lettres sont posées. Le mot cible **ou toute anagramme valide du dictionnaire** est acceptée (le joueur qui trouve « senorita » au lieu de « notaires » a gagné aussi).
+- **Jouer** : on trace, exactement comme en dictée. Un tracé faux fait froncer les sourcils du sage et se compte, sans pénalité. À **mi-temps**, le sage marque la **case de départ** (halo vert).
+- **Validation** : le mot cible **ou toute anagramme valide du dictionnaire** de même longueur est acceptée (le joueur qui trace « senorita » au lieu de « notaires » a gagné aussi).
 - **Récompense** : `10 + 5 × longueur + secondes restantes / 3` billes **[tuning]**, soit ~50 à 85, l'équivalent d'une belle fourniture. Échec ou abandon : **10 billes** de consolation, et le sage révèle le mot.
 - Le nombre de défis relevés apparaît sur l'écran de fin.
 

@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { areAdjacent } from '../adjacency';
 import { buildDictionary } from '../dictionary';
 import { createRng } from '../rng';
 import {
-  applyHint, createSageChallenge, formedWord, isCorrect, isSageManche,
-  sageReward, sageSeconds, sageWordPool, shuffleLetters, type SageChallenge,
+  carvePath, createSageChallenge, isCorrect, isSageManche,
+  sageReward, sageSeconds, sageWordPool, wordFromPath,
 } from '../sage';
 import type { DictEntry } from '../types';
 
@@ -27,11 +28,13 @@ describe('sage', () => {
     expect(sageWordPool(entries).sort()).toEqual(['CHAUFFEUR', 'INCROYABLE', 'NOTAIRES', 'SENORITA']);
   });
 
-  it('shuffles into the same letters but a different order', () => {
+  it('carves a self-avoiding path of adjacent cells', () => {
     for (let i = 0; i < 20; i++) {
-      const out = shuffleLetters('CHAUFFEUR', createRng('s' + i));
-      expect(out.join('')).not.toBe('CHAUFFEUR');
-      expect([...out].sort().join('')).toBe([...'CHAUFFEUR'].sort().join(''));
+      const path = carvePath(5, 12, createRng('p' + i))!;
+      expect(path).not.toBeNull();
+      expect(path.length).toBe(12);
+      expect(new Set(path.map(([r, c]) => `${r},${c}`)).size).toBe(12);
+      for (let k = 1; k < path.length; k++) expect(areAdjacent(path[k - 1], path[k])).toBe(true);
     }
   });
 
@@ -41,28 +44,24 @@ describe('sage', () => {
     expect(sageReward(12, 21)).toBe(77);
   });
 
+  it('plants the word along the path and leaves the rest mute', () => {
+    for (let i = 0; i < 20; i++) {
+      const c = createSageChallenge(['CHAUFFEUR'], createRng('c' + i));
+      expect(c.word).toBe('CHAUFFEUR');
+      expect(c.grid.size).toBe(5);
+      expect(c.solution.length).toBe(9);
+      expect(c.active.length).toBe(9);
+      // le chemin solution écrit bien le mot, et les autres cases existent
+      expect(wordFromPath(c.grid, c.solution)).toBe('CHAUFFEUR');
+      expect(c.grid.cells.flat().length).toBe(25);
+      expect(c.timeLeft).toBe(sageSeconds(9));
+    }
+  });
+
   it('accepts the target word or any valid anagram of it', () => {
     expect(isCorrect('NOTAIRES', 'NOTAIRES', dict)).toBe(true);
     expect(isCorrect('SENORITA', 'NOTAIRES', dict)).toBe(true); // le joueur a trouvé un autre mot juste
     expect(isCorrect('SENORITE', 'NOTAIRES', dict)).toBe(false);
     expect(isCorrect('NOTAIRE', 'NOTAIRES', dict)).toBe(false);
-  });
-
-  it('hint places the first letter and solving fills the word', () => {
-    const c = createSageChallenge(['CHAUFFEUR'], createRng('h'));
-    expect(c.word).toBe('CHAUFFEUR');
-    expect(c.timeLeft).toBe(sageSeconds(9));
-    const hinted = applyHint(c);
-    expect(hinted.hintGiven).toBe(true);
-    expect(formedWord(hinted)).toBe('C');
-
-    // on complète le mot lettre par lettre en partant de l'indice
-    let cur: SageChallenge = hinted;
-    for (const letter of c.word.slice(1)) {
-      const idx = cur.letters.findIndex((l, i) => l === letter && !cur.placed.includes(i));
-      cur = { ...cur, placed: [...cur.placed, idx] };
-    }
-    expect(formedWord(cur)).toBe('CHAUFFEUR');
-    expect(isCorrect(formedWord(cur), cur.word, dict)).toBe(true);
   });
 });

@@ -1,26 +1,28 @@
+import { getAdjacentCells, posKey } from './adjacency';
 import type { Dictionary } from './dictionary';
-import type { DictEntry } from './types';
+import { FRENCH_STANDARD_WEIGHTS, makeCell, sampleLetter } from './gridGenerator';
 import type { Rng } from './rng';
+import type { DictEntry, Grid, Pos } from './types';
 
-// Le Sage du CM1 : une respiration entre deux dictées. Pas de grille, pas d'adjacence —
-// juste des lettres en vrac à remettre dans l'ordre, contre la montre.
+// Le Sage du CM1 : une respiration entre deux dictées. Même geste que le jeu (on trace),
+// mais on connaît déjà les lettres : seules celles du mot sont actives, les autres sont grisées.
+// Tout l'effort est de retrouver le chemin.
 export const SAGE_MIN_LEN = 8;
 export const SAGE_MAX_LEN = 12;
+export const SAGE_GRID_SIZE = 5;
 export const SAGE_AFTER = [3, 7]; // rencontres après ces dictées [tuning]
-export const SAGE_HINT_RATIO = 0.5; // le sage souffle la 1re lettre à mi-temps
+export const SAGE_HINT_RATIO = 0.5; // à mi-temps, le sage montre par où commencer
 
 export function isSageManche(manche: number): boolean {
   return SAGE_AFTER.includes(manche);
 }
 
-// Chrono : plus le mot est long, plus on laisse de temps. [tuning]
 export function sageSeconds(length: number): number {
-  return 15 + 3 * length;
+  return 15 + 3 * length; // [tuning]
 }
 
-// Récompense : l'équivalent d'une belle fourniture, plus le temps restant. [tuning]
 export function sageReward(length: number, secondsLeft: number): number {
-  return 10 + 5 * length + Math.floor(Math.max(0, secondsLeft) / 3);
+  return 10 + 5 * length + Math.floor(Math.max(0, secondsLeft) / 3); // [tuning]
 }
 export const SAGE_CONSOLATION = 10;
 
@@ -32,45 +34,72 @@ export function sageWordPool(entries: readonly DictEntry[]): string[] {
     .map((e) => e.w);
 }
 
-// Mélange garanti différent du mot (sinon le défi n'en est pas un).
-export function shuffleLetters(word: string, rng: Rng): string[] {
-  const letters = word.split('');
-  for (let attempt = 0; attempt < 20; attempt++) {
-    const out = rng.shuffle(letters);
-    if (out.join('') !== word) return out;
+// Chemin auto-évitant de `length` cases, tiré au hasard avec retour arrière.
+export function carvePath(size: number, length: number, rng: Rng): Pos[] | null {
+  const grid: Grid = { size, cells: [] };
+  const used = new Set<number>();
+  const path: Pos[] = [];
+
+  function walk(pos: Pos): boolean {
+    path.push(pos);
+    used.add(posKey(pos[0], pos[1]));
+    if (path.length === length) return true;
+    for (const next of rng.shuffle(getAdjacentCells(pos[0], pos[1], grid))) {
+      if (used.has(posKey(next[0], next[1]))) continue;
+      if (walk(next)) return true;
+    }
+    path.pop();
+    used.delete(posKey(pos[0], pos[1]));
+    return false;
   }
-  return [...letters].reverse();
+
+  for (const start of rng.shuffle(Array.from({ length: size * size }, (_, i) => [Math.floor(i / size), i % size] as Pos))) {
+    if (walk(start)) return path;
+  }
+  return null;
 }
 
 export interface SageChallenge {
   word: string;
-  letters: string[];      // lettres mélangées, l'index sert d'identité (lettres répétées)
-  placed: number[];       // indices choisis, dans l'ordre
+  grid: Grid;
+  solution: Pos[];        // le chemin qui écrit le mot
+  active: number[];       // posKey des cases du mot ; les autres sont grisées et inertes
   seconds: number;
   timeLeft: number;
   hintGiven: boolean;
+  attempts: number;
   outcome: 'playing' | 'won' | 'lost';
   reward: number;
 }
 
-export function createSageChallenge(pool: readonly string[], rng: Rng): SageChallenge {
+// Le mot est planté sur un chemin, puis la feuille est remplie de lettres muettes.
+export function createSageChallenge(pool: readonly string[], rng: Rng, size = SAGE_GRID_SIZE): SageChallenge {
   const word = rng.pick(pool);
-  const seconds = sageSeconds(word.length);
-  return { word, letters: shuffleLetters(word, rng), placed: [], seconds, timeLeft: seconds, hintGiven: false, outcome: 'playing', reward: 0 };
+  const solution = carvePath(size, word.length, rng) ?? [];
+  const cells = Array.from({ length: size }, () =>
+    Array.from({ length: size }, () => makeCell(sampleLetter(FRENCH_STANDARD_WEIGHTS, rng))),
+  );
+  solution.forEach(([r, c], i) => { cells[r][c] = makeCell(word[i]); });
+  return {
+    word,
+    grid: { size, cells },
+    solution,
+    active: solution.map(([r, c]) => posKey(r, c)),
+    seconds: sageSeconds(word.length),
+    timeLeft: sageSeconds(word.length),
+    hintGiven: false,
+    attempts: 0,
+    outcome: 'playing',
+    reward: 0,
+  };
 }
 
-export const formedWord = (c: SageChallenge): string => c.placed.map((i) => c.letters[i]).join('');
+export function wordFromPath(grid: Grid, path: readonly Pos[]): string {
+  return path.map(([r, c]) => grid.cells[r][c].letter).join('');
+}
 
-// Toutes les lettres sont utilisées : une anagramme valide du dictionnaire est acceptée aussi.
+// Toutes les lettres actives doivent servir : une anagramme valide du dictionnaire passe aussi.
 export function isCorrect(formed: string, target: string, dict: Dictionary): boolean {
   if (formed.length !== target.length) return false;
   return formed === target || dict.trie.has(formed);
-}
-
-// Place la première lettre du mot et la verrouille : l'indice de mi-parcours.
-export function applyHint(c: SageChallenge): SageChallenge {
-  const first = c.word[0];
-  const idx = c.letters.findIndex((l, i) => l === first && !c.placed.includes(i));
-  if (idx < 0) return { ...c, hintGiven: true };
-  return { ...c, hintGiven: true, placed: [idx, ...c.placed.filter((i) => i !== idx)] };
 }

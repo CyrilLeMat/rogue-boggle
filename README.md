@@ -1,4 +1,4 @@
-# Rogue Boggle — Ultimate Dictée de CE2 Edition
+# Rogue Boggle Warrior — Ultimate Dictée de CE2 Edition
 
 Boggle roguelite solo raconté comme si ta place en sixième en dépendait : dix dictées, trois bons points,
 une note à atteindre, des fournitures à acheter à la coopérative avec tes billes, des cancres qui copient,

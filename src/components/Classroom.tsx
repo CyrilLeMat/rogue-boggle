@@ -2,6 +2,11 @@ import { GAME_SUBTITLE, GAME_TITLE } from '../theme/lexicon';
 
 // Bandeau d'accueil : la salle de classe, dans le style des cases du prologue.
 export function Classroom() {
+  // Un titre long passe sur deux lignes de craie plutôt que de déborder du tableau.
+  const words = GAME_TITLE.split(' ');
+  const tail = words.length > 2 ? words[words.length - 1] : '';
+  const head = tail ? words.slice(0, -1).join(' ') : GAME_TITLE;
+  const two = !!tail;
   return (
     <svg viewBox="0 0 480 270" className="classroom" role="img" aria-label={`${GAME_TITLE}, ${GAME_SUBTITLE}`}>
       <rect width="480" height="270" fill="#f3ece0" />
@@ -27,9 +32,12 @@ export function Classroom() {
       {/* tableau noir */}
       <rect x="96" y="22" width="288" height="146" rx="5" fill="#8a5a2b" />
       <rect x="104" y="30" width="272" height="122" rx="3" fill="#2f5d4b" />
-      <text x="240" y="84" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="42" fill="#f6f1e4" className="chalk-title">{GAME_TITLE}</text>
-      <text x="240" y="112" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="19" fill="#f2a9a2" className="chalk-sub">{GAME_SUBTITLE}</text>
-      <path d="M128 130 q50 -8 100 2 q60 6 116 -4" stroke="#f6f1e4" strokeWidth="2" opacity="0.5" fill="none" strokeLinecap="round" />
+      <text x="240" y={two ? 72 : 84} textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="38" fill="#f6f1e4" className="chalk-title">
+        <tspan x="240">{head}</tspan>
+        {tail && <tspan x="240" dy="34">{tail}</tspan>}
+      </text>
+      <text x="240" y={two ? 132 : 112} textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="18" fill="#f2a9a2" className="chalk-sub">{GAME_SUBTITLE}</text>
+      {!two && <path d="M128 130 q50 -8 100 2 q60 6 116 -4" stroke="#f6f1e4" strokeWidth="2" opacity="0.5" fill="none" strokeLinecap="round" />}
       {/* rebord et craies */}
       <rect x="104" y="152" width="272" height="8" rx="2" fill="#6f4822" />
       <rect x="130" y="153" width="24" height="5" rx="2" fill="#f6f1e4" />

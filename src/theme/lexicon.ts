@@ -2,7 +2,7 @@
 // … racontée comme si le sort du monde en dépendait. Le décalage est le ton du jeu.
 // Tout le vocabulaire visible passe par ici ; les ids et le moteur gardent leurs noms techniques.
 
-export const GAME_TITLE = 'Rogue Boggle';
+export const GAME_TITLE = 'Rogue Boggle Warrior';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
 export const TAGLINE = 'Dix dictées te séparent du CM1. La maîtresse en a préparé onze, au cas où.';
 

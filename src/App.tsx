@@ -11,6 +11,7 @@ import { FinishButton } from './components/FinishButton';
 import { RelicBar } from './components/RelicBar';
 import { FoundWords } from './components/FoundWords';
 import { Grid } from './components/Grid';
+import { GridLegend } from './components/GridLegend';
 import { MancheRecap } from './components/MancheRecap';
 import { MutatorPick } from './components/MutatorPick';
 import { QuestBadge } from './components/QuestBadge';
@@ -94,6 +95,7 @@ function Playing() {
         />
         <div>
           <ConsumableBar />
+          <GridLegend />
           <FoundWords />
           <FinishButton />
         </div>

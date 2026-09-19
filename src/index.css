@@ -203,6 +203,21 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .cartable-list li.mutator strong { color: #6f9ed1; }
 .cartable-list li.charm strong { color: var(--gold); }
 
+.lesson-pick { max-width: 620px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.lesson-frame { width: 100%; max-width: 440px; box-shadow: 5px 6px 0 #1f1b2e; }
+.lesson-art { display: block; width: 100%; aspect-ratio: 320 / 160; }
+.lesson-pick h2 { margin: 4px 0 0; }
+.lesson-pick .intro-text { min-height: 0; }
+.lesson-pick .cards { grid-template-columns: 1fr 1fr; gap: 14px; }
+.lesson-card {
+  display: flex; flex-direction: column; gap: 6px; text-align: left; align-items: flex-start;
+  background: #eef4fb; color: var(--text); border: 2px solid #cfe0f5; border-radius: 22px 26px 24px 28px;
+  padding: 14px; box-shadow: var(--shadow-soft); font-weight: 500; min-height: 120px;
+}
+.lesson-card:hover { background: #fff; border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
+.lesson-name { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); }
+.lesson-effect { font-size: 0.85rem; color: #6d667c; line-height: 1.35; }
+
 /* la scène de l'événement, en grand, avant que le chrono ne parte */
 .event-intro { max-width: 560px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .event-hero { width: 100%; max-width: 420px; box-shadow: 5px 6px 0 #1f1b2e; }
@@ -399,6 +414,26 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .relic-bar-wrap { margin-bottom: 14px; }
 .relic-desc-box { margin-top: 8px; background: #fff; border-radius: 14px 18px 16px 20px; padding: 10px 14px; font-size: 0.9rem; box-shadow: var(--shadow-soft); }
 .relic.open { border-color: var(--accent); }
+/* le bulletin : l'objet qu'on garde à la fin de l'année */
+.bulletin { background: #fffaf2; border: 2px solid #e3dccf; border-radius: 6px; padding: 14px 16px; margin: 16px 0; text-align: left; box-shadow: var(--shadow-soft); }
+.bulletin-head { display: flex; flex-direction: column; align-items: center; border-bottom: 2px solid var(--text); padding-bottom: 8px; margin-bottom: 6px; }
+.bulletin-school { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 800; }
+.bulletin-title { font-family: 'Patrick Hand', cursive; font-size: 1.6rem; color: var(--text); }
+.bulletin-year { font-size: 0.75rem; color: var(--muted); }
+.bulletin .note-cell { font-weight: 800; font-size: 1.05rem; white-space: nowrap; }
+.bulletin .sur { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+.bulletin .appr-cell { font-family: 'Patrick Hand', cursive; color: var(--ko); font-size: 0.95rem; line-height: 1.15; }
+.bulletin-foot { display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; border-top: 2px solid var(--text); margin-top: 8px; padding-top: 10px; flex-wrap: wrap; }
+.bulletin-label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 800; }
+.bulletin-average { font-size: 2rem; font-weight: 800; color: var(--text); }
+.bulletin-mention { position: relative; flex: 1; min-width: 200px; padding-bottom: 18px; }
+.bulletin-mention .stamp {
+  display: inline-block; border: 3px solid var(--ko); color: var(--ko); border-radius: 6px;
+  padding: 3px 10px; font-family: 'Patrick Hand', cursive; font-size: 1.15rem; transform: rotate(-4deg); opacity: 0.85;
+}
+.bulletin-mention p { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: var(--text); margin: 6px 0 0; }
+.bulletin-mention .signature { position: absolute; right: 0; bottom: -4px; }
+
 .run-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.9rem; }
 .run-table th { text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding: 4px 6px; }
 .run-table td { padding: 5px 6px; border-top: 1px dashed #eee3d6; font-variant-numeric: tabular-nums; }
@@ -487,6 +522,7 @@ button.small { padding: 6px 14px; font-size: 0.8rem; }
   .title { font-size: 2.4rem; }
   .strip { grid-template-columns: 1fr; }
   .archetypes .cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .lesson-pick .cards { grid-template-columns: 1fr; }
   .archetype-card { padding: 8px; gap: 4px; border-radius: 16px 20px 18px 22px; }
   .archetype-name { font-size: 1rem; }
   .archetype-flavor { display: none; }

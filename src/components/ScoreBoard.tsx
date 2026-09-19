@@ -56,8 +56,12 @@ export function ScoreBoard() {
       )}
       {manche.cursedWord && (
         <div className="stat stat-info cursed">
-          <span className="label">Mot mystère</span>
-          <span className="value">{manche.found.some((f) => f.word === manche.cursedWord) ? manche.cursedWord : `${manche.cursedWord.length} lettres · ${'_ '.repeat(manche.cursedWord.length).trim()}`}</span>
+          <span className="label">{manche.cursedVisible ? 'Mot dicté' : 'Mot mystère'}</span>
+          <span className="value">
+            {manche.cursedVisible || manche.found.some((f) => f.word === manche.cursedWord)
+              ? manche.cursedWord
+              : `${manche.cursedWord.length} lettres · ${'_ '.repeat(manche.cursedWord.length).trim()}`}
+          </span>
         </div>
       )}
     </div>

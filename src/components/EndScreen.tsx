@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
-import { L } from '../theme/lexicon';
+import { L, SIGNATURE, appreciation, mention, noteSur20 } from '../theme/lexicon';
 
 export function EndScreen({ victory }: { victory: boolean }) {
   const run = useRunStore((s) => s.run);
@@ -11,6 +11,9 @@ export function EndScreen({ victory }: { victory: boolean }) {
   if (!run) return null;
   const allWords = run.history.flatMap((h) => h.words);
   const best = [...allWords].sort((a, b) => b.score - a.score).slice(0, 5);
+  const notes = run.history.map((h) => noteSur20(h.score, h.threshold));
+  const moyenne = notes.length ? notes.reduce((a, b) => a + b, 0) / notes.length : 0;
+  const verdict = mention(moyenne, victory);
   const copySeed = async () => {
     try { await navigator.clipboard.writeText(run.seed); setCopied(true); } catch { /* presse-papier indisponible */ }
   };
@@ -20,23 +23,45 @@ export function EndScreen({ victory }: { victory: boolean }) {
       <p className="muted">{victory ? L.victoireSub : L.gameoverSub(run.currentManche)}</p>
       <p className="big">{run.score} pts</p>
       {run.endBonus > 0 && <p className="ok">dont +{run.endBonus} pts de bonus de fin d'année</p>}
-      <p className="muted">{allWords.length} mots · {run.euros} {L.nonDepenses}{run.sageWins > 0 ? ` · ${run.sageWins} ${L.sageWins}` : ''}</p>
+      <p className="muted">
+        {allWords.length} mots · {run.euros} {L.nonDepenses}
+        {run.sageWins > 0 && ` · ${run.sageWins} ${run.sageWins > 1 ? 'défis de couloir relevés' : 'défi de couloir relevé'}`}
+      </p>
 
-      <table className="run-table">
-        <thead><tr><th>Dictée</th><th>Feuille</th><th>Note</th><th>Attendu</th><th>Meilleur mot</th><th>Billes</th></tr></thead>
-        <tbody>
-          {run.history.map((h) => (
-            <tr key={h.manche} className={h.success ? '' : 'ko'}>
-              <td>{h.manche}</td>
-              <td>{h.gridSize}×{h.gridSize}</td>
-              <td>{h.score}</td>
-              <td>{h.threshold}</td>
-              <td>{h.bestWord ? `${h.bestWord.word} (${h.bestWord.score})` : '—'}</td>
-              <td>{h.euros}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="bulletin">
+        <div className="bulletin-head">
+          <span className="bulletin-school">École communale · classe de CE2</span>
+          <span className="bulletin-title">Bulletin de fin d'année</span>
+          <span className="bulletin-year">Année {run.seed}</span>
+        </div>
+        <table className="run-table">
+          <thead><tr><th>Dictée</th><th>Feuille</th><th>Note</th><th>Appréciation</th></tr></thead>
+          <tbody>
+            {run.history.map((h) => {
+              const note = noteSur20(h.score, h.threshold);
+              return (
+                <tr key={h.manche} className={h.success ? '' : 'ko'}>
+                  <td>{h.manche}</td>
+                  <td>{h.gridSize}×{h.gridSize}</td>
+                  <td className="note-cell">{note}<span className="sur">/20</span></td>
+                  <td className="appr-cell">{appreciation(h.score / Math.max(1, h.threshold), h.success, h.livesAfter)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <div className="bulletin-foot">
+          <div>
+            <span className="bulletin-label">Moyenne générale</span>
+            <span className="bulletin-average">{moyenne.toFixed(1)}<span className="sur">/20</span></span>
+          </div>
+          <div className="bulletin-mention">
+            <span className="stamp">{verdict.label}</span>
+            <p>{verdict.note}</p>
+            <span className="signature">{SIGNATURE}</span>
+          </div>
+        </div>
+      </div>
 
       {run.relicIds.length > 0 && (
         <div className="relic-bar end-relics">

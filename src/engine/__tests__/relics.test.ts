@@ -28,7 +28,7 @@ function setup(relicIds: string[], g = grid(['P O R', 'X T E', 'V I S'])) {
   const run: RunView = { score: 0, euros: 40, lives: 3, currentManche: 3, relicIds, killCount: 0 };
   const manche: MancheView = {
     grid: g, search: findAllWords(g, dict.trie), threshold: 100, difficulty: { potential: 0, factor: 1, mood: 'normale' }, found: [], timeLeft: 60, timeLeftBeforeWord: 60, elapsed: 30,
-    cursedWord: null, cursedStart: null, radarCell: null, relicState: {}, bonuses: [],
+    cursedWord: null, cursedStart: null, cursedVisible: false, radarCell: null, relicState: {}, bonuses: [],
     streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null, amorce: null,
     inspiration: null, gridDirty: false, mutatorId: null, enemies: [], killsThisManche: 0,
   };

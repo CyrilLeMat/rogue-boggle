@@ -510,7 +510,15 @@ Les relics 24-29 ne sont proposés en boutique qu'à partir de la manche 2, et l
 
 **Coupé du MVP** : Chasseur de chaîne / Famille lexicale (lemmatisation), Grammairien (multi-catégories).
 
-### 7.2 Thèmes de manche (8) — un par manche dès la manche 2
+### 7.2 Leçons (10) — choisies une dictée sur deux
+
+**Cadence** : les dictées **paires** (2, 4, 6, 8, 10) sont précédées d'une **scène au tableau** où la maîtresse hésite entre deux leçons tirées au sort ; c'est le joueur qui tranche (`hasLessonChoice`, `pickLessons`). Les dictées impaires restent nues, pour respirer. Le thème imposé à chaque manche a été remplacé par ce choix : une dictée sur deux est spéciale, et elle l'est parce qu'on l'a voulu.
+
+Deux leçons changent le **geste**, pas seulement les règles :
+- **Dictée à trous** : la maîtresse dicte un mot à la fois, **affiché en clair** avec sa case de départ. Le tracer donne +30 pts et elle en dicte aussitôt un autre. Le vrai principe d'une dictée, enfin dans le jeu.
+- **Le mot en chaîne** : un mot qui commence par la dernière lettre du précédent compte double.
+
+### 7.2 bis Anciennes fiches de thèmes
 
 Un thème partage les hooks de mot d'un relic et peut en plus changer la taille, le chrono, le seuil, post-traiter la grille, ou activer une couche (escargots, objectif, ennemi). Il apparaît comme une puce bleue dans la barre des relics et sur l'écran « prêt ». **Retirés** : Dense voyelles, Dense consonnes (imperceptibles), Grille XXL.
 
@@ -575,6 +583,8 @@ Un thème partage les hooks de mot d'un relic et peut en plus changer la taille,
 | B | Hydre (boss) | 3 | 1.20 | 60 € + relic gratuit | Après chaque mot validé, déplace une de ses cases vers une case adjacente libre. À 50 % PV, rend une case adjacente toxique |
 
 **Interaction avec l'existant** : Bouclier de case neutralise aussi la toxicité d'un Empoisonneur. Case joker n'est jamais une case d'ennemi. Radar ignore les cases de Mur. Mot maudit n'est jamais tiré parmi les mots impossibles à cause d'un Mur (on recalcule `allWords` avec les cases bloquées retirées).
+
+**Le bulletin de fin d'année** (écran de fin) : chaque dictée vaut une **note sur 20** (atteindre la note attendue = 10/20, la doubler = 20/20), avec son appréciation au stylo rouge et le nombre de bons points restants au moment où elle a été rendue. En pied de bulletin : moyenne générale, **mention** tamponnée (Passage de justesse, Mention assez bien / bien / très bien, Félicitations du conseil, ou Redoublement) et la signature de la maîtresse. C'est l'objet que le joueur garde de son année.
 
 **Ce que ça teste en playtest** : est-ce que le joueur prend « Grille infestée » quand « Grille standard » est proposée à côté ? Si non, monter les primes ou rendre les mutateurs sans ennemis plus rares. L'objectif est que la couche soit choisie une manche sur deux environ.
 

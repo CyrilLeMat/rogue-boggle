@@ -17,7 +17,8 @@ export interface MancheView {
   timeLeftBeforeWord: number; // chrono au moment de la validation, avant les effets des relics
   elapsed: number;
   cursedWord: string | null;
-  cursedStart: number | null; // posKey de la première lettre du mot maudit
+  cursedStart: number | null; // posKey de la première lettre du mot désigné
+  cursedVisible: boolean;     // dicté à voix haute (leçon) ou gardé secret (fourniture) ?
   streak: { links: number; lastAt: number }; // série de mots rapprochés
   luckyLetter: string | null; // Lettre porte-bonheur : tirée parmi les lettres de la grille
   amorce: { prefix: string; length: number; start: number | null } | null; // relic Amorce

@@ -16,7 +16,9 @@ export function GridLegend() {
     lines.push({ icon: '…', cls: 'amorce', text: `Antisèche : un mot de ${manche.amorce.length} lettres commence par ${manche.amorce.prefix}${manche.amorce.start !== null ? ', sur la case marquée d\'un point vert' : ''}` });
   }
   if (manche.cursedWord && manche.cursedStart !== null && !manche.found.some((f) => f.word === manche.cursedWord)) {
-    lines.push({ icon: '✦', cls: 'cursed', text: `Mot mystère : ${manche.cursedWord.length} lettres, il commence sur la case marquée ✦ (+60 pts)` });
+    lines.push(manche.cursedVisible
+      ? { icon: '✦', cls: 'cursed', text: `La maîtresse dicte « ${manche.cursedWord} » : il commence sur la case marquée ✦ (+30 pts, puis elle en dicte un autre)` }
+      : { icon: '✦', cls: 'cursed', text: `Mot mystère : ${manche.cursedWord.length} lettres, il commence sur la case marquée ✦ (+60 pts)` });
   }
   if (manche.luckyLetter) lines.push({ icon: manche.luckyLetter, cls: 'lucky', text: `Lettre soulignée : les mots qui commencent par ${manche.luckyLetter} (cases jaunes) comptent double` });
   if (manche.grid.cells.flat().some((c) => c.isToxic)) lines.push({ icon: '●', cls: 'toxic', text: 'Tache d\'encre : −8 s à chaque utilisation' });

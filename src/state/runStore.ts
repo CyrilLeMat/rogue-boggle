@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
-import { isConditionManche, mutatorGridSize, pickCondition } from '../data/mutators';
+import { hasLessonChoice, mutatorGridSize, pickLessons } from '../data/mutators';
 import { ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
@@ -28,7 +28,7 @@ import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'intro' | 'startPick' | 'ready' | 'playing' | 'recap' | 'event' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'intro' | 'startPick' | 'lessonPick' | 'ready' | 'playing' | 'recap' | 'event' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -44,6 +44,7 @@ export interface MancheResult {
   eurosEnemy: number; // primes (+) ou pénalité de survivant (−)
   questLabel: string | null;
   gridSize: number;
+  livesAfter: number;
   bestWord: FoundWord | null;
   words: FoundWord[];
   missed: string[];
@@ -95,6 +96,7 @@ interface Store {
   manche: MancheState | null;
   lastResult: MancheResult | null;
   startChoices: string[];
+  lessonChoices: string[];
   shop: ShopItem[];
   shopRerolls: { paid: number; freeLeft: number };
   event: GameEvent | null;
@@ -103,6 +105,7 @@ interface Store {
   startRun(seed?: string): void;
   acceptChallenge(): void; // prologue → fourniture de rentrée
   pickStartRelic(id: string): void;
+  pickLesson(id: string): void;
   startManche(): void;
   rerollGrid(): void; // Sourcier, depuis l'écran « prêt »
   beginPlay(): void; // écran « prêt » → chrono lancé
@@ -142,7 +145,7 @@ function freshManche(run: RunState): MancheState {
     threshold: threshold(run.currentManche),
     difficulty: { potential: 0, factor: 1, mood: 'normale' },
     found: [], timeLeft: MANCHE_SECONDS, timeLeftBeforeWord: MANCHE_SECONDS, totalSeconds: MANCHE_SECONDS, elapsed: 0,
-    cursedWord: null, cursedStart: null, radarCell: null, relicState: {}, bonuses: [], score: 0,
+    cursedWord: null, cursedStart: null, cursedVisible: false, radarCell: null, relicState: {}, bonuses: [], score: 0,
     streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null, amorce: null,
     inspiration: null, gridDirty: false, mutatorId: run.nextMutatorId, enemies: [], killsThisManche: 0,
     curseIds: [], targeting: null, rerollChoice: null, critters: [], graceSeconds: 0, gridRerollsLeft: 0,
@@ -155,6 +158,7 @@ export const useRunStore = create<Store>((set, get) => ({
   manche: null,
   lastResult: null,
   startChoices: [],
+  lessonChoices: [],
   shop: [],
   shopRerolls: { paid: 0, freeLeft: 0 },
   event: null,
@@ -224,7 +228,7 @@ export const useRunStore = create<Store>((set, get) => ({
     if (!run || !manche || phase !== 'ready' || manche.gridRerollsLeft <= 0) return;
     const mut = manche.mutatorId ? resolveMutator(manche.mutatorId) : null;
     const hooks = activeHooks(run.relicIds, manche.curseIds, manche.mutatorId);
-    const draft: MancheState = { ...manche, relicState: {}, bonuses: [], cursedWord: null, cursedStart: null, radarCell: null, luckyLetter: null, amorce: null, gridRerollsLeft: manche.gridRerollsLeft - 1 };
+    const draft: MancheState = { ...manche, relicState: {}, bonuses: [], cursedWord: null, cursedStart: null, cursedVisible: false, radarCell: null, luckyLetter: null, amorce: null, gridRerollsLeft: manche.gridRerollsLeft - 1 };
     buildGrid(draft, run, hooks, mut);
     set({ manche: draft });
   },
@@ -401,6 +405,7 @@ export const useRunStore = create<Store>((set, get) => ({
       manche: run.currentManche, score: manche.score, threshold: t, mood: manche.difficulty.mood, success,
       euros, eurosBase: breakdown.base, eurosBonus: breakdown.bonus, eurosTime, eurosQuest, eurosEnemy,
       questLabel: manche.quest?.label ?? null, gridSize: manche.grid.size,
+      livesAfter: success ? run.lives : run.lives - 1,
       bestWord: manche.found.reduce<FoundWord | null>((b, f) => (!b || f.score > b.score ? f : b), null),
       words: manche.found, missed,
       grid: manche.grid, cursedWord: manche.cursedWord,
@@ -563,8 +568,24 @@ export const useRunStore = create<Store>((set, get) => ({
     const { run } = get();
     if (!run) return;
     const manche = run.currentManche + 1;
-    const condition = isConditionManche(manche) ? pickCondition(run.rng, run.lastConditionId, manche) : null;
-    set({ run: { ...run, currentManche: manche, nextMutatorId: condition, lastConditionId: condition ?? run.lastConditionId }, shop: [] });
+    // Une dictée sur deux, la maîtresse hésite entre deux leçons : c'est toi qui tranches.
+    if (hasLessonChoice(manche)) {
+      set({
+        run: { ...run, currentManche: manche, nextMutatorId: null },
+        shop: [],
+        phase: 'lessonPick',
+        lessonChoices: pickLessons(run.rng, run.lastConditionId, manche),
+      });
+      return;
+    }
+    set({ run: { ...run, currentManche: manche, nextMutatorId: null }, shop: [] });
+    get().startManche();
+  },
+
+  pickLesson(id) {
+    const { run, lessonChoices } = get();
+    if (!run || !lessonChoices.includes(id)) return;
+    set({ run: { ...run, nextMutatorId: id, lastConditionId: id }, lessonChoices: [] });
     get().startManche();
   },
 
@@ -636,7 +657,7 @@ export const useRunStore = create<Store>((set, get) => ({
   },
 
   backToMenu() {
-    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], shop: [], event: null });
+    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], lessonChoices: [], shop: [], event: null });
   },
 
   addRelic(id) {
@@ -692,6 +713,7 @@ function renewSheet(draft: MancheState, run: RunState, hooks: ReturnType<typeof 
   draft.critters = draft.critters.length ? spawnCritters(grid, run.snailRng) : [];
   draft.cursedWord = null;
   draft.cursedStart = null;
+  draft.cursedVisible = false;
   draft.amorce = null;
   draft.inspiration = null;
   runMancheStart(hooks, ctx); // le mot mystère et l'antisèche repartent sur la nouvelle feuille

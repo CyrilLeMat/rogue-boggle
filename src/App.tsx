@@ -13,6 +13,7 @@ import { FoundWords } from './components/FoundWords';
 import { Grid } from './components/Grid';
 import { GridLegend } from './components/GridLegend';
 import { Intro } from './components/Intro';
+import { LessonPick } from './components/LessonPick';
 import { MancheRecap } from './components/MancheRecap';
 import { QuestBadge } from './components/QuestBadge';
 import { ReadyOverlay } from './components/ReadyScreen';
@@ -115,6 +116,7 @@ export default function App() {
       {phase === 'menu' && <Menu />}
       {phase === 'intro' && <Intro />}
       {phase === 'startPick' && <StartPick />}
+      {phase === 'lessonPick' && <LessonPick />}
       {(phase === 'playing' || phase === 'ready') && <Playing />}
       {phase === 'recap' && <MancheRecap />}
       {phase === 'event' && <EventScreen />}

@@ -158,6 +158,20 @@ export function appreciation(ratio: number, success: boolean, lives: number): st
 
 export const SIGNATURE = 'La maîtresse';
 
+// Bulletin de fin d'année : chaque dictée vaut une note sur 20 (atteindre la note = 10/20).
+export function noteSur20(score: number, threshold: number): number {
+  return Math.max(0, Math.min(20, Math.round((score / Math.max(1, threshold)) * 10)));
+}
+
+export function mention(moyenne: number, victory: boolean): { label: string; note: string } {
+  if (!victory) return { label: 'Redoublement', note: 'L\'année est à refaire. Ce n\'est pas une punition, c\'est une seconde chance.' };
+  if (moyenne >= 18) return { label: 'Félicitations du conseil', note: 'Une année d\'anthologie. Le tableau d\'honneur ne suffira pas.' };
+  if (moyenne >= 15) return { label: 'Mention très bien', note: 'Travail remarquable et constant. Passage en CM1 sans discussion.' };
+  if (moyenne >= 12) return { label: 'Mention bien', note: 'Bonne année scolaire. Quelques étourderies sans gravité.' };
+  if (moyenne >= 10) return { label: 'Mention assez bien', note: 'Des hauts, des bas, mais le compte y est.' };
+  return { label: 'Passage de justesse', note: 'Le conseil a hésité. Longtemps. Ne le décevons pas l\'an prochain.' };
+}
+
 // Monnaie : les billes. `short` pour les pastilles étroites.
 export function money(n: number, short = false): string {
   if (short) return `${n} b.`;
@@ -165,6 +179,34 @@ export function money(n: number, short = false): string {
 }
 
 export const RARITY_LABEL = { common: 'Courant', rare: 'Rare', legendary: 'Trésor' } as const;
+
+// Avant une dictée sur deux : la maîtresse hésite au tableau, et c'est toi qui tranches.
+export const LESSON_SCENES = [
+  {
+    title: 'La maîtresse hésite',
+    lines: [
+      'Elle se tient devant le tableau, la craie levée, immobile depuis une minute entière.',
+      'Deux leçons griffonnées de part et d\'autre du trait. Elle n\'arrive pas à choisir.',
+      'Elle se retourne lentement et te regarde. Toi. Pourquoi toi ?',
+    ],
+  },
+  {
+    title: 'Le vote de la classe',
+    lines: [
+      '« Puisque personne ne se décide », soupire-t-elle, « on va voter. »',
+      'Vingt-cinq mains restent baissées. Vingt-cinq regards se tournent vers toi.',
+      'Le sort de la classe entière tient dans ton index.',
+    ],
+  },
+  {
+    title: 'Le programme officiel',
+    lines: [
+      'Elle feuillette un document corné, tamponné trois fois, signé par un ministre mort.',
+      '« Le programme prévoit l\'une ou l\'autre. Il ne dit pas laquelle. »',
+      'Elle referme le document. Elle attend.',
+    ],
+  },
+] as const;
 
 // Les événements de couloir : un décor, un ton, un enjeu.
 export const EV = {

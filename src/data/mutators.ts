@@ -1,7 +1,21 @@
 import { posKey } from '../engine/adjacency';
 import { FRENCH_STANDARD_WEIGHTS, sampleLetter } from '../engine/gridGenerator';
-import type { Mutator } from '../engine/hooks';
+import type { Mutator, RunContext } from '../engine/hooks';
+import { findPathForWord } from '../engine/wordFinder';
 import type { Rng } from '../engine/rng';
+
+export const DICTATED_BONUS = 30; // [tuning]
+
+// Dictée à trous : la maîtresse choisit un mot courant encore à trouver et le dit à voix haute.
+function dictateWord(ctx: RunContext) {
+  const already = new Set(ctx.manche.found.map((f) => f.word));
+  const pool = [...ctx.manche.search.words].filter((w) => w.length >= 4 && ctx.isCommon(w) && !already.has(w));
+  const word = pool.length ? ctx.rng.pick(pool) : null;
+  ctx.manche.cursedWord = word;
+  ctx.manche.cursedVisible = true; // elle le dit à voix haute, c'est une dictée
+  const path = word ? findPathForWord(ctx.manche.grid, word) : null;
+  ctx.manche.cursedStart = path ? posKey(path[0][0], path[0][1]) : null;
+}
 
 export const FRACTURE_USES = 2; // [tuning] utilisations avant que la case se brise et change de lettre
 
@@ -58,6 +72,24 @@ export const MUTATORS: Mutator[] = [
     onWordFound: () => ({ percent: 0.5 }),
   },
   {
+    id: 'trous', name: 'Dictée à trous', rarity: 'rare',
+    description: 'La maîtresse dicte un mot à la fois. Le tracer rapporte +30 pts et elle en dicte aussitôt un autre',
+    onMancheStart: (ctx) => dictateWord(ctx),
+    onWordAccepted: (found, ctx) => {
+      if (found.word !== ctx.manche.cursedWord) return;
+      ctx.addBonus('Mot dicté', DICTATED_BONUS);
+      dictateWord(ctx);
+    },
+  },
+  {
+    id: 'chaine', name: 'Le mot en chaîne', rarity: 'rare',
+    description: 'Un mot qui commence par la dernière lettre du précédent compte double',
+    onWordFound: (w, ctx) => {
+      const last = ctx.manche.found[ctx.manche.found.length - 1];
+      return last && w[0] === last.word[last.word.length - 1] ? { final: 2 } : undefined;
+    },
+  },
+  {
     id: 'sprint', name: 'Calcul mental', rarity: 'common',
     description: '−30 s de chrono, note à atteindre −30 %',
     secondsDelta: -30, thresholdMult: 0.7,
@@ -81,12 +113,14 @@ export function mutatorGridSize(base: number, m: Mutator | null): number {
   return Math.min(MAX_GRID_SIZE, base + (m?.sizeDelta ?? 0));
 }
 
-export function isConditionManche(manche: number): boolean {
-  return manche > 1;
+// Une dictée sur deux : la maîtresse hésite entre deux leçons, et c'est toi qui tranches.
+// Les dictées impaires restent des dictées nues, pour respirer.
+export function hasLessonChoice(manche: number): boolean {
+  return manche >= 2 && manche % 2 === 0;
 }
 
-// Thème de la manche : jamais le précédent, et certains thèmes attendent la manche 4.
-export function pickCondition(rng: Rng, previous: string | null, manche = 2): string {
+// Deux leçons distinctes, jamais celle de la dernière fois, et certaines attendent la manche 4.
+export function pickLessons(rng: Rng, previous: string | null, manche: number): string[] {
   const pool = MUTATORS.filter((m) => m.id !== previous && (m.minManche ?? 0) <= manche);
-  return rng.pick(pool.length ? pool : MUTATORS).id;
+  return rng.shuffle(pool.length >= 2 ? pool : MUTATORS).slice(0, 2).map((m) => m.id);
 }

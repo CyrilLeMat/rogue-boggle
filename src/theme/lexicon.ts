@@ -197,8 +197,7 @@ export const LESSON_SCENES = [
   {
     title: 'La maîtresse hésite',
     lines: [
-      'Elle se tient devant le tableau, la craie levée, immobile depuis une minute entière.',
-      'Deux leçons griffonnées de part et d\'autre du trait. Elle n\'arrive pas à choisir.',
+      'Craie levée, immobile depuis une minute entière. Deux idées, aucune bonne pour toi.',
       'Elle se retourne lentement et te regarde. Toi. Pourquoi toi ?',
     ],
   },
@@ -207,15 +206,34 @@ export const LESSON_SCENES = [
     lines: [
       '« Puisque personne ne se décide », soupire-t-elle, « on va voter. »',
       'Vingt-cinq mains restent baissées. Vingt-cinq regards se tournent vers toi.',
-      'Le sort de la classe entière tient dans ton index.',
     ],
   },
   {
     title: 'Le programme officiel',
     lines: [
       'Elle feuillette un document corné, tamponné trois fois, signé par un ministre mort.',
-      '« Le programme prévoit l\'une ou l\'autre. Il ne dit pas laquelle. »',
-      'Elle referme le document. Elle attend.',
+      '« Le programme prévoit l\'une ou l\'autre. Il ne dit pas laquelle. » Elle referme. Elle attend.',
+    ],
+  },
+  {
+    title: 'Il est 14 h 03',
+    lines: [
+      'L\'heure la plus lourde de la journée. Le radiateur claque. Quelqu\'un renifle au fond.',
+      'Elle pose deux craies sur le bureau, une dans chaque main, et hausse les sourcils.',
+    ],
+  },
+  {
+    title: 'Elle a mal dormi',
+    lines: [
+      'Ça se voit. Elle a fait trois fautes au tableau ce matin et n\'en a corrigé aucune.',
+      '« Choisis, toi. Moi, aujourd\'hui, je ne peux plus. » Elle s\'assoit sans attendre.',
+    ],
+  },
+  {
+    title: 'Le directeur passe dans le couloir',
+    lines: [
+      'On entend ses chaussures. Elle se redresse d\'un coup et improvise.',
+      '« Alors aujourd\'hui, les enfants, nous allons faire… » Elle te fixe, suppliante.',
     ],
   },
 ] as const;

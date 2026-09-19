@@ -216,7 +216,8 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 }
 .lesson-card:hover { background: #fff; border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
 .lesson-name { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); }
-.lesson-effect { font-size: 0.85rem; color: #6d667c; line-height: 1.35; }
+.lesson-scene { font-family: 'Patrick Hand', cursive; font-size: 1rem; color: var(--text); line-height: 1.2; }
+.lesson-effect { font-size: 0.8rem; color: #6d667c; line-height: 1.3; border-top: 1px dashed #cfe0f5; padding-top: 6px; margin-top: auto; }
 
 /* la scène de l'événement, en grand, avant que le chrono ne parte */
 .event-intro { max-width: 560px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -252,6 +253,10 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .sage-board .cell.amorce::after { width: 10px; height: 10px; }
 /* cases muettes : présentes, lisibles, mais hors du chemin */
 .cell.dim { background: #ece7de !important; color: #b5aea3; box-shadow: none; cursor: default; }
+/* case percée : le papier a cédé */
+.cell.hole { background: #e6ded2 !important; color: transparent; box-shadow: inset 0 3px 6px rgba(63, 58, 85, 0.25); cursor: default; }
+.cell.hole .value, .cell.hole .letter { opacity: 0; }
+.cell.hole::after { content: ''; position: absolute; inset: 18%; border-radius: 50%; background: #d8cfc0; box-shadow: inset 0 2px 4px rgba(63, 58, 85, 0.3); }
 .cell.dim:hover { transform: none; }
 .sage-outcome { margin: 10px 0; }
 .sage-outcome .big { margin: 0 0 6px; letter-spacing: 0.12em; }

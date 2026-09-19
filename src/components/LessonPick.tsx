@@ -31,7 +31,7 @@ export function LessonPick() {
   const choices = useRunStore((s) => s.lessonChoices);
   const manche = useRunStore((s) => s.run?.currentManche ?? 2);
   const pick = useRunStore((s) => s.pickLesson);
-  const scene = LESSON_SCENES[manche % LESSON_SCENES.length];
+  const scene = LESSON_SCENES[(manche / 2) % LESSON_SCENES.length | 0];
   return (
     <div className="panel pick lesson-pick">
       <div className="frame lesson-frame"><Blackboard /></div>
@@ -43,6 +43,7 @@ export function LessonPick() {
         {choices.map(mutator).map((m) => (
           <button key={m.id} className="lesson-card" onClick={() => pick(m.id)}>
             <span className="lesson-name">{m.name}</span>
+            {m.scene && <span className="lesson-scene">{m.scene}</span>}
             <span className="lesson-effect">{m.description}</span>
           </button>
         ))}

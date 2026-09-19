@@ -145,7 +145,7 @@ function freshManche(run: RunState): MancheState {
     threshold: threshold(run.currentManche),
     difficulty: { potential: 0, factor: 1, mood: 'normale' },
     found: [], timeLeft: MANCHE_SECONDS, timeLeftBeforeWord: MANCHE_SECONDS, totalSeconds: MANCHE_SECONDS, elapsed: 0,
-    cursedWord: null, cursedStart: null, cursedVisible: false, radarCell: null, relicState: {}, bonuses: [], score: 0,
+    cursedWord: null, cursedStart: null, cursedVisible: false, holes: [], radarCell: null, relicState: {}, bonuses: [], score: 0,
     streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null, amorce: null,
     inspiration: null, gridDirty: false, mutatorId: run.nextMutatorId, enemies: [], killsThisManche: 0,
     curseIds: [], targeting: null, rerollChoice: null, critters: [], graceSeconds: 0, gridRerollsLeft: 0,
@@ -228,7 +228,7 @@ export const useRunStore = create<Store>((set, get) => ({
     if (!run || !manche || phase !== 'ready' || manche.gridRerollsLeft <= 0) return;
     const mut = manche.mutatorId ? resolveMutator(manche.mutatorId) : null;
     const hooks = activeHooks(run.relicIds, manche.curseIds, manche.mutatorId);
-    const draft: MancheState = { ...manche, relicState: {}, bonuses: [], cursedWord: null, cursedStart: null, cursedVisible: false, radarCell: null, luckyLetter: null, amorce: null, gridRerollsLeft: manche.gridRerollsLeft - 1 };
+    const draft: MancheState = { ...manche, relicState: {}, bonuses: [], cursedWord: null, cursedStart: null, cursedVisible: false, holes: [], radarCell: null, luckyLetter: null, amorce: null, gridRerollsLeft: manche.gridRerollsLeft - 1 };
     buildGrid(draft, run, hooks, mut);
     set({ manche: draft });
   },
@@ -338,8 +338,8 @@ export const useRunStore = create<Store>((set, get) => ({
         fb.bonus = [fb.bonus, ...gained.map((b) => `${b.label} +${b.points}`)].filter(Boolean).join(' · ');
       }
       if (draft.gridDirty) {
-        // Tableau effacé : des lettres ont changé, les mots trouvables aussi
-        draft.search = findAllWords(draft.grid, dictionary.trie);
+        // Tableau effacé, cahier troué : la feuille a changé, les mots trouvables aussi
+        draft.search = findAllWords(draft.grid, dictionary.trie, new Set(draft.holes));
         draft.gridDirty = false;
       }
       // Feuille épuisée : la maîtresse en distribue une neuve, sans toucher au chrono.
@@ -363,16 +363,27 @@ export const useRunStore = create<Store>((set, get) => ({
     const timeLeft = Math.max(0, manche.timeLeft - dt);
     const elapsed = manche.elapsed + dt;
     const run = get().run!;
-    const critters = manche.critters.map((c) => {
+    // les leçons qui vivent pendant la dictée (courant d'air)
+    const hooks = activeHooks(run.relicIds, manche.curseIds, manche.mutatorId);
+    const live = cloneManche(manche);
+    const ctx = makeContext(run.rng, run, live, dictionary);
+    for (const h of hooks) h.onTick?.(ctx, elapsed);
+    if (live.gridDirty) {
+      live.search = findAllWords(live.grid, dictionary.trie, new Set(live.holes));
+      live.gridDirty = false;
+      set({ manche: { ...live, timeLeft, elapsed } });
+    }
+    const base = get().manche!;
+    const critters = base.critters.map((c) => {
       if (elapsed < c.nextMoveAt) return c;
-      const others = manche.critters.filter((o) => o !== c).map((o) => o.pos);
-      return { ...moveCritter(c, manche.grid, run.snailRng, others), nextMoveAt: c.nextMoveAt + CRITTER_MOVE_SECONDS };
+      const others = base.critters.filter((o) => o !== c).map((o) => o.pos);
+      return { ...moveCritter(c, base.grid, run.snailRng, others), nextMoveAt: c.nextMoveAt + CRITTER_MOVE_SECONDS };
     });
-    const enemies = manche.enemies.map((e) => {
+    const enemies = base.enemies.map((e) => {
       if (e.hp <= 0 || elapsed < e.nextMoveAt) return e;
-      return { ...moveEnemy(e, manche.grid, manche.search, run.snailRng, manche.enemies.filter((o) => o !== e && o.hp > 0)), nextMoveAt: e.nextMoveAt + ENEMY_MOVE_SECONDS };
+      return { ...moveEnemy(e, base.grid, base.search, run.snailRng, base.enemies.filter((o) => o !== e && o.hp > 0)), nextMoveAt: e.nextMoveAt + ENEMY_MOVE_SECONDS };
     });
-    set({ manche: { ...manche, timeLeft, elapsed, critters, enemies } });
+    set({ manche: { ...base, timeLeft, elapsed, critters, enemies } });
     if (timeLeft === 0) get().endManche();
   },
 
@@ -714,6 +725,7 @@ function renewSheet(draft: MancheState, run: RunState, hooks: ReturnType<typeof 
   draft.cursedWord = null;
   draft.cursedStart = null;
   draft.cursedVisible = false;
+  draft.holes = [];
   draft.amorce = null;
   draft.inspiration = null;
   runMancheStart(hooks, ctx); // le mot mystère et l'antisèche repartent sur la nouvelle feuille

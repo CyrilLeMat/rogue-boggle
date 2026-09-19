@@ -14,7 +14,7 @@ const grid = (): Grid => ({ size: 2, cells: [['A', 'R'], ['T', 'E']].map((r) => 
 function manche(g: Grid): MancheView {
   return {
     grid: g, search: findAllWords(g, dict.trie), threshold: 10, difficulty: { potential: 0, factor: 1, mood: 'normale' },
-    found: [], timeLeft: 60, timeLeftBeforeWord: 60, elapsed: 0, cursedWord: null, cursedStart: null, cursedVisible: false, radarCell: null,
+    found: [], timeLeft: 60, timeLeftBeforeWord: 60, elapsed: 0, cursedWord: null, cursedStart: null, cursedVisible: false, holes: [], radarCell: null,
     relicState: {}, bonuses: [], streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null, amorce: null,
     inspiration: null, gridDirty: false, mutatorId: 'fracture', enemies: [], killsThisManche: 0,
   };

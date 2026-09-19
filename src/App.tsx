@@ -91,6 +91,7 @@ function Playing() {
           critters={manche.critters.map((c) => c.pos)}
           disabled={phase === 'ready'}
           onDoubleTap={hasReroll ? rerollCell : undefined}
+          lockedCells={manche.holes.length ? new Set(manche.holes) : undefined}
           enemies={manche.enemies}
           onPathChange={onPathChange}
           preview={preview}

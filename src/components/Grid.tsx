@@ -198,7 +198,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
             const cls = [
               'cell',
               !cell.isJoker && !plain && valueTier(cell.letter),
-              isLocked(r, c) && 'dim',
+              isLocked(r, c) && (cell.hole ? 'hole' : 'dim'),
               idx >= 0 && 'selected',
               idx === path.length - 1 && idx >= 0 && 'head',
               cell.isJoker && 'joker',

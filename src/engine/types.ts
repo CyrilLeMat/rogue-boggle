@@ -7,7 +7,8 @@ export interface Cell {
   isJoker: boolean;
   isToxic: boolean;
   enemyId?: string;
-  cracks?: number; // Grille fracturée : utilisations depuis le dernier renouvellement
+  cracks?: number; // Tableau effacé : utilisations depuis le dernier renouvellement
+  hole?: boolean;  // Cahier troué : case percée, plus traçable
   gen?: number;    // incrémenté à chaque renouvellement de lettre (animation)
 }
 

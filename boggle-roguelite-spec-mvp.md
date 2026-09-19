@@ -510,7 +510,26 @@ Les relics 24-29 ne sont proposés en boutique qu'à partir de la manche 2, et l
 
 **Coupé du MVP** : Chasseur de chaîne / Famille lexicale (lemmatisation), Grammairien (multi-catégories).
 
-### 7.2 Leçons (10) — choisies une dictée sur deux
+### 7.2 Leçons (12) — choisies une dictée sur deux
+
+**Les scènes de choix** (`LESSON_SCENES`, 6 contextes) ne décrivent plus « la maîtresse hésite » dans le vide : chaque leçon porte sa propre **cause narrative** (`Mutator.scene`), une phrase qui dit pourquoi cette absurdité arrive aujourd'hui, affichée sur sa carte au-dessus de l'effet mécanique. Le contexte pose la situation, les deux causes donnent le sel, l'effet reste lisible en petit.
+
+| Leçon | Ce qui s'est passé | Ce que ça change |
+|---|---|---|
+| Leçon de choses | Le bocal s'est renversé, les escargots sont partout | Escargots : mot doublé sur leur case |
+| Consigne du jour | Elle a écrit une consigne pendant la récré, très fière d'elle | Objectif payé en billes |
+| Le cancre copie | Kévin s'est assis à côté. Il n'a jamais de stylo | Un cancre mobile à faire taire |
+| Tableau effacé | L'éponge est trop mouillée | Case craquelée puis lettre remplacée |
+| **Le cahier troué** | Ton cahier a pris l'eau dans le cartable | **Chaque case utilisée se perce et devient inutilisable** |
+| **Courant d'air** | La fenêtre est restée ouverte, personne n'ose la fermer | **Deux lettres changent toutes les 8 s** |
+| Taches d'encre | Le stylo de Sophie a explosé, et Sophie pleure | 2 cases à −8 s, +50 % sur tout |
+| Dictée à trous | Elle ouvre son livre page 42 | Un mot dicté à la fois, +30 pts, puis un autre |
+| Le mot en chaîne | Elle a lu un article sur la pédagogie moderne | Mot enchaîné sur la dernière lettre = ×2 |
+| Calcul mental | Rendez-vous chez le dentiste à 16 h | −30 s, note −30 % |
+| Rédaction | Il pleut, la récré est annulée | +45 s, note +40 % |
+| Grande carte | Elle déroule la carte de France | +1 de taille |
+
+Nouveau hook `onTick(ctx, elapsed)` sur `Relic` : ce qui vit pendant la dictée (le courant d'air). Les cases percées sortent du calcul des mots trouvables via le `blocked` de `findAllWords`, déjà prévu pour les murs.
 
 **Cadence** : les dictées **paires** (2, 4, 6, 8, 10) sont précédées d'une **scène au tableau** où la maîtresse hésite entre deux leçons tirées au sort ; c'est le joueur qui tranche (`hasLessonChoice`, `pickLessons`). Les dictées impaires restent nues, pour respirer. Le thème imposé à chaque manche a été remplacé par ce choix : une dictée sur deux est spéciale, et elle l'est parce qu'on l'a voulu.
 

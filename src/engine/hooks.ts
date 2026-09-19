@@ -19,6 +19,7 @@ export interface MancheView {
   cursedWord: string | null;
   cursedStart: number | null; // posKey de la première lettre du mot désigné
   cursedVisible: boolean;     // dicté à voix haute (leçon) ou gardé secret (fourniture) ?
+  holes: number[];            // posKey des cases percées (leçon « Le cahier troué »)
   streak: { links: number; lastAt: number }; // série de mots rapprochés
   luckyLetter: string | null; // Lettre porte-bonheur : tirée parmi les lettres de la grille
   amorce: { prefix: string; length: number; start: number | null } | null; // relic Amorce
@@ -96,6 +97,7 @@ export interface Relic {
   onWordAccepted?: (found: FoundWord, ctx: RunContext) => void;               // effets de bord (chrono…)
   onGridGenerate?: (grid: Grid, ctx: RunContext) => Grid;
   onMancheStart?: (ctx: RunContext) => void;
+  onTick?: (ctx: RunContext, elapsed: number) => void; // ce qui vit pendant la dictée
   onMancheEnd?: (ctx: RunContext, success: boolean, euros: number) => number;
   onRunEnd?: (ctx: RunContext) => number;
   onInvalidWord?: (ctx: RunContext) => void;                                   // Un seul essai
@@ -124,6 +126,7 @@ export const MAX_CONSUMABLES = 3;
 
 // Un mutateur modifie la manche à venir ; il partage les hooks de mot d'un relic.
 export interface Mutator extends Relic {
+  scene?: string;      // pourquoi cette absurdité arrive aujourd'hui
   snails?: boolean;   // thème Escargots
   quest?: boolean;    // thème Objectif
   enemy?: boolean;    // thème Chasse

@@ -101,23 +101,29 @@ const ARTS: Record<string, () => ReactElement> = {
       <path d="M84 52 q6 -5 12 0 q-6 3 -12 0z" fill="#7d6bc4" />
     </>
   ),
-  'cancre-repenti': () => (
+  nouveau: () => (
     <>
       <Body color="#cfe0c8" />
       <Head />
       <path d="M38 40 q22 -14 44 0" {...ink} strokeWidth="3" />
       <Eyes />
-      <path d="M50 62 h20" {...ink} />
-      <path d="M14 120 l12 -34 12 34z" fill="#efe7da" stroke="#3f3a55" strokeWidth="2.5" />
-      <path d="M20 100 l-6 -8 M32 100 l6 -8" {...ink} strokeWidth="2" />
-      <circle cx="94" cy="96" r="9" fill={SKIN[0]} stroke="#3f3a55" strokeWidth="2.5" />
+      <path d="M52 62 q8 5 16 0" {...ink} />
+      {/* étiquette « bonjour, je m'appelle » toute neuve */}
+      <g transform="rotate(-4 60 104)">
+        <rect x="42" y="94" width="36" height="20" rx="3" fill="#fffaf2" stroke="#3f3a55" strokeWidth="2" />
+        <path d="M42 101 h36" stroke="#d9534f" strokeWidth="2" />
+        <path d="M48 108 q6 -4 10 0 q5 3 10 -2" stroke="#7d6bc4" strokeWidth="2" fill="none" />
+      </g>
+      {/* cartable neuf, encore raide */}
+      <rect x="92" y="92" width="20" height="24" rx="4" fill="#e6a94c" stroke="#3f3a55" strokeWidth="2.5" />
+      <path d="M96 92 v-6 q6 -5 12 0 v6" {...ink} strokeWidth="2" />
     </>
   ),
 };
 
 const BG: Record<string, string> = {
-  chouchou: '#eef4fb', 'fond-de-classe': '#eceaf0', footballeur: '#e9f1ea', redoublant: '#f1edf9',
-  'petit-dernier': '#fdeae6', 'rat-de-billes': '#fff5e2', reveur: '#f3effb', 'cancre-repenti': '#eef5ec',
+  nouveau: '#eef5ec', chouchou: '#eef4fb', 'fond-de-classe': '#eceaf0', footballeur: '#e9f1ea',
+  redoublant: '#f1edf9', 'petit-dernier': '#fdeae6', 'rat-de-billes': '#fff5e2', reveur: '#f3effb',
 };
 
 export function ArchetypeArt({ id }: { id: string }) {

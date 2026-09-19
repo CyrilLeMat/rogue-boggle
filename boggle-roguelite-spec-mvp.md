@@ -64,6 +64,7 @@ Mot **courant** = fréquence films ≥ **3 par million** (9 722 mots ; à 1/mill
 
 | Personnalité | Effet | Contrepartie |
 |---|---|---|
+| Le nouveau (en tête, profil neutre) | 20 billes de bienvenue | — |
 | Le chouchou de la maîtresse | +25 % sur tous les mots | −25 % de billes (les autres te rackettent) |
 | Le fond de la classe | Le mot le plus long est souligné 6 s au début de chaque dictée | — |
 | Le footballeur | +25 s de chrono | −15 % sur les mots (la tête est au match) |
@@ -71,7 +72,6 @@ Mot **courant** = fréquence films ≥ **3 par million** (9 722 mots ; à 1/mill
 | Le petit dernier | Élan ×2 plus rapide, fenêtre 7 s | −10 s de chrono |
 | Le rat de billes | +50 % de billes | −10 % sur les mots |
 | La rêveuse | +60 % sur les mots de 6+ lettres | −40 % sur les mots de 3 lettres |
-| Le cancre repenti | 20 billes d'avance | — (profil neutre) |
 
 Leviers ajoutés au type `Relic` pour les servir : `extraLives`, `thresholdMult`, `eurosMult`, `streakStep`, plus `archetype` et `flavor`.
 

@@ -7,6 +7,12 @@ import { findPathForWord } from '../engine/wordFinder';
 // Chaque archétype a un effet franc et une contrepartie, sauf le Cancre repenti (neutre, pour débuter).
 export const ARCHETYPES: Relic[] = [
   {
+    id: 'nouveau', name: 'Le nouveau', rarity: 'rare', archetype: true,
+    flavor: 'Tu viens d\'arriver dans l\'école. Personne ne sait ce que tu vaux. Toi non plus, d\'ailleurs.',
+    description: 'Rien de particulier. Juste toi, la feuille, et 20 billes de bienvenue',
+    // profil neutre : le bon endroit pour découvrir le jeu
+  },
+  {
     id: 'chouchou', name: 'Le chouchou de la maîtresse', rarity: 'rare', archetype: true,
     flavor: 'Tu effaces le tableau sans qu\'on te le demande. C\'est répugnant. Ça paie.',
     description: '+25 % sur tous les mots, mais les autres te rackettent : −25 % de billes',
@@ -64,13 +70,7 @@ export const ARCHETYPES: Relic[] = [
     description: '+60 % sur les mots de 6 lettres et plus, rien de plus sur les mots de 3 lettres',
     onWordFound: (w) => (w.length >= 6 ? { percent: 0.6 } : w.length <= 3 ? { percent: -0.4 } : undefined),
   },
-  {
-    id: 'cancre-repenti', name: 'Le cancre repenti', rarity: 'rare', archetype: true,
-    flavor: 'L\'an dernier tu copiais. Cette année tu veux y arriver seul. Personne n\'y croit.',
-    description: 'Rien de spécial. Juste toi, la feuille, et 20 billes d\'avance',
-    // pas d'effet : le profil neutre, avec un petit pécule de départ
-  },
 ];
 
 export const ARCHETYPE_BY_ID = new Map(ARCHETYPES.map((a) => [a.id, a]));
-export const STARTING_PURSE: Record<string, number> = { 'cancre-repenti': 20 };
+export const STARTING_PURSE: Record<string, number> = { nouveau: 20 };

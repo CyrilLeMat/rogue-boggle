@@ -164,25 +164,38 @@ export function EventScreen() {
   const text = EV[ev.id];
   const canGiveUp = playing && ev.kind !== 'choice' && !(ev.kind === 'harvest' && ev.stake === null);
 
+  // La scène d'abord, en grand. Le défi ne commence qu'au clic.
+  if (!ev.started) {
+    return (
+      <div className="panel pick event-intro">
+        <div className="frame event-hero"><EventArt id={ev.id} /></div>
+        <h2>{text.title}</h2>
+        <div className="intro-text">
+          {text.intro.map((l) => <p key={l}>{l}</p>)}
+        </div>
+        <p className="sage-ask">
+          {ev.kind === 'hunt' ? (ev.id === 'sage' ? EV.sage.ask(ev.word.length) : EV.inspecteur.ask()) : ''}
+          {ev.kind === 'choice' ? EV.reserve.ask() : ''}
+          {ev.kind === 'harvest' ? (ev.id === 'billes' ? EV.billes.ask() : ruleLabel(ev.ruleId ?? '')) : ''}
+        </p>
+        <button className="ready-cta" onClick={start}>{text.start}</button>
+      </div>
+    );
+  }
+
   return (
     <div className="panel pick sage">
-      <div className={`sage-head ${ev.started ? 'compact' : ''}`}>
+      <div className="sage-head compact">
         <div className="frame sage-frame"><EventArt id={ev.id} /></div>
         <div className="sage-speech">
           <h2>{text.title}</h2>
-          {!ev.started && text.intro.map((l) => <p key={l} className="muted">{l}</p>)}
           {ev.kind === 'hunt' && <p className="sage-ask">{ev.id === 'sage' ? EV.sage.ask(ev.word.length) : EV.inspecteur.ask()}</p>}
           {ev.kind === 'choice' && <p className="sage-ask">{EV.reserve.ask()}</p>}
         </div>
       </div>
 
-      {!ev.started && ev.kind !== 'choice' && (
-        <div className="row"><button className="ready-cta" onClick={start}>{text.start}</button></div>
-      )}
-
-      {ev.started && ev.kind === 'hunt' && <Hunt ev={ev} />}
-      {ev.started && ev.kind === 'harvest' && <Harvest ev={ev} />}
-      {ev.kind === 'harvest' && !ev.started && ev.id === 'billes' && <Harvest ev={ev} />}
+      {ev.kind === 'hunt' && <Hunt ev={ev} />}
+      {ev.kind === 'harvest' && <Harvest ev={ev} />}
       {ev.kind === 'choice' && <Choice ev={ev} />}
 
       {ev.outcome !== 'playing' && (

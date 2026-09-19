@@ -11,7 +11,7 @@ import { pickQuest, updateQuest } from '../engine/quests';
 import { SAGE_HINT_RATIO, isCorrect, wordFromPath } from '../engine/sage';
 import {
   INSPECTOR_PENALTY, INSPECTOR_REWARD, RECITATION_PER_WORD, SAGE_CONSOLATION,
-  createChoice, createHarvest, createHunt, isEventManche, pickEvent, ruleAccepts, sageReward,
+  createChoice, createHarvest, createHunt, isEventManche, planEvents, ruleAccepts, sageReward,
   type EventId, type GameEvent,
 } from '../engine/events';
 import { adjustThreshold, difficultyOf } from '../engine/difficulty';
@@ -22,7 +22,7 @@ import { resolvePath, type FoundWord, type SubmitResult } from '../engine/manche
 import { applyModifiers, baseScore } from '../engine/scoring';
 import { candidatesForPath } from '../engine/wordFinder';
 import { createRng, randomSeed, type Rng } from '../engine/rng';
-import { GRACE_SECONDS_AFTER_LOSS, MANCHE_SECONDS, MAX_SAME_CHARM, STARTING_LIVES, STREAK_MAX_LINKS, STREAK_STEP, STREAK_WINDOW, TOTAL_MANCHES, eurosFor, gridSizeFor, mancheSecondsFor, threshold, timeEuros } from '../engine/rules';
+import { GRACE_SECONDS_AFTER_LOSS, MANCHE_SECONDS, MAX_SAME_CHARM, MIN_REMAINING_WORDS, STARTING_LIVES, STREAK_MAX_LINKS, STREAK_STEP, STREAK_WINDOW, TOTAL_MANCHES, eurosFor, gridSizeFor, mancheSecondsFor, threshold, timeEuros } from '../engine/rules';
 import { drawFreeRelics, generateShopOffer, shopRerollPrice, type ShopInput, type ShopItem } from '../engine/shop';
 import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
@@ -81,7 +81,7 @@ export interface RunState extends RunView {
   lastConditionId: string | null;
   seenEnemies: boolean; // la coopérative ne parle de cancres qu'après la première leçon « Le cancre copie »
   sageWins: number;
-  seenEvents: EventId[];
+  eventPlan: EventId[]; // le programme de l'année, tiré à la rentrée
   history: MancheResult[];
   endBonus: number;
   consumables: OwnedConsumable[];
@@ -168,7 +168,7 @@ export const useRunStore = create<Store>((set, get) => ({
       run: {
         seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
-        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, sageWins: 0, seenEvents: [],
+        consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, sageWins: 0, eventPlan: planEvents(rng),
       },
       lastResult: null,
       startChoices,
@@ -334,9 +334,16 @@ export const useRunStore = create<Store>((set, get) => ({
         fb.bonus = [fb.bonus, ...gained.map((b) => `${b.label} +${b.points}`)].filter(Boolean).join(' · ');
       }
       if (draft.gridDirty) {
-        // Terre fracturée : des lettres ont changé, les mots trouvables aussi
+        // Tableau effacé : des lettres ont changé, les mots trouvables aussi
         draft.search = findAllWords(draft.grid, dictionary.trie);
         draft.gridDirty = false;
+      }
+      // Feuille épuisée : la maîtresse en distribue une neuve, sans toucher au chrono.
+      const foundSet = new Set(draft.found.map((f) => f.word));
+      const remaining = [...draft.search.words].filter((w) => !foundSet.has(w)).length;
+      if (remaining < MIN_REMAINING_WORDS) {
+        renewSheet(draft, run, hooks);
+        notes.push('feuille neuve');
       }
     } else {
       if (result.kind === 'duplicate') fb.word = result.word;
@@ -425,9 +432,9 @@ export const useRunStore = create<Store>((set, get) => ({
       return;
     }
     // Un événement de couloir s'invite après les dictées 2, 4, 6 et 8, avant la coopérative.
-    if (isEventManche(run.currentManche)) {
-      const id = pickEvent(run.seenEvents, run.rng);
-      set({ phase: 'event', event: buildEvent(id, run), run: { ...run, seenEvents: [...run.seenEvents, id] } });
+    if (isEventManche(run.currentManche) && run.eventPlan.length) {
+      const [id, ...rest] = run.eventPlan;
+      set({ phase: 'event', event: buildEvent(id, run), run: { ...run, eventPlan: rest } });
       return;
     }
     openShop();
@@ -489,7 +496,7 @@ export const useRunStore = create<Store>((set, get) => ({
   eventStake(amount) {
     const { event, run } = get();
     if (!run || event?.kind !== 'harvest' || event.stake !== null || !event.stakeOptions.includes(amount)) return;
-    set({ event: { ...event, stake: amount, started: true }, run: { ...run, euros: run.euros - amount } });
+    set({ event: { ...event, stake: amount }, run: { ...run, euros: run.euros - amount } });
   },
 
   eventChoose(relicId) {
@@ -671,6 +678,23 @@ function finishEvent(e: GameEvent): GameEvent {
     return { ...e, outcome: 'lost', reward: 0 }; // la mise est déjà partie
   }
   return { ...e, outcome: 'lost' };
+}
+
+// Une feuille neuve : même taille, même thème, chrono et mots trouvés conservés.
+function renewSheet(draft: MancheState, run: RunState, hooks: ReturnType<typeof activeHooks>) {
+  const mut = draft.mutatorId ? resolveMutator(draft.mutatorId) : null;
+  const ctx = makeContext(run.rng, run, draft, dictionary);
+  const weights = mut?.weights ? mut.weights(FRENCH_STANDARD_WEIGHTS) : FRENCH_STANDARD_WEIGHTS;
+  const post = (g: typeof draft.grid) => runGridGenerate(mut?.applyToGrid ? mut.applyToGrid(g, run.rng) : g, hooks, ctx);
+  const { grid, search } = generateGrid(draft.grid.size, weights, run.rng, dictionary, post);
+  draft.grid = grid;
+  draft.search = search;
+  draft.critters = draft.critters.length ? spawnCritters(grid, run.snailRng) : [];
+  draft.cursedWord = null;
+  draft.cursedStart = null;
+  draft.amorce = null;
+  draft.inspiration = null;
+  runMancheStart(hooks, ctx); // le mot mystère et l'antisèche repartent sur la nouvelle feuille
 }
 
 function payoutEvent(e: GameEvent) {

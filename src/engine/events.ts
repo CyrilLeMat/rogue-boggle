@@ -18,11 +18,12 @@ export function isEventManche(manche: number): boolean {
   return EVENT_AFTER.includes(manche);
 }
 
-// Jamais deux fois le même dans l'année.
-export function pickEvent(seen: readonly EventId[], rng: Rng): EventId {
-  const all: EventId[] = ['sage', 'inspecteur', 'reserve', 'billes', 'recitation'];
-  const left = all.filter((e) => !seen.includes(e));
-  return rng.pick(left.length ? left : all);
+// Le programme de l'année, tiré à la rentrée : quatre événements pour quatre créneaux,
+// jamais deux fois le même, et le Sage du CM1 est toujours du voyage (à une place variable).
+export function planEvents(rng: Rng): EventId[] {
+  const pool: EventId[] = ['inspecteur', 'reserve', 'billes', 'recitation'];
+  const others = rng.shuffle(pool).slice(0, EVENT_AFTER.length - 1);
+  return rng.shuffle<EventId>(['sage', ...others]);
 }
 
 interface Base {
@@ -191,7 +192,7 @@ export function createHarvest(id: 'billes' | 'recitation', dict: Dictionary, rng
 }
 
 export function createChoice(offers: string[]): ChoiceEvent {
-  return { kind: 'choice', id: 'reserve', offers, started: true, seconds: 0, timeLeft: 0, outcome: 'playing', reward: 0, extraLife: false };
+  return { kind: 'choice', id: 'reserve', offers, started: false, seconds: 0, timeLeft: 0, outcome: 'playing', reward: 0, extraLife: false };
 }
 
 export function inspectorWordPool(entries: Parameters<typeof commonWordPool>[0]): string[] {

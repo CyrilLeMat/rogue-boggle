@@ -201,7 +201,7 @@ export const EV = {
     wonSub: 'Le concierge passe. Il ne saura jamais.',
     lost: '', lostSub: '',
     hint: '', wrong: '',
-    start: '', giveUp: '', leave: 'Retourner en classe',
+    start: 'Pousser la porte', giveUp: '', leave: 'Retourner en classe',
   },
   billes: {
     title: 'La partie de billes',

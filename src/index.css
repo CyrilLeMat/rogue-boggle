@@ -203,6 +203,18 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .cartable-list li.mutator strong { color: #6f9ed1; }
 .cartable-list li.charm strong { color: var(--gold); }
 
+/* la scène de l'événement, en grand, avant que le chrono ne parte */
+.event-intro { max-width: 560px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.event-hero { width: 100%; max-width: 420px; box-shadow: 5px 6px 0 #1f1b2e; }
+.event-hero .panel-art { aspect-ratio: 200 / 150; }
+.event-intro h2 { margin: 4px 0 0; }
+.event-intro .intro-text { min-height: 0; }
+.event-intro .intro-text p { animation: reveal 0.5s ease-out both; }
+.event-intro .intro-text p:nth-child(2) { animation-delay: 0.35s; }
+.event-intro .intro-text p:nth-child(3) { animation-delay: 0.7s; }
+.event-intro .sage-ask { margin-top: 0 !important; }
+.event-intro .ready-cta { margin-top: 4px; }
+
 .sage { max-width: 680px; }
 .sage-head { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start; text-align: left; }
 .sage-frame { flex: none; }

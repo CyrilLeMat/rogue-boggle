@@ -24,6 +24,8 @@ export const STREAK_MAX_LINKS = 5;
 export const TOTAL_MANCHES = 10;
 export const STARTING_LIVES = 3;
 export const MIN_WORD_LENGTH = 3;
+// [tuning] En dessous de ce nombre de mots encore trouvables, la maîtresse donne une feuille neuve.
+export const MIN_REMAINING_WORDS = 6;
 
 // [tuning] 100 × 1.35^n jugé infranchissable en playtest ; ×1.3 simulé impossible même pour un
 // expert sans relic (score humain ~plat, seuil exponentiel). ×1.2 : un bon joueur finit sans relic,

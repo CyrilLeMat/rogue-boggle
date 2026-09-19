@@ -35,6 +35,7 @@ Pas de meta-progression inter-run au MVP (tout le contenu est disponible dès la
 ### 3.1 Boucle
 
 - **Taille de grille** : elle grandit avec la run **[tuning]** : manches 1-2 en **4×4**, 3-5 en **5×5**, 6-10 en **6×6**. Le **7×7 est l'exception**, pas le trajet normal : il n'arrive que par la condition « Grille géante ». La référence de difficulté (3.1.1) est propre à chaque taille, donc le seuil reste comparable ; une grande grille offre plus de choix, pas plus de points gratuits. Lettres et espacement s'adaptent pour tenir sur un téléphone.
+- **Feuille épuisée** : dès qu'il reste moins de **6 mots** encore trouvables (typiquement avec la leçon « Tableau effacé », ou quand le joueur a tout ramassé), la maîtresse distribue une **feuille neuve** : nouvelle grille, chrono et mots trouvés conservés, mot mystère et antisèche retirés sur la nouvelle feuille. La note « feuille neuve » accompagne le mot déclencheur.
 - **Chrono** : 90 s en 4×4, **+15 s par palier de taille** (105 s en 5×5, 120 s en 6×6, 135 s en 7×7) **[tuning]**. Après une vie perdue, la manche suivante offre **+10 s de répit** (filet anti-spirale).
 - **Écran « prêt »** entre la boutique et la manche : grille visible mais floutée, résumé (seuil, humeur, objectif, chrono), le chrono démarre au premier toucher.
 - **Run** : 10 manches. Manche 10 réussie → écran de félicitations (score final, relics, mots marquants). Pas de mode endless au MVP.
@@ -102,7 +103,8 @@ Chaque mot validé moins de **5 s** après le précédent ajoute un maillon ; le
 | **La partie de billes** | on parie | Mise de 10, 25 ou 50 billes, puis 4 mots en 30 s | Réussi : mise doublée. Raté : mise perdue |
 | **Le concours de récitation** | on joue | Contrainte tirée au sort (mots en R, mots de 5+, que des verbes…), 45 s | 10 billes par mot juste, aucun risque |
 
-- **Quand** : après les dictées **2, 4, 6 et 8**, entre le récap et la coopérative.
+- **Quand** : après les dictées **2, 4, 6 et 8**, entre le récap et la coopérative. Le **programme de l'année est tiré à la rentrée** (`planEvents`) : quatre événements pour quatre créneaux, jamais deux fois le même, et **le Sage du CM1 en fait toujours partie** (à une place variable) — il est le cœur de la série.
+- **Chaque événement s'ouvre sur sa scène en plein écran** : l'illustration en grand, le texte révélé ligne par ligne, la consigne, puis un bouton (« Monter sur l'estrade », « Se lever, dignement », « Pousser la porte »). Le chrono ne part qu'après ; la scène se replie ensuite en bandeau pour laisser toute la place à la feuille.
 - **L'énigme** : un mot **courant de 8 à 12 lettres**, nom ou adjectif (2 376 candidats ; les formes conjuguées comme « abandonnez » sont exclues, devinette ingrate).
 - **La feuille** : une grille **5×5** où le mot est planté le long d'un chemin auto-évitant tiré au hasard (`carvePath`, retour arrière). Les cases du mot sont normales, **les 13 à 17 autres sont grisées et intraçables** : on connaît les lettres, tout l'effort est de retrouver le chemin. Même geste que le jeu, donc rien de nouveau à apprendre.
 - **Chrono** : `15 + 3 × longueur` s (39 s pour 8 lettres, 51 s pour 12) **[tuning]**.

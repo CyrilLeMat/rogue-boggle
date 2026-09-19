@@ -224,6 +224,11 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .scene-card:hover { background: #fffaf2; border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
 .scene-choice { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); line-height: 1.1; }
 .scene-detail { font-size: 0.85rem; color: #6d667c; line-height: 1.35; }
+.scene-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.scene-tag { font-size: 0.72rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: 1.5px solid; white-space: nowrap; }
+.scene-tag.good { color: #3d7c5b; border-color: #a9d8bf; background: #eef8f2; }
+.scene-tag.bad { color: #b5423e; border-color: #f0bdbb; background: #fdf0ef; }
+.scene-tag.neutral { color: var(--accent-deep); border-color: #d5cbee; background: #f3f0fb; }
 /* les petits détails qui bougent dans les planches */
 .splash { animation: pop 0.5s ease-out both; }
 .snail-crawl { animation: crawl 3s ease-in-out infinite alternate; }

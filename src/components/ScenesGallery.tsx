@@ -1,4 +1,4 @@
-import { SCENES } from '../data/scenes';
+import { SCENES, sceneTags } from '../data/scenes';
 import { SceneArt } from './SceneArt';
 
 // Planche de contrôle : toutes les scènes d'un coup, pour les relire et les valider.
@@ -18,6 +18,9 @@ export function ScenesGallery() {
               <div key={c.label} className="scene-card">
                 <span className="scene-choice">{c.label}</span>
                 <span className="scene-detail">{c.detail}</span>
+              <span className="scene-tags">
+                {sceneTags(c.effects).map((t) => <span key={t.text} className={`scene-tag ${t.tone}`}>{t.text}</span>)}
+              </span>
               </div>
             ))}
           </div>

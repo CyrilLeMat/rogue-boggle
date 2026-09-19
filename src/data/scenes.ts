@@ -1,8 +1,9 @@
 import type { Relic } from '../engine/hooks';
 import { posKey } from '../engine/adjacency';
 import { findPathForWord } from '../engine/wordFinder';
-import { MUTATORS } from './mutators';
+import { MUTATORS, MUTATOR_BY_ID } from './mutators';
 import type { Rng } from '../engine/rng';
+import { STREAK_STEP } from '../engine/rules';
 
 // Les planches : une situation, deux réactions possibles, des conséquences qui en découlent.
 // Le narrateur est l'élève, et l'élève dramatise tout.
@@ -226,6 +227,28 @@ export const SCENES: Scene[] = [
 ];
 
 export const SCENE_BY_ID = new Map(SCENES.map((s) => [s.id, s]));
+
+export interface SceneTag { text: string; tone: 'good' | 'bad' | 'neutral' }
+
+const pct = (m: number) => `${m >= 1 ? '+' : '\u2212'}${Math.round(Math.abs(m - 1) * 100)} %`;
+const signed = (n: number, unit: string) => `${n > 0 ? '+' : '\u2212'}${Math.abs(n)} ${unit}`;
+
+// Ce que la réaction coûte et rapporte, en clair : le texte dramatise, les pastilles ne mentent pas.
+export function sceneTags(e: SceneEffects): SceneTag[] {
+  const tags: SceneTag[] = [];
+  if (e.lessonId) tags.push({ text: `Leçon : ${MUTATOR_BY_ID.get(e.lessonId)?.name ?? e.lessonId}`, tone: 'neutral' });
+  if (e.randomLesson) tags.push({ text: 'Leçon tirée au sort', tone: 'neutral' });
+  if (e.seconds) tags.push({ text: signed(e.seconds, 's'), tone: e.seconds > 0 ? 'good' : 'bad' });
+  if (e.euros) tags.push({ text: signed(e.euros, 'billes'), tone: e.euros > 0 ? 'good' : 'bad' });
+  if (e.eurosMult) tags.push({ text: `${pct(e.eurosMult)} de billes`, tone: e.eurosMult >= 1 ? 'good' : 'bad' });
+  if (e.thresholdMult) tags.push({ text: `note à atteindre ${pct(e.thresholdMult)}`, tone: e.thresholdMult <= 1 ? 'good' : 'bad' });
+  if (e.scoreMult) tags.push({ text: `${pct(1 + e.scoreMult)} par mot`, tone: e.scoreMult >= 0 ? 'good' : 'bad' });
+  if (e.sizeDelta) tags.push({ text: e.sizeDelta > 0 ? 'feuille plus grande' : 'feuille plus petite', tone: 'neutral' });
+  if (e.streakStep) tags.push({ text: `élan ×${Math.round(e.streakStep / STREAK_STEP)}`, tone: 'good' });
+  if (e.gommette) tags.push({ text: 'une gommette offerte', tone: 'good' });
+  if (e.amorce) tags.push({ text: 'un début de mot soufflé', tone: 'good' });
+  return tags;
+}
 
 // Cinq créneaux dans l'année (dictées paires), neuf planches : jamais deux fois la même.
 export function planScenes(rng: Rng, slots: number): string[] {

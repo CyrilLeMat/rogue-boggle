@@ -511,32 +511,25 @@ Les relics 24-29 ne sont proposés en boutique qu'à partir de la manche 2, et l
 
 **Coupé du MVP** : Chasseur de chaîne / Famille lexicale (lemmatisation), Grammairien (multi-catégories).
 
-### 7.2 Leçons (12) — choisies une dictée sur deux
+### 7.2 Les planches (9) — une dictée sur deux
 
-**Les scènes de choix** (`LESSON_SCENES`, 6 contextes) ne décrivent plus « la maîtresse hésite » dans le vide : chaque leçon porte sa propre **cause narrative** (`Mutator.scene`), une phrase qui dit pourquoi cette absurdité arrive aujourd'hui, affichée sur sa carte au-dessus de l'effet mécanique. Le contexte pose la situation, les deux causes donnent le sel, l'effet reste lisible en petit.
+Avant les dictées **paires**, il se passe quelque chose en classe : une **planche illustrée** (`src/data/scenes.ts`, dessins dans `SceneArt.tsx`) raconte la situation en trois phrases, puis propose **deux façons d'y réagir**. Le joueur ne choisit plus entre deux règles abstraites : il décide ce qu'il fait, et les conséquences découlent de sa décision. Le narrateur est l'élève, et l'élève dramatise tout.
 
-| Leçon | Ce qui s'est passé | Ce que ça change |
+Les cinq planches de l'année sont tirées à la rentrée (`planScenes`), jamais deux fois la même.
+
+| Planche | Réaction A | Réaction B |
 |---|---|---|
-| Leçon de choses | Le bocal s'est renversé, les escargots sont partout | Escargots : mot doublé sur leur case |
-| Consigne du jour | Elle a écrit une consigne pendant la récré, très fière d'elle | Objectif payé en billes |
-| Le cancre copie | Kévin s'est assis à côté. Il n'a jamais de stylo | Un cancre mobile à faire taire |
-| Tableau effacé | L'éponge est trop mouillée | Case craquelée puis lettre remplacée |
-| **Le cahier troué** | Ton cahier a pris l'eau dans le cartable | **Chaque case utilisée se perce et devient inutilisable** |
-| **Courant d'air** | La fenêtre est restée ouverte, personne n'ose la fermer | **Deux lettres changent toutes les 8 s** |
-| Taches d'encre | Le stylo de Sophie a explosé, et Sophie pleure | 2 cases à −8 s, +50 % sur tout |
-| Dictée à trous | Elle ouvre son livre page 42 | Un mot dicté à la fois, +30 pts, puis un autre |
-| Le mot en chaîne | Elle a lu un article sur la pédagogie moderne | Mot enchaîné sur la dernière lettre = ×2 |
-| Calcul mental | Rendez-vous chez le dentiste à 16 h | −30 s, note −30 % |
-| Rédaction | Il pleut, la récré est annulée | +45 s, note +40 % |
-| Grande carte | Elle déroule la carte de France | +1 de taille |
+| Le stylo de Sophie explose | Voler à son secours : −20 s, +40 billes | Reculer sa chaise : taches d'encre (+50 % sur les mots) |
+| Le bocal de la leçon de choses | Les ramasser : −15 s, +30 billes | Les laisser courir : escargots, −20 % de billes |
+| Le changement de place | Près de Kévin : un cancre copie | Près de la fenêtre : courant d'air |
+| Le remplaçant | Lui mentir sur le règlement : note −25 %, −40 billes | Ne rien dire : une leçon tirée au sort |
+| Le gros mot au tableau | Se dénoncer : −20 s, +60 billes | Laisser punir la classe : note +20 % |
+| La photo de classe | Premier rang : +25 % sur les mots, −25 % de billes | Dernier rang : +50 billes, un cancre à côté |
+| Des chaussures dans le couloir | Se redresser : note −15 %, −10 s | Glisser sous la table : +40 billes, −20 s |
+| Le cahier resté à la maison | Écrire tout petit : feuille −1 taille, +30 % sur les mots | En réclamer une autre : −25 billes |
+| L'anniversaire de Léa | Prendre une part : +30 billes, −15 s | Refuser : élan deux fois plus vif |
 
-Nouveau hook `onTick(ctx, elapsed)` sur `Relic` : ce qui vit pendant la dictée (le courant d'air). Les cases percées sortent du calcul des mots trouvables via le `blocked` de `findAllWords`, déjà prévu pour les murs.
-
-**Cadence** : les dictées **paires** (2, 4, 6, 8, 10) sont précédées d'une **scène au tableau** où la maîtresse hésite entre deux leçons tirées au sort ; c'est le joueur qui tranche (`hasLessonChoice`, `pickLessons`). Les dictées impaires restent nues, pour respirer. Le thème imposé à chaque manche a été remplacé par ce choix : une dictée sur deux est spéciale, et elle l'est parce qu'on l'a voulu.
-
-Deux leçons changent le **geste**, pas seulement les règles :
-- **Dictée à trous** : la maîtresse dicte un mot à la fois, **affiché en clair** avec sa case de départ. Le tracer donne +30 pts et elle en dicte aussitôt un autre. Le vrai principe d'une dictée, enfin dans le jeu.
-- **Le mot en chaîne** : un mot qui commence par la dernière lettre du précédent compte double.
+**Mécanique** : `SceneEffects` couvre chrono, billes (immédiates ou multipliées), note à atteindre, pourcentage sur les mots, taille de feuille, élan, leçon appliquée, leçon tirée au sort, gommette offerte, antisèche soufflée. Les effets immédiats tombent au clic ; ceux qui durent deviennent une **fourniture invisible d'une manche** (`sceneRelic`), ce qui réutilise tout le pipeline de hooks sans cas particulier. Les 12 leçons restent, mais comme **conséquences** d'un choix, plus comme cartes à choisir.
 
 ### 7.2 bis Anciennes fiches de thèmes
 

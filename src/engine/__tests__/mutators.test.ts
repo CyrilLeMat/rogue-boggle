@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { FRACTURE_USES, MUTATORS, MUTATOR_BY_ID, hasLessonChoice, mutatorGridSize, pickLessons } from '../../data/mutators';
+import { FRACTURE_USES, MUTATORS, MUTATOR_BY_ID, hasLessonChoice, mutatorGridSize } from '../../data/mutators';
+import { SCENES, planScenes, sceneChoice, sceneRelic } from '../../data/scenes';
 import { buildDictionary } from '../dictionary';
 import type { MancheView, RunView } from '../hooks';
 import { makeContext, runWordAccepted } from '../hookRunner';
@@ -40,21 +41,39 @@ describe('mutators', () => {
     expect(m.grid.cells[1][1].letter).toBe('E'); // hors chemin : intact
     expect(m.gridDirty).toBe(true);
   });
-  it('grid size is capped at 7, lessons are chosen every other manche, late ones wait', () => {
+  it('grid size is capped at 7, scenes land every other manche', () => {
     expect(mutatorGridSize(6, MUTATOR_BY_ID.get('geante')!)).toBe(7);
     expect(mutatorGridSize(7, MUTATOR_BY_ID.get('geante')!)).toBe(7);
     expect([1, 2, 3, 4, 9, 10].filter(hasLessonChoice)).toEqual([2, 4, 10]);
-    for (let i = 0; i < 30; i++) {
-      const pair = pickLessons(createRng('c' + i), 'fracture', 2);
-      expect(pair.length).toBe(2);
-      expect(new Set(pair).size).toBe(2);
-      expect(pair).not.toContain('fracture');
-      for (const id of pair) {
-        expect(['geante', 'marathon']).not.toContain(id); // réservées à partir de la manche 4
-        expect(MUTATOR_BY_ID.has(id)).toBe(true);
+  });
+
+  it('every scene has two signed choices and no repeat in a year', () => {
+    for (const scene of SCENES) {
+      expect(scene.lines.length).toBeGreaterThanOrEqual(2);
+      expect(scene.choices.length).toBe(2);
+      for (const c of scene.choices) {
+        expect(c.label).toBeTruthy();
+        expect(c.detail).toBeTruthy();
+        expect(Object.keys(c.effects).length).toBeGreaterThan(0);
+        if (c.effects.lessonId) expect(MUTATOR_BY_ID.has(c.effects.lessonId)).toBe(true);
       }
     }
+    for (let i = 0; i < 20; i++) {
+      const plan = planScenes(createRng('p' + i), 5);
+      expect(plan.length).toBe(5);
+      expect(new Set(plan).size).toBe(5);
+    }
   });
+
+  it('turns lasting consequences into a one-manche relic', () => {
+    const photo = sceneChoice('photo', 0)!;
+    const relic = sceneRelic(photo.effects)!;
+    expect(relic.onWordFound!('MOT', {} as never)).toEqual({ percent: 0.25 });
+    expect(relic.eurosMult).toBe(0.75);
+    // un choix qui n'a que des effets immédiats ne crée pas de fourniture
+    expect(sceneRelic({ euros: 40 })).toBeNull();
+  });
+
   it('Grille toxique marks two cells', () => {
     const g = MUTATOR_BY_ID.get('toxique')!.applyToGrid!({ size: 4, cells: Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => makeCell('A'))) }, createRng('t'));
     expect(g.cells.flat().filter((c) => c.isToxic).length).toBe(2);

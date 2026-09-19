@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
-import { hasLessonChoice, mutatorGridSize, pickLessons } from '../data/mutators';
+import { randomCharm } from '../data/charms';
+import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
+import { planScenes, randomLessonId, sceneChoice, sceneRelic } from '../data/scenes';
 import { ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
@@ -28,7 +30,7 @@ import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'intro' | 'startPick' | 'lessonPick' | 'ready' | 'playing' | 'recap' | 'event' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'event' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -83,7 +85,9 @@ export interface RunState extends RunView {
   seenEnemies: boolean; // la coopérative ne parle de cancres qu'après la première leçon « Le cancre copie »
   seenShop: boolean;    // la scène d'arrivée ne se joue qu'une fois par année
   sageWins: number;
-  eventPlan: EventId[]; // le programme de l'année, tiré à la rentrée
+  eventPlan: EventId[];   // le programme de l'année, tiré à la rentrée
+  scenePlan: string[];    // les planches de l'année, une par dictée paire
+  pendingScene: { sceneId: string; choice: number; lessonId: string | null } | null;
   history: MancheResult[];
   endBonus: number;
   consumables: OwnedConsumable[];
@@ -97,7 +101,7 @@ interface Store {
   manche: MancheState | null;
   lastResult: MancheResult | null;
   startChoices: string[];
-  lessonChoices: string[];
+  currentScene: string | null;
   shop: ShopItem[];
   shopRerolls: { paid: number; freeLeft: number };
   event: GameEvent | null;
@@ -106,7 +110,7 @@ interface Store {
   startRun(seed?: string): void;
   acceptChallenge(): void; // prologue → fourniture de rentrée
   pickStartRelic(id: string): void;
-  pickLesson(id: string): void;
+  pickSceneChoice(choice: number): void;
   startManche(): void;
   rerollGrid(): void; // Sourcier, depuis l'écran « prêt »
   beginPlay(): void; // écran « prêt » → chrono lancé
@@ -160,7 +164,7 @@ export const useRunStore = create<Store>((set, get) => ({
   manche: null,
   lastResult: null,
   startChoices: [],
-  lessonChoices: [],
+  currentScene: null,
   shop: [],
   shopRerolls: { paid: 0, freeLeft: 0 },
   event: null,
@@ -175,6 +179,7 @@ export const useRunStore = create<Store>((set, get) => ({
         seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
         consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
+        scenePlan: planScenes(rng, 5), pendingScene: null,
       },
       lastResult: null,
       startChoices,
@@ -207,15 +212,17 @@ export const useRunStore = create<Store>((set, get) => ({
     if (!run) return;
     const curseIds = run.pendingCurseIds;
     const mut = run.nextMutatorId ? resolveMutator(run.nextMutatorId) : null;
-    const hooks = activeHooks(run.relicIds, curseIds, run.nextMutatorId);
+    const sceneFx = run.pendingScene ? sceneChoice(run.pendingScene.sceneId, run.pendingScene.choice)?.effects ?? {} : {};
+    const consequences = sceneRelic(sceneFx);
+    const hooks = [...activeHooks(run.relicIds, curseIds, run.nextMutatorId), ...(consequences ? [consequences] : [])];
     const draft = freshManche(run);
     draft.curseIds = curseIds;
-    const size = mutatorGridSize(gridSizeFor(run.currentManche), mut);
+    const size = Math.max(4, mutatorGridSize(gridSizeFor(run.currentManche), mut) + (sceneFx.sizeDelta ?? 0));
     draft.graceSeconds = run.lostLifeLastManche ? GRACE_SECONDS_AFTER_LOSS : 0;
     const seconds = mancheSeconds(mancheSecondsFor(size) + (mut?.secondsDelta ?? 0), hooks) + draft.graceSeconds;
     draft.timeLeft = draft.timeLeftBeforeWord = draft.totalSeconds = seconds;
     draft.gridRerollsLeft = resolveRelics(run.relicIds).reduce((n, r) => n + (r.gridRerolls ?? 0), 0);
-    buildGrid(draft, run, hooks, mut);
+    buildGrid(draft, run, hooks, mut, size);
     const consumables = run.consumables.map((c) => ({ id: c.id, charges: consumable(c.id).usesPerManche }));
     set({
       phase: 'ready',
@@ -231,7 +238,7 @@ export const useRunStore = create<Store>((set, get) => ({
     const mut = manche.mutatorId ? resolveMutator(manche.mutatorId) : null;
     const hooks = activeHooks(run.relicIds, manche.curseIds, manche.mutatorId);
     const draft: MancheState = { ...manche, relicState: {}, bonuses: [], cursedWord: null, cursedStart: null, cursedVisible: false, holes: [], radarCell: null, luckyLetter: null, amorce: null, gridRerollsLeft: manche.gridRerollsLeft - 1 };
-    buildGrid(draft, run, hooks, mut);
+    buildGrid(draft, run, hooks, mut, manche.grid.size);
     set({ manche: draft });
   },
 
@@ -587,24 +594,42 @@ export const useRunStore = create<Store>((set, get) => ({
     const { run } = get();
     if (!run) return;
     const manche = run.currentManche + 1;
-    // Une dictée sur deux, la maîtresse hésite entre deux leçons : c'est toi qui tranches.
-    if (hasLessonChoice(manche)) {
+    // Une dictée sur deux, il se passe quelque chose en classe et tu dois réagir.
+    const [sceneId, ...restScenes] = run.scenePlan;
+    if (hasLessonChoice(manche) && sceneId) {
       set({
-        run: { ...run, currentManche: manche, nextMutatorId: null },
+        run: { ...run, currentManche: manche, nextMutatorId: null, pendingScene: null, scenePlan: restScenes },
         shop: [],
-        phase: 'lessonPick',
-        lessonChoices: pickLessons(run.rng, run.lastConditionId, manche),
+        phase: 'scenePick',
+        currentScene: sceneId,
       });
       return;
     }
-    set({ run: { ...run, currentManche: manche, nextMutatorId: null }, shop: [] });
+    set({ run: { ...run, currentManche: manche, nextMutatorId: null, pendingScene: null }, shop: [] });
     get().startManche();
   },
 
-  pickLesson(id) {
-    const { run, lessonChoices } = get();
-    if (!run || !lessonChoices.includes(id)) return;
-    set({ run: { ...run, nextMutatorId: id, lastConditionId: id }, lessonChoices: [] });
+  // La décision : les conséquences immédiates tombent tout de suite, le reste vivra pendant la dictée.
+  pickSceneChoice(choice) {
+    const { run, currentScene } = get();
+    if (!run || !currentScene) return;
+    const picked = sceneChoice(currentScene, choice);
+    if (!picked) return;
+    const e = picked.effects;
+    const lessonId = e.randomLesson ? randomLessonId(run.rng, run.currentManche) : e.lessonId ?? null;
+    let relicIds = run.relicIds;
+    if (e.gommette) relicIds = [...relicIds, randomCharm(run.rng).id];
+    set({
+      run: {
+        ...run,
+        relicIds,
+        euros: Math.max(0, run.euros + (e.euros ?? 0)),
+        nextMutatorId: lessonId,
+        lastConditionId: lessonId ?? run.lastConditionId,
+        pendingScene: { sceneId: currentScene, choice, lessonId },
+      },
+      currentScene: null,
+    });
     get().startManche();
   },
 
@@ -676,7 +701,7 @@ export const useRunStore = create<Store>((set, get) => ({
   },
 
   backToMenu() {
-    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], lessonChoices: [], shop: [], event: null });
+    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], currentScene: null, shop: [], event: null });
   },
 
   addRelic(id) {
@@ -687,8 +712,8 @@ export const useRunStore = create<Store>((set, get) => ({
 }));
 
 // Génère la grille d'une manche (ou la regénère pour Sourcier) : mutateur, relics, difficulté, escargots, objectif.
-function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof activeHooks>, mut: ReturnType<typeof resolveMutator> | null) {
-  const size = draft.grid.size && draft.grid.cells.length ? draft.grid.size : mutatorGridSize(gridSizeFor(run.currentManche), mut);
+function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof activeHooks>, mut: ReturnType<typeof resolveMutator> | null, forcedSize?: number) {
+  const size = forcedSize ?? (draft.grid.cells.length ? draft.grid.size : mutatorGridSize(gridSizeFor(run.currentManche), mut));
   const ctx = makeContext(run.rng, run, draft, dictionary);
   const weights = mut?.weights ? mut.weights(FRENCH_STANDARD_WEIGHTS) : FRENCH_STANDARD_WEIGHTS;
   const post = (g: typeof draft.grid) => runGridGenerate(mut?.applyToGrid ? mut.applyToGrid(g, run.rng) : g, hooks, ctx);

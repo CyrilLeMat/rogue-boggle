@@ -2,7 +2,6 @@ import { posKey } from '../engine/adjacency';
 import { FRENCH_STANDARD_WEIGHTS, sampleLetter } from '../engine/gridGenerator';
 import type { Mutator, RunContext } from '../engine/hooks';
 import { findPathForWord } from '../engine/wordFinder';
-import type { Rng } from '../engine/rng';
 
 export const DICTATED_BONUS = 30; // [tuning]
 export const WIND_SECONDS = 8;    // [tuning] le courant d'air souffle toutes les 8 s
@@ -161,8 +160,4 @@ export function hasLessonChoice(manche: number): boolean {
   return manche >= 2 && manche % 2 === 0;
 }
 
-// Deux leçons distinctes, jamais celle de la dernière fois, et certaines attendent la manche 4.
-export function pickLessons(rng: Rng, previous: string | null, manche: number): string[] {
-  const pool = MUTATORS.filter((m) => m.id !== previous && (m.minManche ?? 0) <= manche);
-  return rng.shuffle(pool.length >= 2 ? pool : MUTATORS).slice(0, 2).map((m) => m.id);
-}
+

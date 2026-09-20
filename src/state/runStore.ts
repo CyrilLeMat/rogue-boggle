@@ -507,6 +507,8 @@ export const useRunStore = create<Store>((set, get) => ({
     const ctx = makeContext(run.rng, run, cloneManche(manche), dictionary);
     const t = manche.threshold;
     const success = manche.score >= t;
+    // mode histoire : elle note en rouge, elle soupire, mais le tableau reste plein
+    const lost = !success && !resolveLevel(run.levelId).noFail;
     const breakdown = eurosFor(manche.score, t, success);
     const eurosTime = early && success ? timeEuros(manche.timeLeft) : 0;
     const eurosQuest = manche.quest?.done ? manche.quest.reward : 0;
@@ -523,14 +525,14 @@ export const useRunStore = create<Store>((set, get) => ({
       manche: run.currentManche, score: manche.score, threshold: t, mood: manche.difficulty.mood, success,
       euros, eurosBase: breakdown.base, eurosBonus: breakdown.bonus, eurosTime, eurosQuest, eurosEnemy,
       questLabel: manche.quest?.label ?? null, gridSize: manche.grid.size,
-      livesAfter: success ? run.lives : run.lives - 1,
+      livesAfter: lost ? run.lives - 1 : run.lives,
       bestWord: manche.found.reduce<FoundWord | null>((b, f) => (!b || f.score > b.score ? f : b), null),
       words: manche.found, missed,
       grid: manche.grid, cursedWord: manche.cursedWord,
       appreciation: pickAppreciation(
         manche.score / Math.max(1, t),
         success,
-        success ? run.lives : run.lives - 1,
+        lost ? run.lives - 1 : run.lives,
         run.saidAppreciations,
         manche.score,
         run.seenInterludes.includes('kevin1'),
@@ -544,7 +546,7 @@ export const useRunStore = create<Store>((set, get) => ({
         ...run,
         score: run.score + manche.score,
         euros: run.euros + euros,
-        lives: success ? run.lives : run.lives - 1,
+        lives: lost ? run.lives - 1 : run.lives,
         lostLifeLastManche: !success,
         saidAppreciations: [...run.saidAppreciations, result.appreciation],
         history: [...run.history, result],

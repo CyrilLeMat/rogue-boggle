@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { sfx } from '../audio/sfx';
 import type { Pos } from '../engine/types';
 import { findPathForWord } from '../engine/wordFinder';
+import { level as resolveLevel } from '../data/levels';
 import { useRunStore } from '../state/runStore';
 import { L, SIGNATURE, band, money } from '../theme/lexicon';
 import { MaitresseArt } from './MaitresseArt';
@@ -90,7 +91,9 @@ export function MancheRecap() {
             <span className="signature">{say(SIGNATURE)}</span>
           </div>
         )}
-        {act >= 2 && !result.success && <p className="ko act">{L.vieEnMoins} Il t'en reste {run.lives}.</p>}
+        {act >= 2 && !result.success && (resolveLevel(run.levelId).noFail
+          ? <p className="muted act">{L.vieSauvee}</p>
+          : <p className="ko act">{L.vieEnMoins} Il t'en reste {run.lives}.</p>)}
         {act >= 2 && <button className="ready-cta" onClick={(e) => { e.stopPropagation(); setDetail(true); }}>{L.voirDetail}</button>}
       </div>
     );

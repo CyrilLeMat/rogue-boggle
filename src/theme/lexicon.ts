@@ -230,6 +230,7 @@ export const L = {
   reussie: 'Copie acceptée.',
   ratee: 'Copie refusée.',
   vieEnMoins: 'Un bon point arraché du tableau.',
+  vieSauvee: 'Elle lève son stylo vers le tableau, puis se ravise. Aucun bon point ne bouge.',
   voirBulletin: 'Ouvrir le bulletin',
   voirDetail: 'Voir le détail',
   victoire: 'Passage en CM1.',

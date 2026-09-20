@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { relics } from '../data/registry';
 import { uiFlags } from '../engine/hookRunner';
-import { TOTAL_MANCHES, eurosFor } from '../engine/rules';
+import { eurosFor } from '../engine/rules';
 import { useRunStore } from '../state/runStore';
 import { L } from '../theme/lexicon';
 
@@ -35,16 +35,11 @@ export function ScoreBoard() {
   const live = eurosFor(manche.score, t, reached);
   const flags = uiFlags(relics(run.relicIds));
   const pct = Math.min(100, (shownScore / t) * 100);
+  // Pendant la dictée on ne lit rien d'autre que la note et le chrono :
+  // le rang, les bons points et les billes sont dans le briefing et dans le bulletin.
   return (
     <>
     <div className="scoreboard">
-      <div className="stat"><span className="label">{L.manche}</span><span className="value">{run.currentManche}/{TOTAL_MANCHES}</span></div>
-      <div className={`stat stat-mood mood-${manche.difficulty.mood}`}><span className="label">{L.grille}</span><span className="value">{manche.difficulty.mood}</span></div>
-      <div className="stat"><span className="label">{L.vies}</span><span className="value bons-points">{'★'.repeat(run.lives)}{'☆'.repeat(Math.max(0, 3 - run.lives))}</span></div>
-      <div className="stat">
-        <span className="label">{L.euros}</span>
-        <span className="value">{run.euros}{reached && <span className="live-euros"> +{live.total}</span>}</span>
-      </div>
       {flags.showLongestLength && (
         <div className="stat stat-info"><span className="label">Petit Larousse</span><span className="value">{manche.search.longestLength} lettres</span></div>
       )}
@@ -70,7 +65,9 @@ export function ScoreBoard() {
       <div className="note-numbers">
         <span className="note-now">{shownScore}</span>
         <span className="note-target">/ {t}</span>
-        <span className="note-label">{reached ? 'note atteinte' : L.seuil.toLowerCase()}</span>
+        <span className="note-label">
+          {reached ? <>note atteinte<span className="live-euros"> +{live.total} {L.euros.toLowerCase()}</span></> : L.seuil.toLowerCase()}
+        </span>
       </div>
       <div className="note-bar"><span style={{ width: `${pct}%` }} /></div>
     </div>

@@ -72,8 +72,8 @@ function Playing() {
     <div className={`playing ${phase === 'ready' ? 'is-ready' : ''}`}>
       <ScoreBoard />
       <Timer />
-      <RelicBar />
-      <div className="under-bar">
+      <div className="hud-row">
+        <RelicBar />
         <StreakGauge />
         <QuestBadge />
       </div>

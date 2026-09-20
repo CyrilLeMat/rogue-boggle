@@ -192,7 +192,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .note-numbers { display: flex; align-items: baseline; gap: 10px; }
 .note-now { font-size: 2.6rem; font-weight: 800; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
 .note-target { font-size: 1.3rem; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
-.note-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin-left: auto; }
+.note-label { font-size: 0.7rem; text-align: right; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin-left: auto; }
 .note-bar { height: 8px; background: #f1e9df; border-radius: 999px; overflow: hidden; margin-top: 6px; }
 .note-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), #f4d35e); transition: width 0.3s; border-radius: 999px; }
 .note-hero.ok .note-now, .note-hero.ok .note-label { color: var(--ok); }
@@ -459,6 +459,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .finish { margin-top: 12px; width: 100%; }
 .finish.secondary { opacity: 0.5; }
 
+.hud-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 .under-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
 .streak { display: inline-flex; align-items: center; gap: 8px; background: #fff; border-radius: 999px; padding: 6px 12px; box-shadow: var(--shadow-soft); font-weight: 800; opacity: 0.55; transition: opacity 0.2s; }
 .streak.alive { opacity: 1; }
@@ -476,15 +477,34 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .quest-progress { color: var(--gold); font-variant-numeric: tabular-nums; }
 .board { position: relative; }
 .ready-overlay {
-  position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  background: rgba(251, 246, 238, 0.55); backdrop-filter: blur(2px); border-radius: 24px; color: var(--text); box-shadow: none; padding: 20px;
+  position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  background: rgba(251, 246, 238, 0.82); backdrop-filter: blur(3px); border-radius: 24px; color: var(--text); box-shadow: none; padding: 20px;
 }
-.ready-overlay:hover { background: rgba(251, 246, 238, 0.65); transform: none; }
-.ready-title { font-size: 1.6rem; font-weight: 800; }
+.ready-overlay:hover { background: rgba(251, 246, 238, 0.86); transform: none; }
+.ready-title { font-size: 1.7rem; font-weight: 800; line-height: 1.1; }
+.ready-title small { font-size: 0.9rem; color: var(--muted); font-weight: 700; }
+.ready-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 420px; }
+.chip {
+  font-size: 0.78rem; font-weight: 700; padding: 3px 11px; border-radius: 999px;
+  border: 2px solid #ded6ee; background: #fffdf9; color: var(--text); white-space: nowrap;
+}
+.chip.strong { border-color: var(--accent); color: var(--accent-deep); }
+.chip.ok { border-color: #a9d8bf; color: #3d7c5b; }
+.chip.mood-généreuse { border-color: #a9d8bf; color: #3d7c5b; }
+.chip.mood-aride { border-color: #f0bdbb; color: #b5423e; }
+.ready-lesson {
+  margin: 2px 0 0; max-width: 430px; text-align: center; font-size: 0.9rem; line-height: 1.35; color: var(--text);
+}
+.ready-lesson strong { color: #4f80b5; }
+.ready-lesson.plain { color: var(--muted); font-style: italic; }
+.ready-foot { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--muted); font-weight: 700; }
+.ready-foot .secondary { margin: 0; }
 .ready-line { font-size: 0.95rem; color: var(--muted); font-weight: 600; text-align: center; }
 .ready-cta { margin-top: 12px; background: var(--accent); color: #fff; border-radius: 999px; padding: 12px 22px; font-weight: 800; animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 .is-ready .cell { filter: blur(4px); opacity: 0.8; }
+/* avant le départ, la note et le chrono sont déjà dans le briefing : on ne les écrit pas deux fois */
+.is-ready .note-hero, .is-ready .timer, .is-ready .streak { opacity: 0.18; pointer-events: none; }
 .relic.mutator { border-color: #cfe0f5; background: #eef4fb; }
 .relic.charm { border-color: #f6e0c8; background: #fff8f1; font-weight: 600; }
 .shop-slot.kind-charm .relic-card { border-color: #f6e0c8; background: #fffaf4; min-height: 120px; }
@@ -501,7 +521,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .cell.fresh { animation: crumble 0.5s ease-out; }
 @keyframes crumble { 0% { transform: scale(0.6) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.08) rotate(2deg); opacity: 1; } 100% { transform: none; } }
 
-.relic-bar-wrap { margin-bottom: 14px; }
+.relic-bar-wrap { margin-bottom: 0; }
 .relic-desc-box { margin-top: 8px; background: #fff; border-radius: 14px 18px 16px 20px; padding: 10px 14px; font-size: 0.9rem; box-shadow: var(--shadow-soft); }
 .relic.open { border-color: var(--accent); }
 /* le bulletin : l'objet qu'on garde à la fin de l'année */

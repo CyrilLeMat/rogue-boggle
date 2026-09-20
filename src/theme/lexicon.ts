@@ -110,7 +110,7 @@ export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
 // Les critiques de la presse spécialisée, affichées sous le pitch.
 export const BLURBS = [
   { text: 'Une immersion à couper le souffle.', source: 'Cyril Le Mat' },
-  { text: 'Le Elden Ring du Boggle.', source: 'Leyu, CE2' },
+  { text: 'Le GTA VI du Boggle.', source: 'Leyu, CE2' },
 ];
 
 // Juste avant la dictée, l'élève se parle à lui-même. Il a huit ans et il pense à l'honneur des siens.

@@ -717,5 +717,7 @@ button.small { padding: 6px 14px; font-size: 0.8rem; }
   .found li .pts { font-size: 0.75rem; }
   .cols { grid-template-columns: 1fr; }
   .recap-grid-row { grid-template-columns: 1fr; }
-  .mini-grid { max-width: 260px; margin: 0 auto; }
+  /* sur téléphone la feuille ne s'affiche que si on touche un mot : le bulletin est déjà long */
+  .recap-grid-row .mini-grid { display: none; }
+  .recap-grid-row.showing .mini-grid { display: grid; max-width: 260px; margin: 0 auto 10px; }
 }

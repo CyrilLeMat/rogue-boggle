@@ -113,7 +113,7 @@ export function MancheRecap() {
       {act >= 3 && (
       <>
       <p className="muted act">{result.words.length} mots · {L.motsTouche}</p>
-      <div className="recap-grid-row">
+      <div className={`recap-grid-row ${shownPath ? 'showing' : ''}`}>
         <MiniGrid grid={result.grid} path={shownPath} />
         <div className="cols recap-words">
           <div>

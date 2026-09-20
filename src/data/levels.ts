@@ -11,7 +11,7 @@ export interface Level {
 export const LEVELS: Level[] = [
   {
     id: 'histoire', label: 'Je veux juste l’histoire',
-    hint: 'Deux fois plus de temps, note à atteindre minuscule, et aucun bon point ne peut être perdu : tu verras la fin, quoi qu’il arrive',
+    hint: 'Deux fois plus de temps, note à atteindre ridicule, aucun bon point à perdre. Tu écriras mal, tu passeras quand même, et tu te sentiras en position de succès',
     seconds: 2, threshold: 0.25, noFail: true,
   },
   { id: 'huit', label: 'J’ai vraiment 8 ans', hint: 'Moitié plus de temps, note à atteindre presque divisée par deux', seconds: 1.5, threshold: 0.5 },

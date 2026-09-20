@@ -19,6 +19,7 @@ import { ScenePick } from './components/ScenePick';
 import { ScenesGallery } from './components/ScenesGallery';
 import { InterludesGallery } from './components/InterludesGallery';
 import { MancheRecap } from './components/MancheRecap';
+import { Analytics } from './components/Analytics';
 import { DuelEnd } from './components/DuelEnd';
 import { DuelIntro } from './components/DuelIntro';
 import { QuestBadge } from './components/QuestBadge';
@@ -117,6 +118,7 @@ export default function App() {
         <p>Tourne ton téléphone : la feuille ne tient pas en travers.</p>
       </div>
       <SoundEffects />
+      <Analytics />
       {phase === 'menu' && <Menu />}
       {phase === 'appel' && <Appel />}
       {phase === 'intro' && <Intro />}

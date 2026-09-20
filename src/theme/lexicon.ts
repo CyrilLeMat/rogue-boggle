@@ -231,6 +231,7 @@ export const L = {
   ratee: 'Copie refusée.',
   vieEnMoins: 'Un bon point arraché du tableau.',
   voirBulletin: 'Ouvrir le bulletin',
+  voirDetail: 'Voir le détail',
   victoire: 'Passage en CM1.',
   victoireSub: 'Le CM1. Puis le CM2. Puis {metier}. Tu sors dans la cour, tu cries « {salut} » à personne en particulier, et ce soir il y a {plat}.',
   gameover: 'Redoublement.',
@@ -490,7 +491,9 @@ export const APPRECIATIONS: Record<string, string[]> = {
   ],
 };
 
-function band(ratio: number, success: boolean, lives: number): keyof typeof APPRECIATIONS {
+export type Band = keyof typeof APPRECIATIONS;
+
+export function band(ratio: number, success: boolean, lives: number): Band {
   if (!success && lives <= 1) return 'fatal';
   if (!success && ratio >= 0.8) return 'presque';
   if (!success) return 'rate';

@@ -3,7 +3,8 @@ import { sfx } from '../audio/sfx';
 import type { Pos } from '../engine/types';
 import { findPathForWord } from '../engine/wordFinder';
 import { useRunStore } from '../state/runStore';
-import { L, SIGNATURE, money } from '../theme/lexicon';
+import { L, SIGNATURE, band, money } from '../theme/lexicon';
+import { MaitresseArt } from './MaitresseArt';
 import { useSay } from '../theme/useSay';
 import { MiniGrid } from './MiniGrid';
 
@@ -53,12 +54,13 @@ export function MancheRecap() {
   const scoreShown = useCountUp(result?.score ?? 0, 900, !!result, true);
   const bonusShown = useCountUp(result?.eurosBonus ?? 0, 1400, !!result && act >= 3);
   const [shown, setShown] = useState<string | null>(null);
+  const [detail, setDetail] = useState(false);
   const shownPath = useMemo<Pos[] | null>(() => {
     if (!result || !shown) return null;
     const found = result.words.find((f) => f.word === shown);
     return found?.path ?? findPathForWord(result.grid, shown);
   }, [result, shown]);
-  useEffect(() => { setShown(null); }, [result]);
+  useEffect(() => { setShown(null); setDetail(false); }, [result]);
   useEffect(() => { if (act === 2) sfx.redPen(); }, [act]);
   if (!result || !run) return null;
   const best = [...result.words].sort((a, b) => b.score - a.score).slice(0, 3);
@@ -69,23 +71,36 @@ export function MancheRecap() {
       {extra}
     </li>
   );
+  const humeur = band(result.score / Math.max(1, result.threshold), result.success, result.livesAfter);
   const overshoot = Math.max(0, result.score - result.threshold);
   const modifiers = result.euros - (result.eurosBase + result.eurosBonus + result.eurosTime + result.eurosQuest + result.eurosEnemy);
   const done = bonusShown >= result.eurosBonus;
+  // Sa tête d'abord, en grand. Les chiffres attendent qu'on ait fini de la regarder.
+  if (!detail) {
+    return (
+      <div className="panel recap reaction" onClick={revealAll}>
+        <div className="frame scene-frame"><MaitresseArt band={humeur} /></div>
+        <h2 className={result.success ? 'ok' : 'ko'}>{result.success ? L.reussie : L.ratee}</h2>
+        <p className="big">{scoreShown} <span className="muted">/ {result.threshold}</span></p>
+        {act < 2 && <p className="recap-wait">…</p>}
+        {act >= 2 && (
+          <div className="appreciation act">
+            <span className="appreciation-label">Appréciation</span>
+            <p>{say(result.appreciation)}</p>
+            <span className="signature">{say(SIGNATURE)}</span>
+          </div>
+        )}
+        {act >= 2 && !result.success && <p className="ko act">{L.vieEnMoins} Il t'en reste {run.lives}.</p>}
+        {act >= 2 && <button className="ready-cta" onClick={(e) => { e.stopPropagation(); setDetail(true); }}>{L.voirDetail}</button>}
+      </div>
+    );
+  }
+
   return (
     <div className="panel recap" onClick={revealAll}>
       <h2 className={result.success ? 'ok' : 'ko'}>{result.success ? L.reussie : L.ratee}</h2>
-      <p className="big">{scoreShown} <span className="muted">/ {result.threshold}</span></p>
+      <p className="big">{result.score} <span className="muted">/ {result.threshold}</span></p>
       <p className="muted">Feuille {result.mood}</p>
-      {act < 3 && <p className="recap-wait">…</p>}
-      {act >= 2 && (
-      <div className="appreciation act">
-        <span className="appreciation-label">Appréciation</span>
-        <p>{say(result.appreciation)}</p>
-        <span className="signature">{say(SIGNATURE)}</span>
-      </div>
-      )}
-      {act >= 2 && !result.success && <p className="ko act">{L.vieEnMoins} Il t'en reste {run.lives}.</p>}
 
       {act >= 3 && (
       <div className="euros-breakdown act">

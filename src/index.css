@@ -567,6 +567,13 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 
 .intro-vow { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); margin-top: 4px !important; }
 
+/* sa réaction, plein écran : la tête d'abord, les chiffres après */
+.recap.reaction { align-items: center; text-align: center; gap: 4px; }
+.recap.reaction .scene-frame { width: min(420px, 100%); margin-bottom: 8px; }
+.recap.reaction .big { font-size: 2.4rem; margin: 2px 0; }
+.recap.reaction .appreciation { max-width: 520px; }
+.recap.reaction .ready-cta { margin-top: 10px; animation: reveal 0.5s ease-out both; }
+
 /* l'épilogue : on raconte l'année avant de la compter, une ligne à la fois */
 .epilogue { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 580px; margin: 10px auto 18px; text-align: center; }
 .epilogue p { margin: 0; opacity: 0; animation: reveal 0.7s ease-out both; line-height: 1.45; }

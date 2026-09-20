@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { isMusicEnabled, setMusicEnabled, setMusicIntensity, startMusic, stopMusic } from '../audio/music';
 import { isMuted, setMuted, sfx, unlockAudio } from '../audio/sfx';
 import { useRunStore } from '../state/runStore';
+import { scoreTier } from '../theme/intensity';
 
 // Écoute le store et joue les sons : le store reste pur.
 export function SoundEffects() {
@@ -31,6 +32,7 @@ export function SoundEffects() {
     if (!feedback) return;
     if (feedback.kind === 'ok') {
       sfx.valid(feedback.score ?? 0);
+      sfx.impact(scoreTier(feedback.score ?? 0));
       if (feedback.bonus?.includes('escargot')) sfx.snail();
       else if (feedback.bonus) sfx.bonus();
     } else if (feedback.kind === 'duplicate') sfx.duplicate();

@@ -54,7 +54,7 @@ function Playing() {
   const feedback = useRunStore((s) => s.feedback);
   const [preview, setPreview] = useState<ReturnType<typeof previewPath>>(null);
   const onPathChange = useCallback((p: Pos[]) => setPreview(previewPath(p)), [previewPath]);
-  const flash = feedback?.kind === 'ok' && feedback.path ? { id: feedback.id, path: feedback.path, score: feedback.score ?? 0, bonus: feedback.bonus } : null;
+  const flash = feedback?.kind === 'ok' && feedback.path ? { id: feedback.id, path: feedback.path, score: feedback.score ?? 0, bonus: feedback.bonus, word: feedback.word } : null;
   const rerollCell = useRunStore((s) => s.rerollCell);
   const hasReroll = useRunStore((s) => (s.run?.consumables ?? []).some((c) => c.id === 'reroll' && c.charges > 0));
   const mutatorId = useRunStore((s) => s.manche?.mutatorId ?? null);

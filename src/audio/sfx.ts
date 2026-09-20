@@ -61,6 +61,15 @@ export const sfx = {
     tone({ freq: semi(784, lift), at: 0.09, dur: 0.22, gain: 0.2 });
     if (score >= 25) tone({ freq: semi(1047, lift), at: 0.18, dur: 0.3, gain: 0.16 });
   },
+  // Le choc d'un gros mot : plus le palier est haut, plus ça cogne bas et longtemps
+  impact(tier: number) {
+    if (tier < 3) return;
+    const depth = tier - 2;
+    tone({ freq: 160 - depth * 30, dur: 0.18 + depth * 0.08, wave: 'triangle', gain: 0.22, slide: 0.55 });
+    tone({ freq: 90 - depth * 12, at: 0.02, dur: 0.3 + depth * 0.1, wave: 'sine', gain: 0.26, slide: 0.7 });
+    if (tier >= 4) [0, 7, 12, 19].forEach((n, i) => tone({ freq: semi(523, n), at: 0.06 + i * 0.05, dur: 0.24, gain: 0.16 }));
+    if (tier >= 5) tone({ freq: 1568, at: 0.26, dur: 0.5, wave: 'triangle', gain: 0.14 });
+  },
   bonus() {
     [0, 4, 7, 12].forEach((n, i) => tone({ freq: semi(659, n), at: i * 0.06, dur: 0.2, wave: 'triangle', gain: 0.18 }));
   },

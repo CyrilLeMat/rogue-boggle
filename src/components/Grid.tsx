@@ -5,6 +5,7 @@ import { LETTER_VALUES } from '../engine/gridGenerator';
 import type { Enemy } from '../engine/hooks';
 import type { Grid as GridModel, Pos } from '../engine/types';
 import type { WordPreview } from '../state/runStore';
+import { scoreTier } from '../theme/intensity';
 
 // couleur de case = palier de valeur de la lettre (1 / 2-3 / 4 / 8+)
 const valueTier = (letter: string) => {
@@ -31,7 +32,7 @@ interface Props {
   enemies?: Enemy[];                     // thème Chasse : cases occupées + barre de PV
   onPathChange?: (path: Pos[]) => void;  // pour la prévisualisation du score
   preview?: WordPreview | null;
-  flash?: { id: number; path: Pos[]; score: number; bonus?: string } | null; // dernier mot validé : lettres qui s'allument, score qui s'envole
+  flash?: { id: number; path: Pos[]; score: number; bonus?: string; word?: string } | null; // dernier mot validé : lettres qui s'allument, score qui s'envole
   lockedCells?: Set<number>;             // Sage : cases grisées, hors du tracé
   plain?: boolean;                       // Sage : ni couleur par valeur ni chiffre (pas de score ici)
 }
@@ -45,6 +46,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
   const enemyAt = (r: number, c: number) => enemies.find((e) => e.hp > 0 && e.cells.some((p) => p[0] === r && p[1] === c));
   const [path, setPathState] = useState<Pos[]>([]);
   const lastTap = useRef<{ pos: Pos; at: number } | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<Pos | null>(null);
   const dragging = useRef(false);
   // La ref est la source de vérité : plusieurs événements souris peuvent arriver
@@ -134,7 +136,25 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
   const cellPct = 100 / grid.size;
   const flashIndex = (r: number, c: number) => flash?.path.findIndex((p) => p[0] === r && p[1] === c) ?? -1;
   const flashLast = flash?.path[flash.path.length - 1];
+  const tier = flash ? scoreTier(flash.score) : 0;
   const state = path.length < 2 ? 'idle' : !preview || preview.word === null ? 'unknown' : preview.duplicate ? 'dup' : 'ok';
+
+  // La feuille encaisse le coup : plus le mot est gros, plus elle tremble.
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!flash || tier < 3 || !el?.animate) return;
+    const a = tier === 3 ? 4 : tier === 4 ? 8 : 13;
+    el.animate(
+      [
+        { transform: 'translate(0,0)' },
+        { transform: `translate(${a}px, ${-a * 0.6}px)` },
+        { transform: `translate(${-a}px, ${a * 0.5}px)` },
+        { transform: `translate(${a * 0.5}px, ${a * 0.4}px)` },
+        { transform: 'translate(0,0)' },
+      ],
+      { duration: 130 + tier * 55, easing: 'ease-out' },
+    );
+  }, [flash?.id, tier]);
 
   return (
     <div className="grid-wrap">
@@ -150,6 +170,7 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
         {state === 'unknown' && word.length >= 3 && <span className="cw-note">…</span>}
       </div>
       <div
+        ref={gridRef}
         className="grid"
         style={{
           gridTemplateColumns: `repeat(${grid.size}, 1fr)`,
@@ -180,10 +201,30 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
             />
           )}
         </svg>
+        {flash && flashLast && tier >= 3 && (
+          <svg key={`lines-${flash.id}`} className="speed-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {Array.from({ length: 12 }, (_, i) => {
+              const a = (i / 12) * Math.PI * 2;
+              const cx = (flashLast[1] + 0.5) * cellPct;
+              const cy = (flashLast[0] + 0.5) * cellPct;
+              return (
+                <line key={i}
+                  x1={cx + Math.cos(a) * 12} y1={cy + Math.sin(a) * 12}
+                  x2={cx + Math.cos(a) * (26 + tier * 7)} y2={cy + Math.sin(a) * (26 + tier * 7)}
+                  stroke="var(--coral)" strokeWidth={tier >= 5 ? 2.4 : 1.6} strokeLinecap="round"
+                />
+              );
+            })}
+          </svg>
+        )}
+        {flash && tier >= 4 && flash.word && (
+          <div key={`blast-${flash.id}`} className={`word-blast t${tier}`}>{flash.word}</div>
+        )}
+        {flash && tier >= 5 && <div key={`white-${flash.id}`} className="grid-whiteout" />}
         {flash && flashLast && (
           <div
             key={`pop-${flash.id}`}
-            className={`score-pop ${flash.score >= 30 ? 'big' : ''} ${flash.score >= 80 ? 'huge' : ''}`}
+            className={`score-pop t${tier}`}
             style={{ left: `${(flashLast[1] + 0.5) * cellPct}%`, top: `${(flashLast[0] + 0.5) * cellPct}%` }}
           >
             +{flash.score}

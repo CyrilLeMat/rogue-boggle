@@ -39,10 +39,10 @@ export const DEFAULT_PROFILE: Profile = {
   plat: 'les pâtes au beurre',
   horreur: 'les endives',
   metier: 'pompier musclé',
-  chanson: 'Alouette',
-  admire: 'ma grand-mère',
+  chanson: 'La marseillaise',
+  admire: 'mon papa, l\'homme le plus fort du monde',
   surnom: 'Toto',
-  rigolo: 'schtroumpf',
+  rigolo: 'Caca Prout',
   adjectif: 'gluant',
   adjectif2: 'majestueux',
   adjectif3: 'poisseux',
@@ -52,18 +52,18 @@ export const DEFAULT_PROFILE: Profile = {
   distance: 'trois mètres',
   nombre: 'onze',
   action: 'sauter partout en criant',
-  cri: 'AAAAAH',
+  cri: 'AU SECOURS! APPELER LA POLICE!',
   faute: 'nénuphard',
 };
 export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profile: DEFAULT_PROFILE };
 
 // Réponses de secours pour le bouton « Surprends-moi » de la fiche de renseignements.
 export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
-  salut: ['Salut la compagnie créole', 'Wesh les gros', 'Bonjour à tous, camarades', 'Yo les cocos', 'Coucou les amis'],
+  salut: ['Salut la compagnie créole', 'Wesh les gros', 'Bonjour à tous, camarades', 'Yo les cocos', 'Hey hey, ca sent le pâté ou quoi'],
   phrase: ['Six seeeveeeeeeen', 'Tranquilou Bilou', 'C\'est pas ma faute à moi, moi lolita', 'Même pas mal', 'H.I.P H.O.P c\'est moi le roi de la récré'],
   cour: ['des parties de foot', 'du rap pour sortir sa haine', 'du racketage des CPs', 'du vol de cartes pokemon', 'de l\'entrainement à l\'hyrox'],
   heros: ['Psykokwak', 'Le teletubbies jaune', 'Bioman', 'Astérix', 'Bob l\'éponge'],
-  plat: ['les pâtes au beurre', 'les frites surgelées', 'le gratin de mamie', 'les nuggets', 'la purée'],
+  plat: ['les pâtes au beurre', 'les frites surgelées', 'le gratin de mamie', 'la soupe de nuggets', 'les narines de porcs'],
   horreur: ['les endives', 'le poisson pané', 'les plats de prolétaire', 'les légumes non bios', 'le chou-fleur'],
   metier: ['pompier bodybulder', 'vétérinaire à coeur ouvert', 'astronaute espion', 'youtubeur en paris sportifs', 'président du monde libre', 'videur en boîte de nuit'],
   chanson: ['Ils tapent sur des bambous', 'Le best-of de Zazie', 'l\'hymne de l\'URSS', 'Francky Vincent', 'Le générique du Big Deal'],
@@ -79,7 +79,7 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   distance: ['trois mètres', 'deux kilomètres', 'un bras tendu', 'quarante centimètres', 'une cour de récré'],
   nombre: ['douze', 'quarante-deux', 'trois', 'mille', 'sept', 'cent'],
   action: ['sauter partout en criant', 'courir dans les couloirs', 'faire du vélo de vitesse', 'crier très fort pour appeler maman', 'grimper aux arbres'],
-  cri: ['AAAAAH', 'AU SECOURS', 'MAMAN', 'NON NON NON', 'ENLEVEZ-LA'],
+  cri: ['AAAAAH< JE SUIS ATTAQUÉ!', 'AU SECOURS! APPELER LA POLICE!', 'MAMAN SAUVE MOI', 'NON NON NON JE REFUSE', 'ENLEVEZ-LA'],
   faute: ['nénuphard', 'aujourdhui', 'parmis', 'quand même', 'beaucoups', 'malgrés'],
 };
 

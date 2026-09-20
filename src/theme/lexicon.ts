@@ -323,7 +323,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Tu as fait le minimum. Le minimum a été fait. Nous sommes quittes.',
   ],
   justesse: [
-    'Juste, tout juste, {nom}. Le stylo rouge était déjà décapuchonné.',
+    'Juste, tout juste, {nom}. Un point de moins et je remplissais ton carnet de correspondance.',
     'Tu passes. Je te préviens tout de suite que cela ne se reproduira pas.',
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
     'Un point de plus et je te félicitais. Un point de moins et j\'appelais chez toi.',

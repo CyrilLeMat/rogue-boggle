@@ -61,7 +61,7 @@ export const SCENES: Scene[] = [
     title: 'Le bocal de la leçon de choses',
     lines: [
       'Le bocal gît sur le carrelage. {Nombre} escargots ont recouvré leur liberté.',
-      'Ils progressent vers l\'ouest à trois centimètres par minute. Personne ne les arrêtera. Personne n\'essaiera.',
+      'Ils progressent vers l\'ouest et ont déjà parcouru {distance}. Personne ne les arrêtera. Personne n\'essaiera.',
       'La maîtresse fixe le plafond en silence. Elle a fait sept ans d\'études.',
     ],
     choices: [
@@ -165,7 +165,7 @@ export const SCENES: Scene[] = [
     id: 'directeur',
     title: 'Des chaussures dans le couloir',
     lines: [
-      'Elles ralentissent. Elles s\'arrêtent. La maîtresse blanchit d\'un coup.',
+      'Elles ralentissent. Elles s\'arrêtent à {distance} de la porte. La maîtresse blanchit d\'un coup.',
       '{Directeur} n\'entre jamais sans raison, et {directeur} n\'a jamais de raison. C\'est le frère de la maîtresse. Personne n\'en parle jamais.',
       'La poignée tourne au ralenti, comme dans les films où tout le monde meurt à la fin. Dans ta tête, une seule phrase tourne en boucle : « {cri} ».',
     ],
@@ -208,8 +208,8 @@ export const SCENES: Scene[] = [
     title: 'La cantine',
     lines: [
       'Il est midi. Kévin a fait la queue deux fois et revient à table avec deux plateaux.',
-      'Il pose le second devant toi, sans un mot. Au menu : {horreur}.',
-      'Toute la table s\'est tue. Kévin te regarde. Kévin attend.',
+      'Il pose le second devant toi, sans un mot. Au menu : {horreur}, avec {objet} posé à côté, on ne saura jamais pourquoi.',
+      'Toute la table s\'est tue. Kévin te regarde comme {animal} regarde un plus petit que lui. Kévin attend.',
     ],
     choices: [
       {

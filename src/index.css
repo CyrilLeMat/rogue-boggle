@@ -78,6 +78,12 @@ input:focus { outline: none; border-color: var(--accent); }
 .appel-form { display: flex; flex-direction: column; gap: 14px; }
 .appel-field { display: flex; flex-direction: column; gap: 6px; text-align: left; }
 .appel-field > span { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 800; }
+.appel-input { display: flex; align-items: center; gap: 6px; width: 100%; }
+.dice {
+  flex: none; background: #fffdf9; border: 2px solid var(--cell-2); border-radius: 12px 14px 12px 14px;
+  padding: 4px 8px; font-size: 1rem; line-height: 1; box-shadow: none;
+}
+.dice:hover { border-color: var(--accent); background: #f6f2ff; transform: rotate(-8deg); }
 .appel-field input {
   font-family: 'Patrick Hand', cursive; font-size: 1.2rem; text-align: center; padding: 6px 10px; width: 100%;
   border: 0; border-bottom: 2.5px dashed #d9cfc0; border-radius: 0; background: transparent; color: var(--accent-deep);

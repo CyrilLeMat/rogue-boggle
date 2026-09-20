@@ -9,7 +9,7 @@ import {
   SCOLDS, SHOP_INTRO, SIGNATURE, SUSPICIONS, TOO_SHORT, mention,
 } from '../src/theme/lexicon';
 
-const TOKENS = ['nom', 'salut', 'phrase', 'cour', 'heros', 'plat', 'horreur', 'metier', 'chanson', 'admire', 'surnom', 'rigolo', 'adjectif', 'nombre', 'action', 'cri'];
+const TOKENS = ['nom', 'salut', 'phrase', 'cour', 'heros', 'plat', 'horreur', 'metier', 'chanson', 'admire', 'surnom', 'rigolo', 'adjectif', 'adjectif2', 'objet', 'animal', 'corps', 'distance', 'nombre', 'action', 'cri'];
 
 // Le prologue, tel qu'il est écrit dans le composant.
 const PROLOGUE = [
@@ -41,7 +41,7 @@ const ALIAS: Record<string, string> = { maitresse: 'rigolo', directeur: 'rigolo'
 function tally(texts: (string | undefined)[], seen: Record<string, number>) {
   for (const text of texts) {
     if (!text) continue;
-    for (const m of text.matchAll(/\{([A-Za-z]+)\}/g)) {
+    for (const m of text.matchAll(/\{([A-Za-z][A-Za-z0-9]*)\}/g)) {
       const key = ALIAS[m[1].toLowerCase()] ?? m[1].toLowerCase();
       if (key in seen) seen[key] += 1;
     }

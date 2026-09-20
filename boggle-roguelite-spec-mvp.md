@@ -683,7 +683,9 @@ Fiche de renseignements en trois feuillets de cinq questions (24 caractères, «
 remplit tout, « Passer le reste » saute la fin, valeurs par défaut sinon) :
 bonjour aux amis, phrase fétiche, surnom, activité dans la cour, personnage préféré,
 métier plus tard, personne admirée, chanson préférée, plat préféré, plat détesté,
-mot rigolo, adjectif, nombre, action, cri de l'araignée.
+mot rigolo, adjectif, autre adjectif, objet, nombre, animal, partie du corps, distance,
+action, cri de l'araignée. Chaque question a son dé « Inspire-moi » ; le pied de page
+tire toute la fiche d'un coup.
 
 Dans les textes : `{nom}` insère le prénom, `{hobby}` `{plat}` `{horreur}` la fiche,
 `[masculin|féminin]` choisit la forme. Un jeton capitalisé (`{Admire}`) sort avec une majuscule.

@@ -18,6 +18,11 @@ export interface Profile {
   surnom: string;   // le surnom qu'on te donne
   rigolo: string;   // un mot rigolo, qui devient le nom de famille de la maîtresse
   adjectif: string; // un adjectif
+  adjectif2: string;
+  objet: string;    // un objet, avec son article (« une tapette à souris »)
+  animal: string;   // un animal
+  corps: string;    // une partie du corps, avec son article (« le genou »)
+  distance: string; // une distance (« trois mètres »)
   nombre: string;   // un nombre, gardé tel quel
   action: string;   // une action, à l'infinitif
   cri: string;      // ce que tu cries si une araignée te grimpe sur la jambe
@@ -37,6 +42,11 @@ export const DEFAULT_PROFILE: Profile = {
   surnom: 'Toto',
   rigolo: 'schtroumpf',
   adjectif: 'gluant',
+  adjectif2: 'majestueux',
+  objet: 'une tapette à souris',
+  animal: 'un hérisson',
+  corps: 'le genou',
+  distance: 'trois mètres',
   nombre: 'douze',
   action: 'sauter partout',
   cri: 'AAAAAH',
@@ -57,6 +67,11 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   surnom: ['Toto', 'Bibou', 'le Chef', 'Crevette', 'Bouboule', 'Mimi'],
   rigolo: ['schtroumpf', 'bidule', 'patate', 'zigouigoui', 'plouf', 'gloubiboulga'],
   adjectif: ['gluant', 'majestueux', 'mou', 'terrible', 'collant', 'phénoménal'],
+  adjectif2: ['majestueux', 'poisseux', 'redoutable', 'discret', 'tordu', 'brillant'],
+  objet: ['une tapette à souris', 'un vieux grille-pain', 'une chaussette', 'un tournevis', 'un ballon crevé', 'une boule à neige'],
+  animal: ['un hérisson', 'une otarie', 'un pigeon', 'une vache', 'un lombric', 'un furet'],
+  corps: ['le genou', 'le coude', 'l\'oreille gauche', 'le gros orteil', 'la nuque', 'le menton'],
+  distance: ['trois mètres', 'deux kilomètres', 'un bras tendu', 'quarante centimètres', 'une cour de récré'],
   nombre: ['douze', 'quarante-deux', 'trois', 'mille', 'sept', 'cent'],
   action: ['sauter partout', 'courir dans les couloirs', 'faire du vélo', 'crier très fort', 'grimper aux arbres'],
   cri: ['AAAAAH', 'AU SECOURS', 'MAMAN', 'NON NON NON', 'ENLEVEZ-LA'],
@@ -79,7 +94,7 @@ export function say(text: string, id: Identity | null | undefined): string {
   };
   return text
     .replace(/\[([^\]|]*)\|([^\]]*)\]/g, (_m, masc, fem) => (who.gender === 'f' ? fem : masc))
-    .replace(/\{([A-Za-z]+)\}/g, (whole, key: string) => {
+    .replace(/\{([A-Za-z][A-Za-z0-9]*)\}/g, (whole, key: string) => {
       const lower = key.toLowerCase();
       const value = values[lower];
       if (value === undefined) return whole;
@@ -120,6 +135,14 @@ export const MONOLOGUE = [
   'Un jour je serai {metier}. Ce jour-là, j\'aurai {cour} tous les jours de ma vie.',
   'Regarde-moi bien, {admire}. Ce que tu vas voir est {adjectif}.',
   'Je me lèverai, je crierai « {cri} », et la classe comprendra enfin.',
+  'Mon cœur cogne jusque dans {corps}. Ce n\'est pas normal. Ce n\'est pas grave.',
+  'Le CM1 est à {distance} de cette table. Je peux le sentir d\'ici.',
+  'Je serai {adjectif2}. Je serai précis. Je serai insupportable de justesse.',
+  'Une crampe monte dans {corps}. Elle attendra la fin.',
+  'Je ne suis pas {adjectif2}. Je suis pire. Ils le verront tout à l\'heure.',
+  'Quelque part dehors, {animal} vit sa vie sans rien savoir de tout ça.',
+  'Je sors {objet} de mon cartable. Je le trouve magnifique. Il me donnera la force.',
+  'Je me battrai comme {animal} acculé. Un animal qui sait écrire.',
   'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est ven[u|ue]s là pour briller !',
 ];
 
@@ -215,6 +238,9 @@ export const SCOLDS = [
   'Tu as crié « {cri} » en découvrant ce mot. Toute la classe l\'a entendu.',
   'Tu préférerais {action}, je sais. Écris d\'abord.',
   'Ce mot est {adjectif}. Et ce n\'est pas un compliment.',
+  'Tu écris comme {animal} qui aurait appris hier.',
+  'Tu tiens ton stylo avec {corps}, ma parole.',
+  'Ce mot est {adjectif2}. J\'ai cherché, il n\'y a pas d\'autre mot.',
   '{nom}, tu es vraiment {adjectif} ce matin !',
   'Que dirait {admire} en voyant ça ?',
   'Cette copie a exactement le même goût que {horreur}.',
@@ -259,7 +285,9 @@ export const PRAISES_BIG = [
   'Ce soir, tu mérites ça : {plat}.',
   'Voilà une copie de futur {metier}.',
   'Ça, c\'est {adjectif}. Au sens noble du terme.',
+  'Voilà un mot {adjectif2}. Je le garde pour moi.',
   'Va montrer ça à {admire} ce soir. Insiste.',
+  'J\'ai failli t\'offrir {objet} tellement c\'est bien.',
   'Tu as murmuré « {phrase} » en le traçant. Je l\'ai entendu.',
 ];
 
@@ -279,6 +307,7 @@ export const PRAISES_SMALL = [
   'Continue et je te sers {plat} moi-même.',
   'Tiens donc.',
   'Pour ça, tu mérites {plat}. Une petite portion.',
+  'Encore un comme ça et je te donne {objet}. C\'est tout ce que j\'ai.',
 ];
 
 // Quand tu sors un mot que personne dans la classe ne connaît, elle se méfie.
@@ -294,6 +323,7 @@ export const SUSPICIONS = [
   'C\'est {heros} qui t\'a soufflé, peut-être ?',
   'Répète-le pour voir. Sans regarder.',
   'Ce mot me fait penser à « {rigolo} ». Et ça, ça ne me rassure pas.',
+  'Ce mot-là n\'était pas dans cette classe il y a {distance}. Il vient d\'où ?',
   'Tu as appris ça où ? Certainement pas devant une assiette pleine de courage et {horreur}.',
   'Je note ce mot. Et j\'écris {nom} juste à côté.',
 ];
@@ -324,6 +354,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
   fatal: [
     '{nom}, je convoque tes parents lundi. Nous parlerons de ton avenir, s\'il y en a un.',
     'À ce stade je ne corrige plus, je constate. Ce soir : {horreur}.',
+    'Tu es à {distance} du fond du classement. Et le fond, lui, ne bouge pas.',
     'J\'ai gardé ta copie. Pas pour l\'encadrer. {Admire} peut venir la voir quand elle veut.',
     'Tu repenseras à cette copie toute ta vie, et ta vie sera courte.',
     'J\'ai prévenu la maîtresse de CE2 de l\'an prochain. Elle a demandé une mutation.',
@@ -339,6 +370,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
   ],
   rate: [
     'J\'ai relu trois fois en espérant m\'être trompée. Je ne me trompe jamais.',
+    'Tu écris comme {animal} qu\'on dérange. Et je dérange rarement {animal}.',
     'Ce n\'est rien. Ce soir tu mangeras {horreur} et demain tu recommenceras, comme tout le monde.',
     'Tu trouveras ta voie. Elle sera manuelle, mais tu la trouveras.',
     '{Horreur}. Voilà exactement ce que ta copie m\'évoque.',
@@ -347,6 +379,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Je préviendrai {admire}. Quelqu\'un doit savoir.',
     'Kévin a fait mieux. Kévin n\'a pas de stylo.',
     'Je range cette copie dans le tiroir du bas. Celui qui ferme à clé.',
+    'Même {animal} aurait fait mieux, et il n\'a pas de mains.',
     '{Nombre} fautes. J\'ai arrêté de compter après, d\'ailleurs.',
   ],
   prodige: [
@@ -362,7 +395,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Même {heros} peut aller se rhabiller.',
   ],
   suspect: [
-    'Trop beau, {nom}. Je ne sais pas encore comment tu as fait, mais je le saurai.',
+    'Trop beau, {nom}. Un futur {metier} n\'écrit pas comme ça. Je ne sais pas encore comment tu as fait, mais je le saurai.',
     'Excellent. Un peu trop, même. Un futur {metier} ne devrait pas écrire comme ça.',
     'Superbe. J\'ai photographié ta copie, pour mes archives personnelles.',
     'Personne n\'écrit ça à ton âge, {nom}. Personne. Nous en reparlerons toi et moi.',
@@ -375,24 +408,29 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Très bonne copie, {adjectif} même. J\'ai vérifié deux fois, par acquit de conscience.',
     'Voilà du travail sérieux. Continue et je t\'invite à manger {plat}.',
     'Bien. Tu vois ce qui arrive quand tu oublies {cour} pendant cinq minutes ?',
-    'Voilà ce qu\'on raconte à {admire} en rentrant.',
+    'Voilà ce qu\'on raconte à {admire} en rentrant. Un travail {adjectif2}, vraiment.',
     'C\'est propre, c\'est juste, et tu fredonnais {chanson} en le faisant. Agaçant.',
+    'Voilà un travail {adjectif2}. Je n\'ai pas d\'autre mot, et j\'ai cherché.',
   ],
   correct: [
     'Correct, {nom}. Nous savons tous les deux que tu peux mieux faire, et que tu ne le feras pas.',
-    'Passable. Ta voisine a fait mieux, et elle veut être {metier} elle aussi.',
-    'Acceptable. {Admire} aurait fait mieux, et tu le sais.',
+    'Passable. Ta voisine a fait mieux, et elle veut être {metier} elle aussi. Tu as {corps} plus rapide que la tête.',
+    'Acceptable. {Admire} aurait fait mieux, et {animal} aussi, sans doute.',
     'Ça ira, {nom}. Ça ira, mais tu rêvais de {action}, et ça se voit.',
+    'Un devoir {adjectif2}. J\'ai vu {animal} écrire plus droit, mais ça ira.',
     'Un travail {adjectif}. Je te laisse décider si c\'est bien, futur {metier}.',
+    'Une copie {adjectif2}, à {distance} d\'être excellente.',
     'Moyen. Comme la purée de la cantine, et avec autant de saveur.',
     'Tu as fait le minimum. Ce soir, {plat}, mais sans dessert.',
   ],
   justesse: [
     'Juste, tout juste, {nom}. Un point de moins et je remplissais ton carnet de correspondance.',
     'Tu passes. Ce soir, {plat}. Demain, on recommence, et je serai moins généreuse.',
+    'Tu as tremblé jusque dans {corps}, ça se lit sur la feuille. Mais tu passes.',
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
+    'Il te manquait {distance}. Une toute petite distance.',
     'Tu as dû dire « {phrase} » en rendant ta copie. Tu avais tort.',
-    'Un point de plus et je te félicitais. Un point de moins et j\'appelais chez toi.',
+    'Un point de plus et je te félicitais. Là, tu es {adjectif}, et c\'est tout.',
     'Tu as eu chaud, et moi aussi. Va {action}, tu l\'as mérité de justesse.',
     'Il s\'en est fallu de {nombre} points. Ou pas loin. Je n\'ai pas recompté.',
   ],
@@ -515,8 +553,8 @@ export const EV = {
     ask: (n: number) => `— Un mot de ${n} lettres dort dans cette feuille, petit. Les lettres sont là, en clair. Retrouve le chemin.`,
     hint: 'Le sage soupire et pointe la case de départ.',
     wrong: 'Le sage fronce les sourcils.',
-    won: 'Le sage hoche lentement la tête et murmure : « {phrase} ».',
-    wonSub: '— Tu iras loin, {surnom}. Plus loin que moi. Tu seras {metier}, je le sens.',
+    won: 'Le sage hoche lentement la tête, murmure « {phrase} » et te tend {objet} sans un mot.',
+    wonSub: '— Tu iras loin, {surnom}. Bien plus loin que {distance}. Tu seras {metier}, je le sens.',
     lost: 'Le sage efface la feuille d\'un revers de manche.',
     lostSub: '— Reviens me voir quand tu sauras. D\'ici là, va {action}, c\'est de ton âge.',
     start: 'Je regarde la feuille',
@@ -530,11 +568,11 @@ export const EV = {
       'Depuis la rentrée il copie sur toi, et depuis la rentrée ça ne lui suffit plus.',
       'Il plaque la feuille contre le mur et pose un mot dessus, bien fort, pour que le couloir entende.',
     ],
-    ask: (n: number) => `— Alors, {surnom} ? Ce mot fait ${n} lettres. Tu le trouves, ou tout le couloir saura que tu n\'es rien sans ta maîtresse.`,
+    ask: (n: number) => `— Alors, {surnom} ? Ce mot fait ${n} lettres, et je suis à {distance} de toi. Tu le trouves, ou tout le couloir saura que tu n\'es rien sans ta maîtresse.`,
     hint: 'Il soupire et tapote la feuille du doigt, là où le mot commence.',
-    wrong: 'Il ricane. Deux CM1 se sont arrêtés pour regarder.',
-    won: 'Kévin recule d\'un pas. Il ne ricane plus du tout, {nom}.',
-    wonSub: '— Coup de chance. Va manger {plat} et profites-en, on se revoit à la prochaine dictée.',
+    wrong: 'Il ricane comme {animal} content de lui. Deux CM1 se sont arrêtés pour regarder.',
+    won: 'Kévin recule d\'un pas, {adjectif2} de surprise. Il ne ricane plus du tout, {nom}.',
+    wonSub: '— Coup de chance. Va manger {plat} et profites-en. Je reste à {distance}, et je regarde.',
     lost: 'Kévin plie la feuille en quatre et la met dans sa poche.',
     lostSub: '— Je la garde. Et j\'écris « {surnom} » dessus, au cas où on oublierait.',
     start: 'Relever le défi',
@@ -554,7 +592,7 @@ export const EV = {
     won: 'Il referme son carnet. Un silence. Puis, presque un sourire.',
     wonSub: '— Voilà une classe bien tenue, {maitresse}. Cet élève ira loin.',
     lost: 'Il note. Il souligne. Il note encore.',
-    lostSub: '— Nous en reparlerons à la commission, {maitresse}. Avec le mot « {adjectif} » dans le rapport.',
+    lostSub: '— Nous en reparlerons à la commission, {maitresse}. Deux mots dans mon rapport : « {adjectif} » et « {adjectif2} ».',
     start: 'Se lever, dignement',
     giveUp: 'Baisser les yeux',
     leave: 'Le regarder partir',
@@ -569,7 +607,7 @@ export const EV = {
     ask: () => 'Prends une chose. Une seule. Et cours, comme si tu allais {action}.',
     take: 'Prendre et filer',
     won: 'Tu refermes la porte sans un bruit.',
-    wonSub: 'Le concierge passe en sifflant {chanson}. Il ne saura jamais.',
+    wonSub: 'Le concierge passe en sifflant {chanson}, {animal} de porcelaine sous le bras. Il ne saura jamais.',
     lost: '', lostSub: '',
     hint: '', wrong: '',
     start: 'Pousser la porte', giveUp: '', leave: 'Retourner en classe',
@@ -588,7 +626,7 @@ export const EV = {
     won: 'Le cercle explose de cris.',
     wonSub: 'Tu ramasses la mise. Double. Tu cries « {salut} » à toute la cour.',
     lost: 'Silence. Puis les rires.',
-    lostSub: 'Tes billes changent de poche. C\'était la règle. {Admire} n\'en saura rien.',
+    lostSub: 'Tes billes changent de poche. C\'était la règle. Tu serres {corps} très fort, et {Admire} n\'en saura rien.',
     start: 'Poser sa mise',
     giveUp: 'Abandonner la partie',
     leave: 'Quitter le cercle',

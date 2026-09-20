@@ -25,7 +25,7 @@ export const INTERLUDES: Interlude[] = [
     id: 'miroir',
     mood: 'win',
     lines: [
-      'Les lavabos. L’eau froide. Ton reflet te fixe comme un adversaire, et il a l’air {adjectif}.',
+      'Les lavabos. L’eau froide sur {corps}. Ton reflet te fixe comme un adversaire, et il a l’air {adjectif}.',
       'Tu t’agrippes à la faïence des deux mains et tu murmures, les dents serrées :',
     ],
     cry: 'Ce n’était qu’une dictée. {heros} ne se serait pas arrêté là, et moi non plus.',
@@ -46,7 +46,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'loss',
     lines: [
       'Le couloir est vide. Tu t’adosses au mur sous les porte-manteaux et tu glisses lentement jusqu’au sol.',
-      'Le carrelage est froid. Tu fixes tes chaussures. Tu ne clignes pas des yeux. Tout au fond, quelque chose voudrait sortir :',
+      'Le carrelage est froid, et le froid remonte jusqu’à {corps}. Tu ne clignes pas des yeux. Tout au fond, quelque chose voudrait sortir :',
     ],
     cry: '{Cri}.',
     fall: 'Tu as eu onze. La moyenne de la classe est de douze. Au menu ce soir : {horreur}.',
@@ -58,7 +58,7 @@ export const INTERLUDES: Interlude[] = [
       'Vingt-deux heures. La maison dort. Une seule lampe brûle encore.',
       'Tu recopies le mot. Encore. Encore. Ta main tremble, l’encre bave, tu ne t’arrêtes pas.',
     ],
-    cry: 'Cent fois. Mille s’il le faut. Je ne perdrai plus jamais.',
+    cry: 'Cent fois. Mille s’il le faut. J’écrirai jusqu’à ce que {corps} me lâche.',
     fall: '{Admire} dort à l’étage. Tu n’as rien dit à personne. Le mot est ÉCUREUIL.',
   },
   {
@@ -97,7 +97,7 @@ export const INTERLUDES: Interlude[] = [
     lines: [
       'Tu ne le connaissais pas ce matin. Il t’a lancé un « {salut} » en arrivant, et ce soir tu ne verras plus que lui.',
       'Kévin. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords. Il copie sur tout le monde et tout le monde le laisse faire.',
-      'Dans la cour, il traverse le goudron sans se presser, s’arrête à trois pas de toi, sort les mains de ses poches et te désigne du menton.',
+      'Dans la cour, il traverse le goudron sans se presser, s’arrête à {distance} de toi, sort les mains de ses poches et te désigne du menton.',
     ],
     cry: 'Cette année, c’est toi ma victime.',
     fall: 'Il s’assoit juste derrière toi et lit déjà par-dessus ton épaule.',
@@ -117,7 +117,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Le soir. La classe est éteinte. Tu passes devant la fenêtre et tu t’arrêtes net.',
-      'Kévin est là, seul devant le tableau, à recopier les mots en silence. Depuis combien de temps, personne ne le saura.',
+      'Kévin est là, seul devant le tableau, à recopier les mots en silence, {objet} posé à ses pieds. Depuis combien de temps, personne ne le saura.',
     ],
     cry: 'Tu as changé. Moi aussi.',
     fall: 'Le lendemain, il s’assoit à côté de toi. Il ne te regarde pas.',

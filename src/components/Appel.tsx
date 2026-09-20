@@ -24,7 +24,14 @@ const QUESTIONS: { key: keyof Profile; label: string }[][] = [
   [
     { key: 'rigolo', label: 'Un mot rigolo (ce sera le nom de la maîtresse)' },
     { key: 'adjectif', label: 'Un adjectif' },
+    { key: 'adjectif2', label: 'Un autre adjectif' },
+    { key: 'objet', label: 'Un objet (une chaussette, un tournevis…)' },
     { key: 'nombre', label: 'Un nombre' },
+  ],
+  [
+    { key: 'animal', label: 'Un animal (un hérisson, une otarie…)' },
+    { key: 'corps', label: 'Une partie du corps (le genou, la nuque…)' },
+    { key: 'distance', label: 'Une distance (trois mètres, deux pas…)' },
     { key: 'action', label: 'Une action (sauter, courir…)' },
     { key: 'cri', label: 'Ce que je crie si une araignée me grimpe sur la jambe' },
   ],
@@ -74,11 +81,21 @@ export function Appel() {
           {QUESTIONS[page - 1].map((q) => (
             <label className="appel-field" key={q.key}>
               <span>{q.label}</span>
-              <input
-                value={profile[q.key]}
-                maxLength={MAX_ANSWER}
-                onChange={(e) => setProfile({ ...profile, [q.key]: e.target.value })}
-              />
+              <span className="appel-input">
+                <input
+                  value={profile[q.key]}
+                  maxLength={MAX_ANSWER}
+                  onChange={(e) => setProfile({ ...profile, [q.key]: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="dice"
+                  title="Inspire-moi"
+                  onClick={() => setProfile({ ...profile, [q.key]: pick(PROFILE_IDEAS[q.key]) })}
+                >
+                  🎲
+                </button>
+              </span>
             </label>
           ))}
           <button className="ready-cta" type="submit">
@@ -86,7 +103,7 @@ export function Appel() {
           </button>
           <div className="appel-foot">
             <button type="button" className="secondary small" onClick={() => setPage(page - 1)}>← Retour</button>
-            <button type="button" className="secondary small" onClick={surprise}>Surprends-moi</button>
+            <button type="button" className="secondary small" onClick={surprise}>Tout tirer au sort</button>
             {!last && <button type="button" className="secondary small" onClick={submit}>Passer le reste</button>}
           </div>
         </form>

@@ -61,6 +61,9 @@ button {
 }
 /* un bouton éteint ne réagit pas au survol : les cartes de la coopérative sont des boutons
    désactivés (on les lit, on n'y clique pas) et le violet plein les rendait illisibles. */
+/* Le survol général ne vaut que pour les boutons pleins et actifs. Comme il porte
+   :not(:disabled), il pèse plus lourd qu'une classe seule : les boutons-cartes qui veulent
+   un autre survol se qualifient avec leur élément (button.appel-level:hover, etc.). */
 button:hover:not(:disabled) { background: var(--accent-deep); transform: translateY(-1px); }
 button.secondary { background: #fff; color: var(--text); }
 button.secondary:hover:not(:disabled) { background: #f4efe8; }
@@ -85,7 +88,7 @@ input:focus { outline: none; border-color: var(--accent); }
   flex: none; background: #fffdf9; border: 2px solid var(--cell-2); border-radius: 12px 14px 12px 14px;
   padding: 4px 8px; font-size: 1rem; line-height: 1; box-shadow: none;
 }
-.dice:hover { border-color: var(--accent); background: #f6f2ff; transform: rotate(-8deg); }
+button.dice:hover { border-color: var(--accent); background: #f6f2ff; transform: rotate(-8deg); }
 .appel-field input {
   font-family: 'Patrick Hand', cursive; font-size: 1.2rem; text-align: center; padding: 6px 10px; width: 100%;
   border: 0; border-bottom: 2.5px dashed #d9cfc0; border-radius: 0; background: transparent; color: var(--accent-deep);
@@ -102,7 +105,7 @@ input:focus { outline: none; border-color: var(--accent); }
 .appel-box.on { border-color: var(--accent); background: #f6f2ff; }
 /* ces cartes ne sont pas des boutons pleins : au survol, le violet profond du bouton
    générique leur tombait dessus d'un bloc. Un lavande léger suffit à dire « cliquable ». */
-.appel-box:hover, .appel-level:hover { background: #faf7ff; border-color: #cdbff2; transform: none; }
+button.appel-box:hover, button.appel-level:hover { background: #faf7ff; border-color: #cdbff2; transform: none; }
 .appel-box.on:hover, .appel-level.on:hover { background: #f1ebff; border-color: var(--accent); }
 .appel-foot { display: flex; justify-content: space-between; gap: 10px; }
 /* la liste complète des questions défile, les raccourcis restent en haut */
@@ -167,7 +170,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .mini-order { position: absolute; top: 2px; right: 5px; font-size: 0.55rem; color: var(--coral); }
 .recap-words .cols { margin: 0; }
 .word-link { background: none; border: 0; padding: 0; color: var(--text); font: inherit; font-weight: 700; box-shadow: none; cursor: pointer; border-radius: 6px; }
-.word-link:hover { background: none; color: var(--coral); transform: none; }
+button.word-link:hover { background: none; color: var(--coral); transform: none; }
 .word-link.active { color: var(--coral); text-decoration: underline; text-decoration-style: wavy; }
 .cursed-reveal { color: var(--lilac); font-weight: 700; margin: 6px 0 12px; }
 .cursed-reveal .word-link { color: var(--lilac); }
@@ -180,7 +183,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
   background: #fff; color: var(--text); border: 2px solid var(--cell-2); border-radius: 22px 26px 24px 28px;
   padding: 12px; box-shadow: var(--shadow-soft); font-weight: 500;
 }
-.archetype-card:hover { background: #fff; border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
+button.archetype-card:hover { background: #fff; border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
 .archetype-card .frame { box-shadow: 3px 4px 0 #1f1b2e; }
 .archetype-card .frame { line-height: 0; }
 .archetype-card .archetype-art { aspect-ratio: 1; width: 100%; }
@@ -230,7 +233,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
   color: #3d7c5b; background: #eef8f2; border: 1.5px solid #a9d8bf; border-radius: 999px; padding: 2px 8px; margin-bottom: 2px;
 }
 .feedback-link { display: inline-block; margin: 8px 0 0; font-size: 0.8rem; color: var(--muted); font-weight: 700; }
-.feedback-link:hover { color: var(--accent-deep); }
+a.feedback-link:hover { color: var(--accent-deep); }
 /* téléphone couché : la grille ne tient pas, on demande de tourner */
 .rotate-me { display: none; }
 @media (orientation: landscape) and (max-height: 480px) {
@@ -243,7 +246,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 }
 @keyframes tilt { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } }
 .linkish { background: none; box-shadow: none; color: var(--muted); font-size: 0.82rem; font-weight: 700; padding: 4px 8px; text-decoration: underline; text-underline-offset: 3px; }
-.linkish:hover { background: none; color: var(--accent-deep); transform: none; }
+button.linkish:hover { background: none; color: var(--accent-deep); transform: none; }
 .menu-links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: -6px; }
 .rules-note {
   background: #fffdf9; border: 2px dashed #ded6ee; border-radius: 16px 20px 18px 22px; padding: 10px 14px;
@@ -355,7 +358,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .dots span.on { background: var(--ko); }
 .intro-cta { font-size: 1.1rem; padding: 14px 30px; animation: pulse 1.6s ease-in-out infinite; }
 .intro-skip { background: none; box-shadow: none; color: var(--muted); font-size: 0.8rem; padding: 4px 8px; font-weight: 600; }
-.intro-skip:hover { background: none; color: var(--text); transform: none; }
+button.intro-skip:hover { background: none; color: var(--text); transform: none; }
 
 .note-hero { margin: 4px 0 10px; }
 .note-numbers { display: flex; align-items: baseline; gap: 10px; }
@@ -446,7 +449,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
   padding: 14px; box-shadow: var(--shadow-soft); font-weight: 500; min-height: 120px;
   animation: reveal 0.5s ease-out 0.9s both;
 }
-.scene-card:hover { background: #fffaf2; border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
+button.scene-card:hover { background: #fffaf2; border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
 .scene-choice { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); line-height: 1.1; }
 .scene-detail { font-size: 0.85rem; color: #6d667c; line-height: 1.35; }
 .scene-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
@@ -778,7 +781,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
   position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
   background: rgba(251, 246, 238, 0.82); backdrop-filter: blur(3px); border-radius: 24px; color: var(--text); box-shadow: none; padding: 20px;
 }
-.ready-overlay:hover { background: rgba(251, 246, 238, 0.86); transform: none; }
+div.ready-overlay:hover { background: rgba(251, 246, 238, 0.86); transform: none; }
 .ready-title { font-size: 1.7rem; font-weight: 800; line-height: 1.1; }
 .ready-title small { font-size: 0.9rem; color: var(--muted); font-weight: 700; }
 .ready-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 420px; }
@@ -855,7 +858,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 
 .relic-bar { display: flex; flex-wrap: wrap; gap: 8px; }
 .relic { padding: 6px 14px; border-radius: 999px; background: #fff; color: var(--text); font-size: 0.85rem; font-weight: 700; box-shadow: var(--shadow-soft); cursor: pointer; border: 2px solid var(--cell-2); font-family: inherit; }
-.relic:hover { background: #fff; transform: none; }
+span.relic:hover, button.relic:hover { background: #fff; transform: none; }
 .relic.rare { border-color: #cfe0f5; }
 .relic.legendary { border-color: #f6e7b8; }
 
@@ -931,7 +934,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 button:disabled { opacity: 0.45; cursor: default; transform: none; }
 .consumables { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
 .consumable { background: #fff; color: var(--text); border: 2px solid #f6dcc4; padding: 8px 14px; font-size: 0.85rem; }
-.consumable:hover { background: #fff5ec; }
+button.consumable:hover { background: #fff5ec; }
 .consumable.active { border-color: var(--coral); background: #fdeae6; }
 .consumable.empty { opacity: 0.4; cursor: default; }
 .consumable .charges { background: var(--gold); color: #fff; border-radius: 999px; padding: 0 7px; margin-left: 4px; font-size: 0.75rem; }
@@ -941,7 +944,7 @@ button:disabled { opacity: 0.45; cursor: default; transform: none; }
 
 .audio-toggles { position: fixed; top: 10px; right: 10px; z-index: 20; display: flex; gap: 6px; }
 .mute { padding: 6px 10px; font-size: 1rem; opacity: 0.75; }
-.mute:hover { opacity: 1; }
+button.mute:hover { opacity: 1; }
 
 .dev-panel { display: flex; gap: 8px; margin-top: 20px; align-items: center; opacity: 0.5; }
 .dev-panel select { background: #fff; color: var(--text); border: 2px solid var(--cell-2); border-radius: 999px; padding: 6px 10px; font-family: inherit; }

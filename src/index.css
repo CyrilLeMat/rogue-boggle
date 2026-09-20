@@ -224,13 +224,14 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .seed-label input { border: 0; border-bottom: 2px dashed #d9cfc0; border-radius: 0; background: transparent; font-family: 'Patrick Hand', cursive; font-size: 1.1rem; width: 110px; padding: 2px 4px; text-align: center; }
 .seed-label input:focus { outline: none; border-bottom-color: var(--accent); }
 .menu-frame { width: 100%; }
-.classroom { display: block; width: 100%; aspect-ratio: 700 / 270; }
+.classroom { display: block; width: 100%; aspect-ratio: 700 / 346; }
 .chalk-title { animation: chalk 1.1s ease-out both; }
 .chalk-sub { animation: reveal 0.5s ease-out 0.9s both; }
 .classroom .hand-m { transform-origin: 432px 52px; animation: spin 12s linear infinite; }
 .classroom .quill { transform-origin: 316px 240px; animation: write 3.2s ease-in-out infinite; }
 @keyframes write { 0%, 100% { rotate: 0deg; } 50% { rotate: -7deg; } }
 .classroom .stars-wall { animation: flicker 3.4s ease-in-out infinite; }
+.classroom .frieze g:nth-child(odd) { transform-box: fill-box; }
 /* un avion en papier toutes les quinze secondes, et la craie qui retombe */
 .classroom .plane { animation: glide 15s linear infinite; }
 @keyframes glide {

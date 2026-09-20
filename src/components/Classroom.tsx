@@ -8,9 +8,25 @@ export function Classroom() {
   const head = tail ? words.slice(0, -1).join(' ') : GAME_TITLE;
   const two = !!tail;
   return (
-    <svg viewBox="-110 0 700 270" preserveAspectRatio="xMidYMax slice" className="classroom" role="img" aria-label={`${GAME_TITLE}, ${GAME_SUBTITLE}`}>
+    <svg viewBox="-110 -76 700 346" preserveAspectRatio="xMidYMax slice" className="classroom" role="img" aria-label={`${GAME_TITLE}, ${GAME_SUBTITLE}`}>
       {/* la salle déborde des deux côtés : sur les écrans larges, on rogne les murs, jamais le pupitre */}
-      <rect x="-110" width="700" height="270" fill="#f3ece0" />
+      <rect x="-110" y="-76" width="700" height="346" fill="#f3ece0" />
+      {/* plafond, suspension et frise de l'alphabet : de l'air au-dessus du tableau */}
+      <rect x="-110" y="-76" width="700" height="26" fill="#e9e2d4" />
+      <path d="M-110 -50 h700" stroke="#d6cbb8" strokeWidth="2" />
+      <g>
+        <path d="M240 -50 v16" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M216 -14 q24 -26 48 0z" fill="#f6e2ad" stroke="#3f3a55" strokeWidth="2.5" strokeLinejoin="round" />
+        <circle cx="240" cy="-8" r="3" fill="#f7c55c" />
+      </g>
+      <g className="frieze">
+        {['A', 'B', 'C', 'D', 'E', 'F'].map((l, i) => (
+          <g key={l} transform={`translate(${96 + i * 50} -6)`}>
+            <rect width="30" height="22" rx="3" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2" />
+            <text x="15" y="16" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="15" fill="#5d4aa8">{l}</text>
+          </g>
+        ))}
+      </g>
       <rect x="-110" y="196" width="700" height="74" fill="#e2d6c2" />
       <path d="M-110 196 h700" stroke="#c9b9a0" strokeWidth="2" />
 

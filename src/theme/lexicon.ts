@@ -163,7 +163,7 @@ export const MONOLOGUE = [
   'Quelque part dehors, {animal} vit sa vie sans rien savoir de tout ça.',
   'Je sors {objet} de mon cartable. Je le trouve magnifique. Il me donnera la force.',
   'Je me battrai comme {animal} acculé. Un animal qui sait écrire.',
-  'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est ven[u|ue]s là pour briller !',
+  'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Repense à {objet}, ton objet préféré ! Il est si {adjectif2} ! Et ce soir, il y a {plat} !',
 ];
 
 export const HOME = {

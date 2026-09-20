@@ -234,6 +234,8 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .classroom .frieze g:nth-child(odd) { transform-box: fill-box; }
 /* un avion en papier toutes les quinze secondes, et la craie qui retombe */
 .classroom .plane { animation: glide 15s linear infinite; }
+.classroom .wad { animation: tumble 1.1s linear infinite; transform-origin: center; }
+@keyframes tumble { to { transform: rotate(360deg); } }
 @keyframes glide {
   0% { transform: translate(-60px, 96px) rotate(-6deg); opacity: 0; }
   4% { opacity: 1; }

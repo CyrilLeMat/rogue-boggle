@@ -97,10 +97,10 @@ export const INTERLUDES: Interlude[] = [
     lines: [
       'Tu ne le connaissais pas ce matin. Ce soir, tu ne verras plus que lui.',
       'Kévin. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords. Il copie sur tout le monde et tout le monde le laisse faire.',
-      'Dans la cour, il ne bouge pas. Les mains dans les poches, il te regarde. Un papier de goûter traverse lentement l’espace entre vous deux.',
+      'Dans la cour, il traverse le goudron sans se presser, s’arrête à trois pas de toi, sort les mains de ses poches et te désigne du menton.',
     ],
-    cry: 'On va bien s’entendre, toi et moi.',
-    fall: 'Il s’assoit deux rangs derrière toi. Il a choisi sa place. Il t’a choisi[|e].',
+    cry: 'Cette année, c’est toi ma victime.',
+    fall: 'Il s’assoit juste derrière toi et lit déjà par-dessus ton épaule.',
   },
   {
     id: 'kevin2',

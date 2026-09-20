@@ -28,7 +28,7 @@ const PANELS = [
     title: 'III. La révolte',
     text: [
       'Tes genoux tremblent ? Qu\'ils tremblent. La sueur coule ? Qu\'elle coule.',
-      'Tu montes sur la table. Et à la face du Bescherelle, du Bled, et de toute la République, tu hurles :',
+      'Tu montes sur la table. Et à la face du Bescherelle, de la maîtresse et de toute la République, tu hurles :',
     ],
     cry: '« Dictée, tu ne m\'auras pas ! »',
     art: <Revolte />,
@@ -119,7 +119,13 @@ function Revolte() {
       <circle cx="160" cy="60" r="13" fill="#ffe1cf" stroke="#f6f1e4" strokeWidth="3" />
       <path d="M150 50 l-4 -10 M156 47 l-1 -11 M164 47 l2 -11 M170 50 l5 -9" stroke="#f6f1e4" strokeWidth="3" strokeLinecap="round" />
       <circle cx="180" cy="48" r="7" fill="#ffe1cf" stroke="#f6f1e4" strokeWidth="3" className="fist" />
-      <path d="M155 62 q5 6 10 0" stroke="#3f3a55" strokeWidth="2" fill="none" /><path d="M153 56 l5 2 M167 58 l-5 -2" stroke="#3f3a55" strokeWidth="2" />
+      {/* sourcils baissés, mâchoire serrée, veine sur la tempe : il est furieux */}
+      <path d="M152 55 l8 4 M168 55 l-8 4" stroke="#3f3a55" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M153 66 q7 -6 14 0 q-7 5 -14 0z" fill="#3f3a55" />
+      <path d="M154 68 h12" stroke="#fffdf9" strokeWidth="1.2" />
+      <g stroke="#d9534f" strokeWidth="2" strokeLinecap="round" className="tension">
+        <path d="M140 42 l-5 -4 M140 42 l-5 4 M140 42 h-6" />
+      </g>
       {/* le tag */}
       <text x="160" y="186" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="22" fill="#f28b7d" transform="rotate(-4 160 186)" className="tag">PAS AUJOURD'HUI</text>
       {/* étoiles */}

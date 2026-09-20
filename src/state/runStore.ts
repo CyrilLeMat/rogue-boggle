@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_LEVEL, level as resolveLevel } from '../data/levels';
 import { DEFAULT_IDENTITY, type Identity } from '../theme/lexicon';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { randomCharm } from '../data/charms';
@@ -79,6 +80,7 @@ export type MancheState = MancheView & {
 
 export interface RunState extends RunView {
   identity: Identity;
+  levelId: string;
   seed: string;
   rng: Rng;
   snailRng: Rng; // flux séparé : les déplacements dépendent du timing, ils ne doivent pas désynchroniser la run
@@ -113,7 +115,7 @@ interface Store {
   feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; path?: Pos[]; id: number } | null;
 
   startRun(seed?: string): void;
-  setIdentity(identity: Identity): void;
+  setIdentity(identity: Identity, levelId: string): void;
   acceptChallenge(): void; // prologue → fourniture de rentrée
   pickStartRelic(id: string): void;
   pickSceneChoice(choice: number): void;
@@ -184,7 +186,7 @@ export const useRunStore = create<Store>((set, get) => ({
     set({
       phase: 'appel',
       run: {
-        identity: loadIdentity(), seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
+        identity: loadIdentity(), levelId: loadLevel(), seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
         consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
         scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [],
@@ -196,11 +198,12 @@ export const useRunStore = create<Store>((set, get) => ({
   },
 
   // L'appel : le prénom sur la feuille de présence, et la case cochée.
-  setIdentity(identity) {
+  setIdentity(identity, levelId) {
     const { run } = get();
     if (!run) return;
     saveIdentity(identity);
-    set({ run: { ...run, identity }, phase: 'intro' });
+    saveLevel(levelId);
+    set({ run: { ...run, identity, levelId }, phase: 'intro' });
   },
 
   acceptChallenge() {
@@ -235,7 +238,8 @@ export const useRunStore = create<Store>((set, get) => ({
     draft.curseIds = curseIds;
     const size = Math.max(4, mutatorGridSize(gridSizeFor(run.currentManche), mut) + (sceneFx.sizeDelta ?? 0));
     draft.graceSeconds = run.lostLifeLastManche ? GRACE_SECONDS_AFTER_LOSS : 0;
-    const seconds = mancheSeconds(mancheSecondsFor(size) + (mut?.secondsDelta ?? 0), hooks) + draft.graceSeconds;
+    const lvl = resolveLevel(run.levelId);
+    const seconds = Math.round(mancheSeconds(mancheSecondsFor(size) + (mut?.secondsDelta ?? 0), hooks) * lvl.seconds) + draft.graceSeconds;
     draft.timeLeft = draft.timeLeftBeforeWord = draft.totalSeconds = seconds;
     draft.gridRerollsLeft = resolveRelics(run.relicIds).reduce((n, r) => n + (r.gridRerolls ?? 0), 0);
     buildGrid(draft, run, hooks, mut, size);
@@ -746,7 +750,7 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   draft.grid = grid;
   draft.search = search;
   draft.difficulty = difficultyOf(rawPotential, size);
-  draft.threshold = adjustThreshold(threshold(run.currentManche) * (mut?.thresholdMult ?? 1) * thresholdMultiplier(resolveRelics(run.relicIds)), draft.difficulty.factor);
+  draft.threshold = adjustThreshold(threshold(run.currentManche) * resolveLevel(run.levelId).threshold * (mut?.thresholdMult ?? 1) * thresholdMultiplier(resolveRelics(run.relicIds)), draft.difficulty.factor);
   draft.critters = mut?.snails ? spawnCritters(grid, run.snailRng) : [];
   draft.quest = mut?.quest ? pickQuest(grid, search, run.rng) : null;
   // Le cancre copie : 1 cancre ; punition Classe de cancres : +2 (même hors leçon) ; Cancres têtus : endurance ×1.5
@@ -877,6 +881,7 @@ function applyReroll([r, c]: Pos, letter: string) {
 
 // Le prénom et le genre sont réutilisés d'une année sur l'autre.
 const IDENTITY_KEY = 'rb-identity';
+const LEVEL_KEY = 'rb-level';
 
 function loadIdentity(): Identity {
   try {
@@ -886,6 +891,14 @@ function loadIdentity(): Identity {
     if (!parsed.name || (parsed.gender !== 'm' && parsed.gender !== 'f')) return DEFAULT_IDENTITY;
     return { name: parsed.name, gender: parsed.gender };
   } catch { return DEFAULT_IDENTITY; }
+}
+
+function loadLevel(): string {
+  try { return localStorage.getItem(LEVEL_KEY) ?? DEFAULT_LEVEL; } catch { return DEFAULT_LEVEL; }
+}
+
+function saveLevel(id: string) {
+  try { localStorage.setItem(LEVEL_KEY, id); } catch { /* stockage indisponible */ }
 }
 
 function saveIdentity(identity: Identity) {

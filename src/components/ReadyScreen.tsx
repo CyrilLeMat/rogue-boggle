@@ -24,7 +24,14 @@ export function ReadyOverlay() {
   };
   if (!manche || !run) return null;
   const mut = manche.mutatorId ? mutator(manche.mutatorId) : null;
-  if (thought) return <div className="psyche" onClick={begin}><p>« {thought} »</p></div>;
+  if (thought) return (
+    <div className="psyche" onClick={begin}>
+      <blockquote>
+        <p><span className="q">«</span> {thought} <span className="q">»</span></p>
+        <cite>{run.identity.name}, élève de CE2</cite>
+      </blockquote>
+    </div>
+  );
   return (
     <div className="ready-overlay">
       <h2 className="ready-title">{L.manche} {run.currentManche} <small>sur {TOTAL_MANCHES}</small></h2>

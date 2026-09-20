@@ -91,6 +91,17 @@ input:focus { outline: none; border-color: var(--accent); }
 }
 .appel-box i { width: 20px; height: 20px; border: 2px solid #3f3a55; border-radius: 4px; font-style: normal; font-size: 0.9rem; line-height: 17px; color: var(--ko); }
 .appel-box.on { border-color: var(--accent); background: #f6f2ff; }
+.appel-levels { display: flex; flex-direction: column; gap: 6px; }
+.appel-level {
+  display: flex; flex-direction: column; gap: 2px; text-align: left; align-items: flex-start;
+  background: #fff; color: var(--text); border: 2px solid var(--cell-2); border-radius: 16px 20px 18px 22px;
+  padding: 8px 12px;
+}
+.appel-level strong { font-size: 0.95rem; }
+.appel-level small { font-size: 0.75rem; color: var(--muted); line-height: 1.25; font-weight: 600; }
+.appel-level.on { border-color: var(--accent); background: #f6f2ff; }
+.appel-level.on strong { color: var(--accent-deep); }
+.appel { max-width: 440px; }
 .appel-box small { font-size: 0.75em; vertical-align: super; color: var(--ko); }
 .ready-cta:disabled { opacity: 0.45; animation: none; }
 
@@ -257,10 +268,21 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
   mask-image: radial-gradient(circle at 50% 50%, transparent 26%, #000 62%);
   animation: psycheBurst 1.1s ease-out both;
 }
+.psyche blockquote {
+  position: relative; margin: 0; max-width: 460px; text-align: center;
+  animation: psycheText 0.7s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
 .psyche p {
   position: relative; font-family: 'Patrick Hand', cursive; font-size: clamp(1.5rem, 5.5vw, 2.2rem); line-height: 1.2;
-  color: var(--accent-deep); text-align: center; max-width: 440px; margin: 0;
-  animation: psycheText 0.7s cubic-bezier(0.2, 1.3, 0.4, 1) both, shakeText 1.6s ease-in-out 0.8s infinite alternate;
+  color: var(--accent-deep); margin: 0;
+  animation: shakeText 1.6s ease-in-out 0.8s infinite alternate;
+}
+/* les guillemets, en gros, comme dans un journal */
+.psyche .q { color: var(--coral); font-size: 1.5em; line-height: 0; vertical-align: -0.12em; }
+.psyche cite {
+  display: block; margin-top: 14px; font-style: normal; font-size: 0.85rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  animation: reveal 0.6s ease-out 0.5s both;
 }
 @keyframes psycheIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes psycheBurst { from { opacity: 0.9; transform: scale(0.55) rotate(-6deg); } to { opacity: 0.5; transform: scale(1) rotate(0deg); } }

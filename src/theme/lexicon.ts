@@ -26,7 +26,7 @@ export interface Identity { name: string; gender: Gender; profile: Profile }
 
 export const DEFAULT_PROFILE: Profile = {
   salut: 'Salut la compagnie',
-  phrase: 'C\'est pas faux',
+  phrase: 'Six seeeveeeeeeen',
   cour: 'des parties de foot',
   heros: 'Pikachu',
   plat: 'les pâtes au beurre',
@@ -46,7 +46,7 @@ export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profil
 // Réponses de secours pour le bouton « Surprends-moi » de la fiche de renseignements.
 export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   salut: ['Salut la compagnie', 'Wesh', 'Bonjour à tous', 'Yo', 'Coucou les amis'],
-  phrase: ['C\'est pas faux', 'Tranquille', 'Même pas mal', 'Ah ouais quand même', 'Ça passe crème'],
+  phrase: ['Six seeeveeeeeeen', 'Tranquilou Bilou', 'C\'est pas faux', 'Même pas mal', 'Ah ouais quand même'],
   cour: ['des parties de foot', 'des courses poursuites', 'rien du tout', 'des échanges de cartes', 'le mur des billes'],
   heros: ['Pikachu', 'Goku', 'Titeuf', 'Sangoku', 'Astérix', 'Bob l\'éponge'],
   plat: ['les pâtes au beurre', 'les frites', 'le gratin de mamie', 'les nuggets', 'la purée'],

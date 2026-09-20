@@ -1,4 +1,5 @@
-import { SCENE_BY_ID, sceneTags } from '../data/scenes';
+import { SCENE_BY_ID } from '../data/scenes';
+import { SceneTags } from './SceneTags';
 import { useRunStore } from '../state/runStore';
 import { SceneArt } from './SceneArt';
 
@@ -20,9 +21,7 @@ export function ScenePick() {
           <button key={c.label} className="scene-card" onClick={() => pick(i)}>
             <span className="scene-choice">{c.label}</span>
             <span className="scene-detail">{c.detail}</span>
-            <span className="scene-tags">
-              {sceneTags(c.effects).map((t) => <span key={t.text} className={`scene-tag ${t.tone}`}>{t.text}</span>)}
-            </span>
+            <SceneTags effects={c.effects} />
           </button>
         ))}
       </div>

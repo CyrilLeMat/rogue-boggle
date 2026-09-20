@@ -225,7 +225,19 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .scene-choice { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); line-height: 1.1; }
 .scene-detail { font-size: 0.85rem; color: #6d667c; line-height: 1.35; }
 .scene-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
-.scene-tag { font-size: 0.72rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: 1.5px solid; white-space: nowrap; }
+.scene-tag { position: relative; font-size: 0.72rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: 1.5px solid; white-space: nowrap; }
+.tag-hint {
+  position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 6; width: max-content; max-width: 240px;
+  padding: 8px 10px; border-radius: 12px 14px 12px 14px; border: 2px solid var(--accent); background: var(--panel);
+  color: var(--text); font-size: 0.78rem; font-weight: 400; line-height: 1.3; white-space: normal; text-align: left;
+  box-shadow: var(--shadow); opacity: 0; pointer-events: none; transform: translateY(4px); transition: opacity 0.15s, transform 0.15s;
+}
+.scene-tag:hover .tag-hint { opacity: 1; transform: none; }
+.scene-hints { display: none; font-size: 0.76rem; color: var(--muted); line-height: 1.3; }
+@media (hover: none) {
+  .tag-hint { display: none; }
+  .scene-hints { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
+}
 .scene-tag.good { color: #3d7c5b; border-color: #a9d8bf; background: #eef8f2; }
 .scene-tag.bad { color: #b5423e; border-color: #f0bdbb; background: #fdf0ef; }
 .scene-tag.neutral { color: var(--accent-deep); border-color: #d5cbee; background: #f3f0fb; }

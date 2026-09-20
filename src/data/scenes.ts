@@ -228,7 +228,7 @@ export const SCENES: Scene[] = [
 
 export const SCENE_BY_ID = new Map(SCENES.map((s) => [s.id, s]));
 
-export interface SceneTag { text: string; tone: 'good' | 'bad' | 'neutral' }
+export interface SceneTag { text: string; tone: 'good' | 'bad' | 'neutral'; hint?: string }
 
 const pct = (m: number) => `${m >= 1 ? '+' : '\u2212'}${Math.round(Math.abs(m - 1) * 100)} %`;
 const signed = (n: number, unit: string) => `${n > 0 ? '+' : '\u2212'}${Math.abs(n)} ${unit}`;
@@ -236,8 +236,11 @@ const signed = (n: number, unit: string) => `${n > 0 ? '+' : '\u2212'}${Math.abs
 // Ce que la réaction coûte et rapporte, en clair : le texte dramatise, les pastilles ne mentent pas.
 export function sceneTags(e: SceneEffects): SceneTag[] {
   const tags: SceneTag[] = [];
-  if (e.lessonId) tags.push({ text: `Leçon : ${MUTATOR_BY_ID.get(e.lessonId)?.name ?? e.lessonId}`, tone: 'neutral' });
-  if (e.randomLesson) tags.push({ text: 'Leçon tirée au sort', tone: 'neutral' });
+  if (e.lessonId) {
+    const m = MUTATOR_BY_ID.get(e.lessonId);
+    tags.push({ text: `Leçon : ${m?.name ?? e.lessonId}`, tone: 'neutral', hint: m?.description });
+  }
+  if (e.randomLesson) tags.push({ text: 'Leçon tirée au sort', tone: 'neutral', hint: 'Une leçon au hasard parmi toutes celles que la maîtresse peut sortir à ce moment de l\'année. Tu la découvriras sur la feuille.' });
   if (e.seconds) tags.push({ text: signed(e.seconds, 's'), tone: e.seconds > 0 ? 'good' : 'bad' });
   if (e.euros) tags.push({ text: signed(e.euros, 'billes'), tone: e.euros > 0 ? 'good' : 'bad' });
   if (e.eurosMult) tags.push({ text: `${pct(e.eurosMult)} de billes`, tone: e.eurosMult >= 1 ? 'good' : 'bad' });

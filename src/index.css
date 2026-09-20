@@ -98,6 +98,10 @@ input:focus { outline: none; border-color: var(--accent); }
 }
 .appel-box.on .portrait { transform: scale(1.06); }
 .appel-box.on { border-color: var(--accent); background: #f6f2ff; }
+/* ces cartes ne sont pas des boutons pleins : au survol, le violet profond du bouton
+   générique leur tombait dessus d'un bloc. Un lavande léger suffit à dire « cliquable ». */
+.appel-box:hover, .appel-level:hover { background: #faf7ff; border-color: #cdbff2; transform: none; }
+.appel-box.on:hover, .appel-level.on:hover { background: #f1ebff; border-color: var(--accent); }
 .appel-foot { display: flex; justify-content: space-between; gap: 10px; }
 /* la liste complète des questions défile, les raccourcis restent en haut */
 .appel-foot.sticky { position: sticky; top: 0; z-index: 3; background: var(--panel); padding: 6px 0 8px; margin-bottom: 2px; }

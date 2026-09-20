@@ -93,7 +93,7 @@ export function Appel() {
         <h2>Fiche de renseignements</h2>
         {/* le joueur ne peut pas deviner que ces mots reviendront dans les planches : on le lui dit */}
         <p className="appel-sub">
-          Tes réponses reviennent dans l'histoire, mot pour mot, toute l'année : la maîtresse, Kévin et le narrateur s'en servent.
+          Tes réponses reviennent dans l'histoire, mot pour mot, toute l'année : la maîtresse et le narrateur s'en servent, et ils ne demandent pas la permission.
         </p>
         <p className="appel-sub">
           Prends le temps de les changer, c'est là que le jeu devient le tien. Le 🎲 en tire une au hasard, et rien n'est obligatoire.

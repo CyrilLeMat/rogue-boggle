@@ -235,6 +235,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .chalk-sub { animation: reveal 0.5s ease-out 0.9s both; }
 .classroom .hand-m { transform-origin: 432px 52px; animation: spin 12s linear infinite; }
 .classroom .quill { transform-origin: 316px 240px; animation: write 3.2s ease-in-out infinite; }
+.classroom .pointer-arm { transform-origin: 68px 158px; animation: shakeText 2.4s ease-in-out infinite alternate; }
 @keyframes write { 0%, 100% { rotate: 0deg; } 50% { rotate: -7deg; } }
 .classroom .stars-wall { animation: flicker 3.4s ease-in-out infinite; }
 .classroom .frieze g:nth-child(odd) { transform-box: fill-box; }

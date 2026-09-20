@@ -845,11 +845,21 @@ button:disabled { opacity: 0.45; cursor: default; transform: none; }
 button.small { padding: 6px 14px; font-size: 0.8rem; }
 
 @media (max-width: 700px) {
-  .menu-hero .classroom { height: clamp(180px, 32vh, 260px); }
+  /* sur téléphone, la classe prend plus de place et le bulletin passe en bandeau */
+  .menu-hero .classroom { height: clamp(250px, 40vh, 340px); }
+  .last-year {
+    position: static; width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center;
+    align-items: baseline; gap: 4px 10px; transform: none; border: 0; border-top: 2px dashed #e7dfd0;
+    border-radius: 0; box-shadow: none; padding: 8px 12px; background: #fffdf9;
+  }
+  .last-year .pin { display: none; }
+  .last-year strong { font-size: 1.15rem; }
+  .last-label, .last-seed, .last-mention { font-size: 0.66rem; }
+  .clipping { font-size: 1rem; padding: 8px 12px; }
+  .clippings { gap: 8px 12px; }
   .menu-body { gap: 16px; padding: 24px 14px 28px; }
   .menu-body .tagline { font-size: 1.15rem; }
   .clipping { font-size: 1.05rem; max-width: 100%; }
-  .last-year { width: 98px; padding: 8px; bottom: 8px; right: 8px; }
   .last-year strong { font-size: 1.3rem; }
   .menu-cta { position: sticky; bottom: 10px; width: 100%; }
   /* boutique : la barre d'action tient sur deux lignes serrées, le décor passe à la trappe */

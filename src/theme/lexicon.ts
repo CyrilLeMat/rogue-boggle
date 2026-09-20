@@ -22,7 +22,7 @@ export const MONOLOGUE = [
   'Trois bons points. Il ne m\'en reste que trois. C\'est tout ce qui me sépare du vide.',
 ];
 
-export const TAGLINE = 'Dix dictées te séparent du CM1. La maîtresse en a préparé onze, au cas où.';
+export const TAGLINE = 'La maîtresse a préparé dix dictées. Sauras-tu accomplir ton destin et passer en CM1 ?';
 
 export const L = {
   manche: 'Dictée',

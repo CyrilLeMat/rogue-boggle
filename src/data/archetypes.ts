@@ -65,6 +65,14 @@ export const ARCHETYPES: Relic[] = [
     onWordFound: () => ({ percent: -0.1 }),
   },
   {
+    id: 'specialiste', name: '[Le spécialiste|La spécialiste]', rarity: 'rare', archetype: true,
+    flavor: 'Tu connais quatre cent douze espèces de dinosaures. Le bruit de la cour te fait mal aux oreilles, et les billes ne t\'ont jamais intéressé[|e].',
+    description: '+25 % sur tous les mots et +20 s de chrono, mais les billes te passent sous le nez : −40 %',
+    onWordFound: () => ({ percent: 0.25 }),
+    mancheSeconds: (s) => s + 20,
+    eurosMult: 0.6,
+  },
+  {
     id: 'reveur', name: '[Le rêveur|La rêveuse]', rarity: 'rare', archetype: true,
     flavor: 'Tu regardes par la fenêtre. Les grands mots viennent tout seuls ; les petits t\'ennuient.',
     description: '+60 % sur les mots de 6 lettres et plus, rien de plus sur les mots de 3 lettres',

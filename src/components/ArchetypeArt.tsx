@@ -88,6 +88,23 @@ const ARTS: Record<string, () => ReactElement> = {
       </g>
     </>
   ),
+  // concentration totale, casque sur les oreilles, le bruit reste dehors
+  specialiste: () => (
+    <>
+      <Body color="#dcebe4" />
+      <Head />
+      <path d="M36 40 q24 -16 48 0" {...ink} strokeWidth="3" />
+      <g fill="#3f3a55"><circle cx="52" cy="48" r="2.4" /><circle cx="68" cy="48" r="2.4" /></g>
+      <path d="M53 62 h14" {...ink} strokeWidth="2.5" />
+      {/* le casque anti-bruit */}
+      <path d="M34 44 q26 -26 52 0" stroke="#5fae83" strokeWidth="6" fill="none" strokeLinecap="round" />
+      <rect x="26" y="42" width="14" height="20" rx="6" fill="#5fae83" stroke="#3f3a55" strokeWidth="2.5" />
+      <rect x="80" y="42" width="14" height="20" rx="6" fill="#5fae83" stroke="#3f3a55" strokeWidth="2.5" />
+      {/* le livre, ouvert à la même page depuis des heures */}
+      <path d="M40 92 h18 v16 h-18z M62 92 h18 v16 h-18z" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2.5" />
+      <g stroke="#b9b1c9" strokeWidth="1.5"><path d="M44 98 h10 M44 103 h10 M66 98 h10 M66 103 h10" /></g>
+    </>
+  ),
   reveur: () => (
     <>
       <Body color="#ece6f7" />
@@ -123,7 +140,7 @@ const ARTS: Record<string, () => ReactElement> = {
 
 const BG: Record<string, string> = {
   nouveau: '#eef5ec', chouchou: '#eef4fb', 'fond-de-classe': '#eceaf0', footballeur: '#e9f1ea',
-  redoublant: '#f1edf9', 'petit-dernier': '#fdeae6', 'rat-de-billes': '#fff5e2', reveur: '#f3effb',
+  redoublant: '#f1edf9', 'petit-dernier': '#fdeae6', 'rat-de-billes': '#fff5e2', reveur: '#f3effb', specialiste: '#e7f2ec',
 };
 
 export function ArchetypeArt({ id }: { id: string }) {

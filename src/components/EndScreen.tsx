@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { relic, relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
+import { useScrollTop } from '../useScrollTop';
 import { EPILOGUE_ACTS, epilogue } from '../theme/epilogue';
 import { EpilogueArt } from './EpilogueArt';
 import { L, SIGNATURE, mention, noteSur20, say } from '../theme/lexicon';
@@ -13,6 +14,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
   const [copied, setCopied] = useState(false);
   const [showBulletin, setShowBulletin] = useState(false);
   const [act, setAct] = useState(0); // l'épilogue se lit en trois temps, un clic entre chaque
+  useScrollTop(act, showBulletin);
   if (!run) return null;
   const allWords = run.history.flatMap((h) => h.words);
   const best = [...allWords].sort((a, b) => b.score - a.score).slice(0, 5);

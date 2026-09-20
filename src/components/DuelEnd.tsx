@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { relic } from '../data/registry';
 import { useRunStore } from '../state/runStore';
+import { useScrollTop } from '../useScrollTop';
 import { DUEL } from '../theme/lexicon';
 import { useSay } from '../theme/useSay';
 
@@ -215,6 +216,7 @@ export function DuelEnd() {
   const next = useRunStore((s) => s.leaveDuel);
   const say = useSay();
   const [step, setStep] = useState(0);
+  useScrollTop(step);
 
   const item = back ? say(relic(back).name) : null;
   const deal = won

@@ -32,6 +32,7 @@ import { SoundEffects } from './components/SoundEffects';
 import { StartPick } from './components/StartPick';
 import { Timer } from './components/Timer';
 import { useRunStore } from './state/runStore';
+import { useScrollTop } from './useScrollTop';
 
 
 function Playing() {
@@ -105,6 +106,7 @@ function Playing() {
 
 export default function App() {
   const phase = useRunStore((s) => s.phase);
+  useScrollTop(phase);
   const debug = new URLSearchParams(location.search);
   if (debug.has('planches')) return <main><ScenesGallery /></main>;
   if (debug.has('transitions')) return <main><InterludesGallery /></main>;

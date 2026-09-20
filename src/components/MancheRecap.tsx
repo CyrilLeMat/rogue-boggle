@@ -4,6 +4,7 @@ import type { Pos } from '../engine/types';
 import { findPathForWord } from '../engine/wordFinder';
 import { level as resolveLevel } from '../data/levels';
 import { useRunStore } from '../state/runStore';
+import { useScrollTop } from '../useScrollTop';
 import { L, SIGNATURE, band, money } from '../theme/lexicon';
 import { MaitresseArt } from './MaitresseArt';
 import { useSay } from '../theme/useSay';
@@ -56,6 +57,7 @@ export function MancheRecap() {
   const bonusShown = useCountUp(result?.eurosBonus ?? 0, 1400, !!result && act >= 3);
   const [shown, setShown] = useState<string | null>(null);
   const [detail, setDetail] = useState(false);
+  useScrollTop(detail, result);
   const shownPath = useMemo<Pos[] | null>(() => {
     if (!result || !shown) return null;
     const found = result.words.find((f) => f.word === shown);

@@ -8,6 +8,7 @@ import { dictionary } from '../data/dictionary';
 import { relic, relics } from '../data/registry';
 import { useSay } from '../theme/useSay';
 import { useRunStore } from '../state/runStore';
+import { useScrollTop } from '../useScrollTop';
 import { EV, SCOLDS, money, scold } from '../theme/lexicon';
 import { EventArt } from './EventArt';
 import { Grid } from './Grid';
@@ -156,6 +157,7 @@ function Racket({ ev }: { ev: RacketEvent }) {
   const say = useSay();
   const [step, setStep] = useState(0);
   const t = EV.racket;
+  useScrollTop(step, ev.outcome);
 
   if (ev.outcome === 'playing') {
     return (
@@ -221,6 +223,7 @@ export function EventScreen() {
   const leave = useRunStore((s) => s.leaveEvent);
   const start = useRunStore((s) => s.eventStart);
   const playing = ev?.outcome === 'playing';
+  useScrollTop(ev?.started, ev?.id);
 
   useEffect(() => {
     if (!playing || !ev || ev.seconds === 0) return;

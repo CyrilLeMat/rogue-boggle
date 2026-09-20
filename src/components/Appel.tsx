@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LEVELS } from '../data/levels';
 import { useRunStore } from '../state/runStore';
+import { useScrollTop } from '../useScrollTop';
 import { DEFAULT_PROFILE, PROFILE_IDEAS, type Gender, type Profile } from '../theme/lexicon';
 
 const MAX_NAME = 24;
@@ -68,6 +69,7 @@ export function Appel() {
   const run = useRunStore((s) => s.run);
   const setIdentity = useRunStore((s) => s.setIdentity);
   const [page, setPage] = useState(0);
+  useScrollTop(page);
   const [name, setName] = useState(run?.identity.name ?? '');
   const [gender, setGender] = useState<Gender | null>(run?.identity.gender ?? null);
   const [levelId, setLevelId] = useState(run?.levelId ?? 'adulte');

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { setMusicMood } from '../audio/music';
 import { VOW } from '../theme/lexicon';
 import { useRunStore } from '../state/runStore';
+import { useScrollTop } from '../useScrollTop';
 import { useSay } from '../theme/useSay';
 
 // Prologue en trois cases de bande dessinée. Le ton du jeu tient là-dedans :
@@ -156,6 +157,7 @@ const PANEL_MOODS = ['triste', 'choc', 'combat'] as const;
 export function Intro() {
   const accept = useRunStore((s) => s.acceptChallenge);
   const [i, setI] = useState(0);
+  useScrollTop(i);
   const say = useSay();
   useEffect(() => { setMusicMood(PANEL_MOODS[i]); }, [i]);
   const panel = PANELS[i];

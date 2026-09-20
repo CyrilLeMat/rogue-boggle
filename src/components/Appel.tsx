@@ -3,7 +3,7 @@ import { LEVELS } from '../data/levels';
 import { useRunStore } from '../state/runStore';
 import { DEFAULT_PROFILE, PROFILE_IDEAS, type Gender, type Profile } from '../theme/lexicon';
 
-const MAX_NAME = 14;
+const MAX_NAME = 24;
 const MAX_ANSWER = 60;
 
 const QUESTIONS: { key: keyof Profile; label: string }[][] = [

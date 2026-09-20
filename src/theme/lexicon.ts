@@ -38,7 +38,7 @@ export const DEFAULT_PROFILE: Profile = {
   heros: 'Pikachu',
   plat: 'les pâtes au beurre',
   horreur: 'les endives',
-  metier: 'pompier',
+  metier: 'pompier musclé',
   chanson: 'Alouette',
   admire: 'ma grand-mère',
   surnom: 'Toto',
@@ -60,7 +60,7 @@ export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profil
 // Réponses de secours pour le bouton « Surprends-moi » de la fiche de renseignements.
 export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   salut: ['Salut la compagnie créole', 'Wesh les gros', 'Bonjour à tous, camarades', 'Yo les cocos', 'Coucou les amis'],
-  phrase: ['Six seeeveeeeeeen', 'Tranquilou Bilou', 'C\'est pas ma faute à moi, moi lolita', 'Même pas mal', 'Ah ouais quand même'],
+  phrase: ['Six seeeveeeeeeen', 'Tranquilou Bilou', 'C\'est pas ma faute à moi, moi lolita', 'Même pas mal', 'H.I.P H.O.P c\'est moi le roi de la récré'],
   cour: ['des parties de foot', 'rapper pour sortir ma haine', 'racketter les CPs', 'voler des cartes pokemon', 's\'entrainer à l\'hyrox'],
   heros: ['Psykokwak', 'Les teletubbies', 'Bioman', 'Astérix', 'Bob l\'éponge'],
   plat: ['les pâtes au beurre', 'les frites surgelées', 'le gratin de mamie', 'les nuggets', 'la purée'],

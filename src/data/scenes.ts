@@ -40,7 +40,7 @@ export const SCENES: Scene[] = [
     title: 'Le stylo de Sophie',
     lines: [
       'Catastrophe : le stylo de Sophie, ta voisine, tombe par terre.',
-      'Il explose au contact du sol. Il y a de l\'encre partout. Tu es terrifi[é|ée] par cette coulée violette qui avance vers toi et qui pourrait t\'engloutir.',
+      'Il explose au contact du sol. Tu hurles « {cri} » avant même de comprendre pourquoi. La coulée violette avance vers toi et pourrait t\'engloutir.',
       'Mais tu vois aussi la détresse de Sophie, qui tombe à genoux, en larmes, et hurle au ciel : « Noooon, c\'était mon seul crayon !! »',
     ],
     choices: [
@@ -167,7 +167,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Elles ralentissent. Elles s\'arrêtent. La maîtresse blanchit d\'un coup.',
       'Le directeur n\'entre jamais sans raison, et le directeur n\'a jamais de raison.',
-      'La poignée tourne au ralenti, comme dans les films où tout le monde meurt à la fin.',
+      'La poignée tourne au ralenti, comme dans les films où tout le monde meurt à la fin. Dans ta tête, une seule phrase tourne en boucle : « {cri} ».',
     ],
     choices: [
       {
@@ -200,27 +200,6 @@ export const SCENES: Scene[] = [
         label: 'En réclamer une deuxième',
         detail: 'L\'audace des désespérés. Elle soupire, elle fouille, elle te la tend en te faisant payer le dérangement.',
         effects: { euros: -25 },
-      },
-    ],
-  },
-  {
-    id: 'araignee',
-    title: 'L\'araignée',
-    lines: [
-      'Elle descend du plafond au bout de son fil, tranquille, juste au-dessus de la rangée.',
-      'Elle atterrit sur ta jambe. Tu le sens avant de le voir.',
-      'Tu hurles « {cri} » et toute l\'école t\'entend. Même la classe de CM2. Même le directeur.',
-    ],
-    choices: [
-      {
-        label: 'Monter sur la table',
-        detail: 'Personne n\'a compris. Personne ne comprendra jamais. Tu resteras debout jusqu\'à ce qu\'on te le demande.',
-        effects: { seconds: -15, streakStep: 0.2 },
-      },
-      {
-        label: 'La laisser vivre sa vie',
-        detail: 'Elle s\'installe dans un coin de ta feuille et y reste. Vous vous êtes compris[|es], toi et elle.',
-        effects: { lessonId: 'escargots', euros: 20 },
       },
     ],
   },

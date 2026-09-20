@@ -135,7 +135,7 @@ export const L = {
   victoire: 'Passage en CM1.',
   victoireSub: 'Le CM1. Puis le CM2. Puis {metier}. Tu sors dans la cour, tu cries « {salut} » à personne en particulier, et ce soir il y a {plat}.',
   gameover: 'Redoublement.',
-  gameoverSub: (n: number) => `La dictée ${n} a eu raison de toi. Tes parents sont convoqués, et ce soir, au dîner, il y a {horreur}.`,
+  gameoverSub: (n: number) => `Tu as crié « {cri} » en voyant la note. La dictée ${n} a eu raison de toi. Tes parents sont convoqués, et ce soir, au dîner, il y a {horreur}.`,
   continuer: 'Copie suivante',
   lancer: 'Silence. On commence.',
   terminer: 'Rendre la copie',
@@ -187,9 +187,15 @@ export const SCOLDS = [
   'J\'ai fait sept ans d\'études pour lire ça.',
   'Même le radiateur a honte.',
   'Tu écris comme on jette des cailloux, {nom}.',
+  'Arrête de chantonner {chanson}, on t\'entend jusqu\'au fond du couloir.',
   'Tu as gribouillé « {rigolo} » dans la marge. Je l\'ai vu. Nous en reparlerons.',
+  'Tu as crié « {cri} » en découvrant ce mot. Toute la classe l\'a entendu.',
   'Tu préférerais {action}, je sais. Écris d\'abord.',
   'Ce mot est {adjectif}. Et ce n\'est pas un compliment.',
+  '{nom}, tu es vraiment {adjectif} ce matin !',
+  'Que dirait {admire} en voyant ça ?',
+  'Cette copie a le goût de {horreur}.',
+  'Tu as marmonné « {phrase} » en traçant ça. Ce n\'est pas une excuse.',
   'Ton cerveau pense à {cour}. Pas aux consonnes doubles.',
   'Tu fredonnais {chanson} pendant la dictée. Je l\'ai entendu. Tout le monde l\'a entendu.',
   'Ici, personne ne t\'appelle {surnom}. Ici, tu as un nom et une copie.',
@@ -230,6 +236,8 @@ export const PRAISES_BIG = [
   'Ce soir, tu mérites ça : {plat}.',
   'Voilà une copie de futur {metier}.',
   'Ça, c\'est {adjectif}. Au sens noble du terme.',
+  'Va montrer ça à {admire} ce soir. Insiste.',
+  'Tu as murmuré « {phrase} » en le traçant. Je l\'ai entendu.',
 ];
 
 export const PRAISES_SMALL = [
@@ -243,8 +251,11 @@ export const PRAISES_SMALL = [
   'Tes parents seront contents, {nom}.',
   'Je reprends espoir. Un peu.',
   'Encore {nombre} comme celui-là et je te laisse {action}.',
+  'Écris ça sur un papier, montre-le à {admire}.',
+  'Un mot propre. Pas comme « {rigolo} », tiens.',
   'Continue et je te sers {plat} moi-même.',
   'Tiens donc.',
+  'Pour ça, tu mérites une part de {plat}. Une petite.',
 ];
 
 // Quand tu sors un mot que personne dans la classe ne connaît, elle se méfie.
@@ -259,6 +270,8 @@ export const SUSPICIONS = [
   'C\'est ton grand frère qui t\'a soufflé ?',
   'C\'est {heros} qui t\'a soufflé, peut-être ?',
   'Répète-le pour voir. Sans regarder.',
+  'Ce mot me fait penser à « {rigolo} ». Et ça, ça ne me rassure pas.',
+  'Tu as appris ça où ? Certainement pas devant une assiette de {horreur}.',
   'Je note ce mot. Et j\'écris {nom} juste à côté.',
 ];
 
@@ -284,7 +297,7 @@ export function scold(list: readonly string[], seed: number): string {
 // L'appréciation du bulletin, au stylo rouge. `ratio` = note obtenue / note attendue.
 // L'appréciation n'est jamais neutre : ou elle est vacharde, ou elle est inquiétante d'affection.
 // Le score sert d'index : la même copie donne toujours la même phrase.
-const APPRECIATIONS: Record<string, string[]> = {
+export const APPRECIATIONS: Record<string, string[]> = {
   fatal: [
     '{nom}, je convoque tes parents lundi. Nous parlerons de ton avenir, s\'il y en a un.',
     'À ce stade je ne corrige plus, je constate.',
@@ -305,6 +318,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'J\'ai relu trois fois en espérant m\'être trompée. Je ne me trompe jamais.',
     'Ce n\'est rien. Tout le monde ne peut pas réussir, il faut bien des gens pour le reste.',
     'Tu trouveras ta voie. Elle sera manuelle, mais tu la trouveras.',
+    '{Horreur}. Voilà exactement ce que ta copie m\'évoque.',
     'J\'ai montré ta copie en salle des maîtres. Personne n\'a ri. Le silence était pire.',
     'Tu as passé l\'année à {cour}. Voilà le résultat, {nom}.',
     'Je préviendrai {admire}. Quelqu\'un doit savoir.',
@@ -319,6 +333,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Je n\'avais pas vu ça depuis 1987. Cet élève-là a mal fini, mais quel talent.',
     'Ce soir je cuisine {plat} pour toute ma famille, et je leur raconterai ta copie.',
     'Tu seras {metier}, et tu seras le meilleur. Je l\'écris ici, noir sur rouge.',
+    'Préviens {admire}. Non, laisse, je préviendrai {admire} moi-même.',
     'J\'ai pleuré dans la réserve. Ne dis rien à personne, {nom}.',
     'C\'est {adjectif}. J\'ai cherché un autre mot pendant {nombre} minutes, il n\'y en a pas.',
     'Même {heros} peut aller se rhabiller.',
@@ -337,6 +352,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Très bonne copie. J\'ai vérifié deux fois, par acquit de conscience.',
     'Voilà du travail sérieux. Continue et je t\'invite à manger {plat}.',
     'Bien. Tu vois ce qui arrive quand tu penses à autre chose qu\'à {cour} ?',
+    'Voilà ce qu\'on raconte à {admire} en rentrant.',
     'C\'est propre, c\'est juste, c\'est presque agaçant.',
   ],
   correct: [
@@ -352,6 +368,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Juste, tout juste, {nom}. Un point de moins et je remplissais ton carnet de correspondance.',
     'Tu passes. Je te préviens tout de suite que cela ne se reproduira pas.',
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
+    'Tu as dû dire « {phrase} » en rendant ta copie. Tu avais tort.',
     'Un point de plus et je te félicitais. Un point de moins et j\'appelais chez toi.',
     'Tu as eu chaud. Moi aussi, figure-toi.',
     'Il s\'en est fallu de {nombre} points. Ou pas loin. Je n\'ai pas recompté.',
@@ -409,9 +426,10 @@ export const SHOP_INTRO = {
     'Derrière : un comptoir, des étagères jusqu\'au plafond, et Mathieu.',
     'Mathieu tient la caisse depuis le CP. Personne ne sait pourquoi. Personne ne demande.',
     'Sur l\'étagère du haut, des gommettes {heros}. Il jure qu\'elles portent chance. Il jure beaucoup.',
+    'Sur le comptoir, un bocal d\'étiquettes où quelqu\'un a écrit « {rigolo} ». Mathieu ne commente pas.',
     '« Tu as des billes ? »',
   ],
-  ask: 'Ici tout s\'achète : les fournitures, les gommettes, et même les punitions, si tu es de ce genre-là.',
+  ask: 'Ici tout s\'achète : les fournitures, les gommettes, et même les punitions, si tu es de ce genre-là. Tout, sauf {horreur}.',
   cta: 'Sortir ses billes',
 } as const;
 

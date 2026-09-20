@@ -38,7 +38,7 @@ export const INTERLUDES: Interlude[] = [
       'Dehors, sous le préau, la pluie tombe comme dans les dernières pages.',
       'Tu lèves les yeux vers le ciel gris, bras le long du corps, et tu laisses l’eau couler sur ton visage sans ciller.',
     ],
-    cry: 'Je les ai tous dépassés. Et pourtant je ne ressens rien.',
+    cry: 'Je les ai tous dépassés. « {phrase} », comme on dit. Et pourtant je ne ressens rien.',
     fall: 'La récréation dure douze minutes.',
   },
   {
@@ -46,9 +46,9 @@ export const INTERLUDES: Interlude[] = [
     mood: 'loss',
     lines: [
       'Le couloir est vide. Tu t’adosses au mur sous les porte-manteaux et tu glisses lentement jusqu’au sol.',
-      'Le carrelage est froid. Tu fixes tes chaussures. Tu ne clignes pas des yeux.',
+      'Le carrelage est froid. Tu fixes tes chaussures. Tu ne clignes pas des yeux. Tout au fond, quelque chose voudrait sortir :',
     ],
-    cry: 'J’étais si près.',
+    cry: '{Cri}.',
     fall: 'Tu as eu onze. La moyenne de la classe est de douze.',
   },
   {
@@ -59,7 +59,7 @@ export const INTERLUDES: Interlude[] = [
       'Tu recopies le mot. Encore. Encore. Ta main tremble, l’encre bave, tu ne t’arrêtes pas.',
     ],
     cry: 'Cent fois. Mille s’il le faut. Je ne perdrai plus jamais.',
-    fall: 'Le mot est ÉCUREUIL.',
+    fall: '{Admire} dort à l’étage. Tu n’as rien dit à personne. Le mot est ÉCUREUIL.',
   },
   {
     id: 'pluie',

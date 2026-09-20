@@ -708,3 +708,10 @@ Un test vérifie qu'aucun marqueur ne subsiste dans les monologues, planches et 
   Le Sage et Kévin sont désormais garantis dans le programme de l'année.
 - Le personnage préféré ressort dans le monologue, les soupçons, les compliments, les doublons,
   la coopérative, la partie de billes, le remplaçant, le miroir et six appréciations.
+
+### Couverture des mots de la fiche
+`npx vite-node scripts/token-coverage.ts` simule 4000 années et compte les occurrences de chaque jeton.
+Objectif : au moins 2 en moyenne et 95 % de parties avec au moins une apparition.
+Mesure au 20/09/2026 : tous les jetons entre 2,3 et 5,2 (hors {nom}, 13,5), couverture 93 à 100 %.
+Le cri de l'araignée ne sert jamais pour une araignée : il surgit sur l'encre renversée,
+à l'arrivée du directeur, dans le couloir après un échec et sur l'écran de redoublement.

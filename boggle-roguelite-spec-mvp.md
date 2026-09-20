@@ -674,6 +674,10 @@ Le prologue suit ses trois cases : récré en classe, annonce en choc, révolte 
 Écran « Feuille de présence » entre le menu et le prologue : prénom (14 caractères max) et case à cocher
 élève / élève**e**. Stocké dans `run.identity`, mémorisé dans `localStorage` sous `rb-identity`.
 
+Quatre niveaux déclarés au même écran (`src/data/levels.ts`), multiplicateurs chrono / note :
+8 ans ×1,5 et ×0,55 · 12 ans ×1,25 et ×0,75 · adulte ×1 et ×1 · professionnel ×0,85 et ×1,45.
+Mémorisé sous `rb-level`.
+
 Dans les textes : `{nom}` insère le prénom, `[masculin|féminin]` choisit la forme.
 `say(texte, identity)` fait le rendu, `useSay()` le branche sur la partie en cours.
 Un test vérifie qu'aucun marqueur ne subsiste dans les monologues, planches et transitions.

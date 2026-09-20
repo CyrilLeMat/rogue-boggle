@@ -4,8 +4,12 @@
 
 export const GAME_TITLE = 'Rogue Boggle Warrior';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
-export const BLURB = 'Un jeu à couper le souffle.';
-export const BLURB_SOURCE = 'Le Bulletin de l\'École Communale, édition du mardi';
+// Les critiques de la presse spécialisée, affichées sous le pitch.
+export const BLURBS = [
+  { text: 'Un jeu à couper le souffle.', source: 'Le Bulletin de l\'École Communale' },
+  { text: 'Le Elden Ring du Boggle.', source: 'Kévin, CE2' },
+];
+
 // Juste avant la dictée, l'élève se parle à lui-même. Il a huit ans et il pense à l'honneur des siens.
 export const MONOLOGUE = [
   'Si je perds, ce sera une honte pour toute ma famille.',

@@ -147,10 +147,12 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 @keyframes write { 0%, 100% { rotate: 0deg; } 50% { rotate: -7deg; } }
 .classroom .stars-wall { animation: flicker 3.4s ease-in-out infinite; }
 .menu .tagline { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; margin: 0; }
+.blurbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; margin-top: -2px; }
 .blurb {
-  font-family: 'Patrick Hand', cursive; font-size: 1.45rem; color: var(--accent-deep);
-  margin: -2px 0 0; transform: rotate(-1.2deg);
+  font-family: 'Patrick Hand', cursive; font-size: 1.25rem; color: var(--accent-deep);
+  margin: 0; transform: rotate(-1.2deg); max-width: 260px;
 }
+.blurb:last-child { transform: rotate(1deg); }
 .blurb small { display: block; font-family: 'Nunito', sans-serif; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.02em; margin-top: 2px; }
 .menu-cta { font-size: 1.15rem; padding: 14px 32px; }
 .menu input { max-width: 280px; margin: 0 auto; font-size: 0.85rem; padding: 8px 14px; opacity: 0.8; }

@@ -18,11 +18,12 @@ export function FoundWords() {
     : feedback.id % 4 === 0 ? scold(PRAISES_SMALL, feedback.id)
     : null;
   const praise = raw === null ? null : say(raw);
-  const msg =
+  // tout passe par say() : ces répliques portent le prénom et des accords
+  const msg = say(
     feedback?.kind === 'ok' ? `${feedback.word} +${feedback.score}${feedback.bonus ? ` · ${feedback.bonus}` : ''}` :
     feedback?.kind === 'duplicate' ? scold(DUPLICATES, feedback.id) :
     feedback?.kind === 'invalid' ? scold(SCOLDS, feedback.id) :
-    feedback?.kind === 'tooShort' ? scold(TOO_SHORT, feedback.id) : ' ';
+    feedback?.kind === 'tooShort' ? scold(TOO_SHORT, feedback.id) : ' ');
   const total = found.reduce((s, f) => s + f.score, 0);
   return (
     <div className="found">

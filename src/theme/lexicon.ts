@@ -423,6 +423,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'À un cheveu. Même {heros} aurait grimacé.',
     'La prochaine fois, arrête de regarder la pendule. Elle ne t\'aime pas.',
     'Il manquait si peu. Viens me voir à la récréation, on regardera ça ensemble. Tous les deux. Seuls.',
+    'Si peu. Tu avais {corps} qui tremblait, je l\'ai remarqué. Je remarque tout, chez toi.',
   ],
   rate: [
     'J\'ai relu trois fois en espérant m\'être trompée. Je ne me trompe jamais, et « {faute} » non plus.',
@@ -438,6 +439,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Même {animal} aurait fait mieux, et il n\'a pas de mains.',
     '{Nombre} fautes. J\'ai arrêté de compter après, d\'ailleurs.',
     'Ce n\'est pas grave. Tu resteras avec moi l\'an prochain, et celui d\'après. Nous avons tout notre temps.',
+    'Ça ne fait rien : tu as une belle âme. Une belle âme et aucune orthographe.',
   ],
   prodige: [
     'Je vais encadrer cette copie et l\'accrocher dans mon salon, au-dessus du buffet.',
@@ -454,6 +456,8 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'J\'ai photocopié ta copie en trois exemplaires. Un pour l\'école, un pour moi, un pour plus tard.',
     'Je garde ta copie sur ma table de nuit et je la relis le soir. Ce n\'est pas normal. Je sais que ce n\'est pas normal.',
     'Si tes parents sont d\'accord, tu peux venir réviser chez moi le samedi. Et le dimanche. Et le mercredi.',
+    'Tu es une belle âme, {nom}. Je ne dis jamais ça. Je viens de le dire.',
+    'Et cette écriture. {Corps}, quand tu écris, me fascine. Je regarde souvent, tu sais.',
   ],
   suspect: [
     'Trop beau, {nom}. Un futur {metier} n\'écrit pas comme ça. Je ne sais pas encore comment tu as fait, mais je le saurai.',
@@ -464,6 +468,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Je t\'ai regardé[|e] pendant toute la dictée. Je n\'ai rien vu. Ça m\'inquiète.',
     'À partir de maintenant je te surveille de très près. Très près. Tu ne me verras même pas.',
     'J\'ai appelé ta maîtresse de CE1. Elle ne se souvient pas de toi. Voilà qui est passionnant.',
+    'Vous êtes tellement mignons, {rival} et toi, à vous chamailler. Je vous observe. Longuement.',
   ],
   bien: [
     'Bon travail. J\'ai souri, et ça ne m\'était pas arrivé depuis des années.',
@@ -476,6 +481,8 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Voilà un travail {adjectif2}. Et pas une seule fois « {faute} ». Je n\'en reviens pas.',
     'J\'ai gardé ton brouillon. Pour rien. Comme ça.',
     'Si un jour tu as besoin d\'un endroit calme pour réviser, j\'ai un bureau qui ne sert à personne. Enfin. Je dis ça.',
+    'Tu as une belle âme. Ça se voit à la façon dont tu formes tes « g ».',
+    'Vous êtes adorables, {rival} et toi, on dirait deux petits frères. J\'en parle à ma sœur le soir.',
   ],
   correct: [
     'Correct, {nom}. Nous savons tous les deux que tu peux mieux faire, et que tu ne le feras pas.',
@@ -488,6 +495,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Moyen. Comme la purée de la cantine, et avec autant de saveur.',
     'Tu as fait le minimum. Ce soir, {plat}, mais sans dessert.',
     'Correct. J\'ai pensé à toi ce week-end, au supermarché, devant les yaourts. Ne cherche pas pourquoi.',
+    '{Corps} me fascine quand tu écris. Ne change rien. Enfin, change tout le reste.',
   ],
   justesse: [
     'Juste, tout juste, {nom}. Un point de moins et je remplissais ton carnet de correspondance.',
@@ -500,6 +508,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Tu as eu chaud, et moi aussi. Va {action}, tu l\'as mérité de justesse.',
     'Il s\'en est fallu de {nombre} points. Ou pas loin. Je n\'ai pas recompté.',
     'Tu passes. Si ça ne tenait qu\'à moi, tu refaisais l\'année. Avec moi. Tu comprends, {nom} ? Avec moi.',
+    'Tu t\'en sors. Et {rival}, vous vous chamaillez toujours ? Ne vous arrêtez surtout pas, c\'est charmant.',
   ],
 };
 
@@ -517,8 +526,10 @@ export function band(ratio: number, success: boolean, lives: number): Band {
 }
 
 // Une appréciation jamais servie cette année : même avec des notes identiques, elle se renouvelle.
-export function pickAppreciation(ratio: number, success: boolean, lives: number, used: readonly string[], seed: number): string {
-  const pool = APPRECIATIONS[band(ratio, success, lives)];
+export function pickAppreciation(ratio: number, success: boolean, lives: number, used: readonly string[], seed: number, knowsRival = true): string {
+  // elle ne parle pas du redoublant du fond tant qu'il ne s'est pas présenté
+  const all = APPRECIATIONS[band(ratio, success, lives)];
+  const pool = knowsRival ? all : all.filter((t) => !t.includes('{rival}'));
   const fresh = pool.filter((t) => !used.includes(t));
   const list = fresh.length ? fresh : pool;
   return list[Math.abs(Math.round(seed * 7 + ratio * 100)) % list.length];

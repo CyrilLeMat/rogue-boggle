@@ -528,6 +528,7 @@ export const useRunStore = create<Store>((set, get) => ({
         success ? run.lives : run.lives - 1,
         run.saidAppreciations,
         manche.score,
+        run.seenInterludes.includes('kevin1'),
       ),
     };
     set({

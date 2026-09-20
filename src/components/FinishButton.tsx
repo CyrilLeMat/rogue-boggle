@@ -6,6 +6,7 @@ export function FinishButton() {
   const manche = useRunStore((s) => s.manche);
   const finish = useRunStore((s) => s.finishEarly);
   if (!manche) return null;
+  if (manche.enemies.some((e) => e.typeId === 'kevin')) return null; // l'affrontement s'arrête quand il tombe
   const reached = manche.score >= manche.threshold;
   const gain = timeEuros(manche.timeLeft);
   return (

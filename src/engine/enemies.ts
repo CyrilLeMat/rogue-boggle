@@ -65,5 +65,9 @@ export function enemyTouched(path: Pos[], enemy: Enemy): boolean {
 }
 
 export const ENEMY_NAMES: Record<string, string> = { limace: 'Cancre', tank: 'Gros cancre', kevin: 'Kévin' };
-export const BOSS_HP_MULT = 1.8;     // [tuning] Kévin encaisse bien plus qu'un cancre
-export const BOSS_BOUNTY = 120;      // [tuning] et il paie en conséquence
+export const BOSS_BOUNTY = 120;      // [tuning] Kévin paie mieux qu'un cancre
+// L'affrontement n'est pas une dictée : il n'a pas de note à atteindre, donc l'endurance de Kévin
+// ne se déduit plus d'un seuil, elle est posée. [tuning] 150 au niveau adulte, soit trois à quatre
+// mots qui lui passent dessus (l'ancien calcul montait à ~300 : un mur, retour playtest).
+export const DUEL_HP = 150;
+export const DUEL_SECONDS = 75;

@@ -24,7 +24,9 @@ export function GridLegend() {
   if (manche.grid.cells.flat().some((c) => c.isToxic)) lines.push({ icon: '●', cls: 'toxic', text: 'Tache d\'encre : −8 s à chaque utilisation' });
   if (manche.critters.length) lines.push({ icon: '🐌', cls: '', text: `Escargot : un mot qui passe par sa case compte double` });
   const alive = manche.enemies.filter((e) => e.hp > 0);
-  if (alive.length === 1) lines.push({ icon: '🧒', cls: 'enemy', text: `Cancre (${alive[0].hp} d'endurance) : il change de place toutes les 8 s ; trace des mots à travers sa case, chaque mot lui retire son score. Calmé : +30 billes, toujours là : −15 billes` });
+  const boss = alive.find((e) => e.typeId === 'kevin');
+  if (boss) lines.push({ icon: '🧒', cls: 'enemy', text: `Kévin (${boss.hp} d'endurance) : il change de place toutes les 5 s ; trace des mots à travers sa case, chaque mot lui retire son score. Il tombe à zéro, et pas avant` });
+  else if (alive.length === 1) lines.push({ icon: '🧒', cls: 'enemy', text: `Cancre (${alive[0].hp} d'endurance) : il change de place toutes les 8 s ; trace des mots à travers sa case, chaque mot lui retire son score. Calmé : +30 billes, toujours là : −15 billes` });
   if (alive.length > 1) lines.push({ icon: '🧒', cls: 'enemy', text: `${alive.length} cancres (${alive[0].maxHp} d'endurance chacun) : ils changent de place toutes les 8 s ; un mot qui traverse leur case leur retire son score. Calmé : +30 billes, toujours là : −15 billes` });
   if (lines.length === 0) return null;
   return (

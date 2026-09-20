@@ -3,7 +3,7 @@ import { sfx } from '../audio/sfx';
 import { mutator } from '../data/registry';
 import { TOTAL_MANCHES } from '../engine/rules';
 import { hasEverTraced, useRunStore } from '../state/runStore';
-import { L, PSYCHE_LEAD, money, say } from '../theme/lexicon';
+import { DUEL, L, PSYCHE_LEAD, money, say } from '../theme/lexicon';
 import { TraceDemo } from './TraceDemo';
 
 // Le briefing d'avant-dictée porte tout ce qu'on ne veut plus lire pendant :
@@ -21,6 +21,13 @@ export function ReadyOverlay() {
 
   // Le temps de souffler avant la dictée : une pensée qu'on lit à son rythme, puis le chrono.
   const brace = () => {
+    // devant Kévin, pas de pensée tirée au sort : il n'y a qu'une chose à se dire
+    if (manche?.enemies.some((e) => e.typeId === 'kevin')) {
+      setLead(DUEL.lead);
+      setThought(DUEL.cry);
+      sfx.heartbeat();
+      return;
+    }
     // pas un mot sur Kévin tant qu'il ne s'est pas présenté
     const leads = PSYCHE_LEAD.filter((l) => run?.seenInterludes.includes('kevin1') || !l.includes('Kévin'));
     setLead(leads[Math.floor(Math.random() * leads.length)]);
@@ -39,17 +46,25 @@ export function ReadyOverlay() {
       <button className="ready-cta psyche-go" onClick={begin}>{L.lancer}</button>
     </div>
   );
+  // L'affrontement n'est pas une dictée : ni numéro, ni note, ni feuille à rendre.
+  const boss = manche.enemies.find((e) => e.typeId === 'kevin');
   return (
-    <div className="ready-overlay">
-      <h2 className="ready-title">{L.manche} {run.currentManche} <small>sur {TOTAL_MANCHES}</small></h2>
+    <div className={`ready-overlay ${boss ? 'is-duel' : ''}`}>
+      <h2 className="ready-title">
+        {boss ? DUEL.title : <>{L.manche} {run.currentManche} <small>sur {TOTAL_MANCHES}</small></>}
+      </h2>
       <div className="ready-chips">
-        <span className="chip strong">{L.seuil} {manche.threshold}</span>
+        {boss
+          ? <span className="chip strong">{DUEL.hp} · {boss.maxHp} PV</span>
+          : <span className="chip strong">{L.seuil} {manche.threshold}</span>}
         <span className="chip">{Math.round(manche.totalSeconds)} s</span>
         <span className={`chip mood-${manche.difficulty.mood}`}>feuille {manche.grid.size}×{manche.grid.size}, {manche.difficulty.mood}</span>
         {manche.graceSeconds > 0 && <span className="chip ok">+{manche.graceSeconds} s {L.repit}</span>}
         {manche.quest && <span className="chip">{manche.quest.label} · +{money(manche.quest.reward)}</span>}
       </div>
-      {mut
+      {boss
+        ? <p className="ready-lesson"><strong>{DUEL.sub}</strong> {say(DUEL.lesson, run.identity)}</p>
+        : mut
         ? <p className="ready-lesson"><strong>{L.theme} — {say(mut.name, run.identity)}.</strong> {say(mut.description, run.identity)}</p>
         : <p className="ready-lesson plain">{say(L.pretClassique, run.identity)}</p>}
       {novice && <TraceDemo />}

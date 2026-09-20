@@ -285,7 +285,8 @@ export function sceneChoice(sceneId: string, choice: number): SceneChoice | null
 }
 
 export function randomLessonId(rng: Rng, manche: number): string {
-  const pool = MUTATORS.filter((m) => (m.minManche ?? 0) <= manche);
+  // le duel n'est pas une leçon : Kévin a son rendez-vous à lui, entre la dictée 10 et la 11
+  const pool = MUTATORS.filter((m) => (m.minManche ?? 0) <= manche && !m.boss);
   return rng.pick(pool).id;
 }
 

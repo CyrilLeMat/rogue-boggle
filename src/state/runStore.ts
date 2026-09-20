@@ -6,7 +6,7 @@ import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
 import { hasInterlude, pickInterlude } from '../data/interludes';
 import { planScenes, randomLessonId, sceneChoice, sceneRelic } from '../data/scenes';
-import { BOSS_BOUNTY, BOSS_HP_MULT, ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
+import { BOSS_BOUNTY, DUEL_HP, DUEL_SECONDS, ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
 import { ARCHETYPES, STARTING_PURSE } from '../data/archetypes';
@@ -33,7 +33,7 @@ import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'appel' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'interlude' | 'event' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'appel' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'duelEnd' | 'interlude' | 'event' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -103,6 +103,7 @@ export interface RunState extends RunView {
   pendingCurseIds: string[];
   tookEnemyMutator: boolean;
   stolenRelicId: string | null; // ce que Kévin a pris aux toilettes, et qu'il garde jusqu'au duel
+  duelDone: boolean;            // l'affrontement a eu lieu : il n'a pas lieu deux fois
 }
 
 interface Store {
@@ -116,6 +117,8 @@ interface Store {
   shop: ShopItem[];
   shopRerolls: { paid: number; freeLeft: number };
   event: GameEvent | null;
+  duelWon: boolean;           // résultat du dernier affrontement, lu par la planche de fin
+  duelBack: string | null;    // ce qu'il rend (ou garde) : l'objet volé aux toilettes
   feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; path?: Pos[]; id: number } | null;
 
   startRun(seed?: string): void;
@@ -143,6 +146,7 @@ interface Store {
   racketOffer(relicId: string): void; // tu tends quelque chose ; il prend autre chose
   racketRefuse(): void;
   eventGiveUp(): void;
+  leaveDuel(): void; // la planche « Kévin à terre » renvoie à la dernière dictée
   leaveEvent(): void;
   enterShop(): void;
   buy(index: number): void;
@@ -186,6 +190,8 @@ export const useRunStore = create<Store>((set, get) => ({
   shop: [],
   shopRerolls: { paid: 0, freeLeft: 0 },
   event: null,
+  duelWon: false,
+  duelBack: null,
   feedback: null,
 
   startRun(seed = randomSeed()) {
@@ -198,7 +204,7 @@ export const useRunStore = create<Store>((set, get) => ({
         identity: loadIdentity(), levelId: loadLevel(), seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
         consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
-        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [], saidThoughts: [], saidAppreciations: [], stolenRelicId: null,
+        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [], saidThoughts: [], saidAppreciations: [], stolenRelicId: null, duelDone: false,
       },
       lastResult: null,
       startChoices,
@@ -277,9 +283,12 @@ export const useRunStore = create<Store>((set, get) => ({
     const draft = freshManche(run);
     draft.curseIds = curseIds;
     const size = Math.max(4, mutatorGridSize(gridSizeFor(run.currentManche), mut) + (sceneFx.sizeDelta ?? 0));
-    draft.graceSeconds = run.lostLifeLastManche ? GRACE_SECONDS_AFTER_LOSS : 0;
+    // pas de répit face à Kévin : son chrono est le sien, il ne s'allonge pas
+    draft.graceSeconds = run.lostLifeLastManche && !mut?.boss ? GRACE_SECONDS_AFTER_LOSS : 0;
     const lvl = resolveLevel(run.levelId);
-    const seconds = Math.round(mancheSeconds(mancheSecondsFor(size) + (mut?.secondsDelta ?? 0), hooks) * lvl.seconds) + draft.graceSeconds;
+    const seconds = mut?.boss
+      ? Math.round(DUEL_SECONDS * lvl.seconds)
+      : Math.round(mancheSeconds(mancheSecondsFor(size) + (mut?.secondsDelta ?? 0), hooks) * lvl.seconds) + draft.graceSeconds;
     draft.timeLeft = draft.timeLeftBeforeWord = draft.totalSeconds = seconds;
     draft.gridRerollsLeft = resolveRelics(run.relicIds).reduce((n, r) => n + (r.gridRerolls ?? 0), 0);
     buildGrid(draft, run, hooks, mut, size);
@@ -391,16 +400,8 @@ export const useRunStore = create<Store>((set, get) => ({
         if (killedNow > 0) {
           draft.killsThisManche += killedNow;
           notes.push(`prime +${bounty} billes`);
-          // Le duel rend ce que les toilettes avaient pris : il lâche ton objet en tombant.
-          const back = kevinDown ? run.stolenRelicId : null;
-          if (back) notes.push(`il lâche ${resolveRelics([back])[0].name} !`);
-          set({
-            run: {
-              ...run, euros: run.euros + bounty, killCount: run.killCount + killedNow,
-              relicIds: back ? [...run.relicIds, back] : run.relicIds,
-              stolenRelicId: back ? null : run.stolenRelicId,
-            },
-          });
+          if (kevinDown) notes.push('Kévin est à terre.');
+          set({ run: { ...run, euros: run.euros + bounty, killCount: run.killCount + killedNow } });
         }
       }
       if (draft.quest && !draft.quest.done) {
@@ -432,6 +433,8 @@ export const useRunStore = create<Store>((set, get) => ({
       if (result.kind === 'invalid') runInvalidWord(hooks, ctx);
     }
     set({ manche: draft, feedback: fb });
+    // L'affrontement n'a pas de chrono à finir : il s'arrête quand Kévin tombe.
+    if (isDuel(draft) && draft.enemies.length > 0 && draft.enemies.every((e) => e.hp <= 0)) get().endManche(true);
     if (draft.timeLeft <= 0) get().endManche();
   },
 
@@ -467,13 +470,33 @@ export const useRunStore = create<Store>((set, get) => ({
 
   finishEarly() {
     const { manche, phase } = get();
-    if (!manche || phase !== 'playing' || manche.score < manche.threshold) return;
+    if (!manche || phase !== 'playing' || isDuel(manche) || manche.score < manche.threshold) return;
     get().endManche(true);
   },
 
   endManche(early = false) {
     const { run, manche, phase } = get();
     if (!run || !manche || phase !== 'playing') return;
+    // L'affrontement ne se corrige pas : soit Kévin est à terre, soit la sonnerie l'a sauvé.
+    if (isDuel(manche)) {
+      const won = manche.enemies.length > 0 && manche.enemies.every((e) => e.hp <= 0);
+      const back = won ? run.stolenRelicId : null;
+      set({
+        phase: 'duelEnd',
+        duelWon: won,
+        duelBack: run.stolenRelicId,
+        manche: { ...manche, targeting: null, rerollChoice: null },
+        run: {
+          ...run,
+          score: run.score + manche.score,
+          duelDone: true,
+          nextMutatorId: null,
+          relicIds: back ? [...run.relicIds, back] : run.relicIds,
+          stolenRelicId: back ? null : run.stolenRelicId,
+        },
+      });
+      return;
+    }
     const hooks = activeHooks(run.relicIds, manche.curseIds, manche.mutatorId);
     const ctx = makeContext(run.rng, run, cloneManche(manche), dictionary);
     const t = manche.threshold;
@@ -645,6 +668,12 @@ export const useRunStore = create<Store>((set, get) => ({
     payoutEvent(done);
   },
 
+  leaveDuel() {
+    if (get().phase !== 'duelEnd') return;
+    set({ manche: null });
+    get().nextManche();
+  },
+
   leaveEvent() {
     if (get().phase !== 'event') return;
     set({ event: null });
@@ -698,9 +727,10 @@ export const useRunStore = create<Store>((set, get) => ({
     const { run } = get();
     if (!run) return;
     const manche = run.currentManche + 1;
-    // La dernière dictée de l'année est un duel : Kévin s'assoit en face, pas à côté.
-    if (manche === TOTAL_MANCHES) {
-      set({ run: { ...run, currentManche: manche, nextMutatorId: 'duel', pendingScene: null }, shop: [] });
+    // Avant la dernière dictée, Kévin t'attend. Ce n'est pas une dictée : il n'y a pas de note,
+    // il n'y a que lui. On ne change donc pas encore de dictée.
+    if (manche === TOTAL_MANCHES && !run.duelDone) {
+      set({ run: { ...run, nextMutatorId: 'duel', pendingScene: null }, shop: [] });
       get().startManche();
       return;
     }
@@ -821,6 +851,11 @@ export const useRunStore = create<Store>((set, get) => ({
   },
 }));
 
+// L'affrontement se reconnaît à son mutateur : c'est le seul qui porte un adversaire nommé.
+function isDuel(manche: MancheState): boolean {
+  return !!manche.mutatorId && !!resolveMutator(manche.mutatorId).boss;
+}
+
 // Génère la grille d'une manche (ou la regénère pour Sourcier) : mutateur, relics, difficulté, escargots, objectif.
 function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof activeHooks>, mut: ReturnType<typeof resolveMutator> | null, forcedSize?: number) {
   const size = forcedSize ?? (draft.grid.cells.length ? draft.grid.size : mutatorGridSize(gridSizeFor(run.currentManche), mut));
@@ -831,14 +866,20 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   draft.grid = grid;
   draft.search = search;
   draft.difficulty = difficultyOf(rawPotential, size);
-  draft.threshold = adjustThreshold(threshold(run.currentManche) * resolveLevel(run.levelId).threshold * (mut?.thresholdMult ?? 1) * thresholdMultiplier(resolveRelics(run.relicIds)), draft.difficulty.factor);
+  const lvl = resolveLevel(run.levelId);
+  // L'affrontement ne se note pas : on ne compare rien, on fait tomber quelqu'un.
+  draft.threshold = mut?.boss ? 0 : adjustThreshold(threshold(run.currentManche) * lvl.threshold * (mut?.thresholdMult ?? 1) * thresholdMultiplier(resolveRelics(run.relicIds)), draft.difficulty.factor);
   draft.critters = mut?.snails ? spawnCritters(grid, run.snailRng) : [];
   draft.quest = mut?.quest ? pickQuest(grid, search, run.rng) : null;
   // Le cancre copie : 1 cancre ; punition Classe de cancres : +2 (même hors leçon) ; Cancres têtus : endurance ×1.5
   const count = (mut?.enemy ? 1 : 0) + (draft.curseIds.includes('infestation') ? 2 : 0);
-  const hpMult = (draft.curseIds.includes('peau-dure') ? 1.5 : 1) * (mut?.boss ? BOSS_HP_MULT : 1);
+  const stubborn = draft.curseIds.includes('peau-dure') ? 1.5 : 1;
+  // L'affrontement n'ayant pas de note, l'endurance de Kévin ne s'en déduit plus : elle est posée.
+  const hp = mut?.boss
+    ? Math.round(DUEL_HP * lvl.threshold * stubborn)
+    : enemyHp(draft.threshold, count, stubborn);
   draft.enemies = count
-    ? spawnEnemies(grid, search, run.rng, enemyHp(draft.threshold, count, hpMult), count, mut?.boss ? ENEMY_MOVE_SECONDS * 0.6 : ENEMY_MOVE_SECONDS, mut?.boss ? 'kevin' : 'limace')
+    ? spawnEnemies(grid, search, run.rng, hp, count, mut?.boss ? ENEMY_MOVE_SECONDS * 0.6 : ENEMY_MOVE_SECONDS, mut?.boss ? 'kevin' : 'limace')
     : [];
   runMancheStart(hooks, ctx);
 }

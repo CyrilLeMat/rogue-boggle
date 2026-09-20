@@ -3,7 +3,7 @@ import { relics } from '../data/registry';
 import { uiFlags } from '../engine/hookRunner';
 import { eurosFor } from '../engine/rules';
 import { useRunStore } from '../state/runStore';
-import { L } from '../theme/lexicon';
+import { DUEL, L } from '../theme/lexicon';
 
 // Le score affiché rattrape le vrai score en ~400 ms : on voit les points arriver.
 function useTicker(target: number) {
@@ -29,6 +29,21 @@ export function ScoreBoard() {
   const manche = useRunStore((s) => s.manche);
   const shownScore = useTicker(manche?.score ?? 0);
   if (!run || !manche) return null;
+  // L'affrontement n'a pas de note : à sa place, ce qu'il reste de Kévin.
+  const boss = manche.enemies.find((e) => e.typeId === 'kevin');
+  if (boss) {
+    const left = Math.max(0, boss.hp);
+    return (
+      <div className={`note-hero duel ${left === 0 ? 'ok' : ''}`}>
+        <div className="note-numbers">
+          <span className="note-now">{left}</span>
+          <span className="note-target">/ {boss.maxHp}</span>
+          <span className="note-label">{left === 0 ? 'il est à terre' : DUEL.hp}</span>
+        </div>
+        <div className="note-bar"><span style={{ width: `${(left / boss.maxHp) * 100}%` }} /></div>
+      </div>
+    );
+  }
   const t = manche.threshold;
   const reached = manche.score >= t;
   const bumping = shownScore !== manche.score;

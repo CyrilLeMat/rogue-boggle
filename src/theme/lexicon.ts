@@ -573,6 +573,32 @@ export const LESSON_SCENES = [
 ] as const;
 
 // Les événements de couloir : un décor, un ton, un enjeu.
+// L'affrontement : entre la dixième dictée et la dernière, il n'y a plus de note, il n'y a que lui.
+export const DUEL = {
+  title: 'L\'affrontement',
+  sub: 'Pas de note, pas de copie à rendre. Il est sur ta feuille, entre tes lettres.',
+  lesson: 'Chaque mot dont le tracé lui passe dessus lui rentre dedans. Fais-le tomber avant la sonnerie.',
+  hp: 'Kévin',
+  lead: 'Tu poses ton cartable au milieu du couloir. Il ne bouge pas. Toi non plus. Puis tu te dis, une seule fois :',
+  cry: 'Tu m\'as pris quelque chose. Je viens le reprendre.',
+  won: [
+    'Kévin est à genoux au milieu de la feuille. Il tient {corps} à deux mains et ne relève pas la tête.',
+    'Il ne ricane plus. Il ne copie plus. Il souffle très fort, et sa voix part dans les aigus.',
+  ],
+  wonCry: 'Pardon… Pardon, {nom}. J\'aurais pas dû. Je te jure que j\'aurais pas dû.',
+  wonBack: (what: string) => `Il fouille dans son cartable, en sort « ${what} », et te le tend à deux mains, en tremblant.`,
+  wonEmpty: 'Il n\'a rien à te rendre. Il te tend une bille, sa meilleure, et referme tes doigts dessus.',
+  wonFall: 'Tu ranges tout sans un mot. Il reste une dictée. Une seule.',
+  lost: [
+    'La sonnerie. Kévin se relève, essoufflé, et recule vers la porte sans te quitter des yeux.',
+    'Il a tenu. Pas longtemps, mais il a tenu, et dans cette cour ça suffit à tout changer.',
+  ],
+  lostCry: 'La prochaine fois, {surnom}. La prochaine fois.',
+  lostKeep: (what: string) => `« ${what} » reste dans SON cartable. Tu feras la dernière dictée sans.`,
+  lostFall: 'Il reste une dictée. Une seule. Et tu la passeras en colère.',
+  leave: 'Aller à la dernière dictée',
+};
+
 export const EV = {
   sage: {
     title: 'Le Sage du CM1',
@@ -636,7 +662,7 @@ export const EV = {
     won: '', wonSub: '',
     lost: 'Tu n\'as rien fait de mal.',
     lostSub: 'C\'est pourtant toi qui ressors avec {corps} qui tremble et les yeux qui piquent. Il te tient la porte, en plus.',
-    grudge: 'Tu retiens son nom. Tu retiens l\'heure. Un jour tu seras {metier}, et lui ne sera rien. Il reste trois dictées avant qu\'il s\'assoie en face de toi.',
+    grudge: 'Tu retiens son nom. Tu retiens l\'heure. Un jour tu seras {metier}, et lui ne sera rien. Il reste deux dictées avant qu\'il s\'assoie en face de toi.',
     start: 'Poser le cartable par terre',
     giveUp: '',
     leave: 'Sortir sans rien dire',

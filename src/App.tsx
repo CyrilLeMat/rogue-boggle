@@ -19,6 +19,7 @@ import { ScenePick } from './components/ScenePick';
 import { ScenesGallery } from './components/ScenesGallery';
 import { InterludesGallery } from './components/InterludesGallery';
 import { MancheRecap } from './components/MancheRecap';
+import { DuelEnd } from './components/DuelEnd';
 import { QuestBadge } from './components/QuestBadge';
 import { ReadyOverlay } from './components/ReadyScreen';
 import { StreakGauge } from './components/StreakGauge';
@@ -122,6 +123,7 @@ export default function App() {
       {phase === 'scenePick' && <ScenePick />}
       {(phase === 'playing' || phase === 'ready') && <Playing />}
       {phase === 'recap' && <MancheRecap />}
+      {phase === 'duelEnd' && <DuelEnd />}
       {phase === 'interlude' && <Interlude />}
       {phase === 'event' && <EventScreen />}
       {phase === 'shop' && <Shop />}

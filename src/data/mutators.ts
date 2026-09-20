@@ -142,7 +142,7 @@ export const MUTATORS: Mutator[] = [
   {
     id: 'duel', name: 'Le duel', rarity: 'rare', enemy: true, boss: true,
     scene: 'Kévin s\'est assis en face de toi, pas à côté. Il a posé sa feuille. Il ne copiera pas aujourd\'hui.',
-    description: 'Kévin en personne, deux fois plus coriace qu\'un cancre ordinaire. Il bouge vite. Le faire taire rapporte gros',
+    description: 'Kévin en personne. Il bouge vite, il encaisse, et le faire taire rapporte gros',
   },
   {
     id: 'geante', name: 'Grande carte', rarity: 'rare', minManche: 4,

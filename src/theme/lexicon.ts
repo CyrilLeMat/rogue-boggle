@@ -12,18 +12,18 @@ export const BLURBS = [
 
 // Juste avant la dictée, l'élève se parle à lui-même. Il a huit ans et il pense à l'honneur des siens.
 export const MONOLOGUE = [
-  'Si je perds, ce sera une honte pour toute ma famille.',
+  'Si je perds, ce sera une honte pour toute ma famille. Pendant au moins mille ans !',
   'Chaque seconde de ma vie m\'a mené vers cet instant. En voici la conclusion.',
   'Je suis prêt à tout pour réussir le CE2. Même à pousser mon petit frère dans les orties.',
   'Les yeux de la maîtresse sont rouges de sang. Elle ne fera aucun cadeau.',
   'Ils ont tous ri quand j\'ai écrit NÉNUPHAR. Plus personne ne rira.',
-  'Mon stylo pèse trois grammes. Aujourd\'hui, il en pèse mille.',
-  'Je n\'ai pas dormi. J\'ai récité. Toute la nuit, j\'ai récité.',
-  'Si je tombe ici, personne ne se souviendra de mon nom. Elle, si.',
-  'Le CM1 ne pardonne pas. Le CM1 n\'attend personne.',
-  'Ma mère m\'a dit de faire de mon mieux. Elle ne sait pas ce que ça implique.',
-  'Kévin me regarde. Qu\'il regarde. Il verra ce que je vaux.',
-  'Trois bons points. Il ne m\'en reste que trois. C\'est tout ce qui me sépare du vide.',
+  'Mon stylo pèse trois grammes. Aujourd\'hui il en pèse mille, et mes doigts tremblent sous le poids du destin.',
+  'Je n\'ai pas dormi. Dormir, c\'est pour les faibles. J\'ai récité. Toute la nuit, j\'ai récité.',
+  'Si je tombe ici, personne ne se souviendra de mon nom. Même mes parents m\'oublieront.',
+  'Le CM1 ne pardonne pas. Le CM1 n\'attend personne. Le CM1 est la lumière.',
+  'Ma mère m\'a dit de faire de mon mieux. Je suis prêt à donner ma vie pour cette épreuve du destin.',
+  'Kévin me regarde. Il veut me voir échouer. Qu\'il regarde. Il verra ce que je vaux.',
+  'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est venus là pour briller !',
 ];
 
 export const TAGLINE = 'La maîtresse a préparé dix dictées. Sauras-tu accomplir ton destin et passer en CM1 ?';

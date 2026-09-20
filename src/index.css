@@ -519,15 +519,34 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .racket { display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .racket .cards { justify-content: center; }
 .racket-refuse { align-self: center; }
-.racket-outcome { margin: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 560px; }
+/* Trois temps bien séparés : l'échange, l'objet qui part, l'addition. */
+.racket-outcome { margin: 6px auto 0; display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 460px; }
 .racket-outcome > * { opacity: 0; animation: reveal 0.6s ease-out both; }
-.racket-outcome p { margin: 2px 0; }
-/* l'objet part de travers, comme arraché */
-.stolen { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 8px 0; }
-.stolen .relic-card { transform: rotate(-4deg); filter: grayscale(0.5); opacity: 0.75; }
+.racket-outcome p { margin: 0; }
+.racket-outcome .beat { line-height: 1.45; }
+/* sa voix à lui : plus grande, à la craie */
+.racket-outcome .him { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); }
+/* l'objet part de travers, comme arraché, avec le tampon de la cour */
+.stolen { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 2px 0; }
+.stolen .relic-card { transform: rotate(-4deg); filter: grayscale(0.6); opacity: 0.6; }
+.stolen .stamp-pris {
+  /* dans le coin, jamais par-dessus le nom : on doit lire ce qu'il emporte */
+  position: absolute; top: -6px; right: -4px; transform: rotate(-11deg);
+  font-family: 'Patrick Hand', cursive; font-size: 1.15rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--coral); border: 2.5px solid var(--coral); border-radius: 5px; padding: 0 8px;
+  background: #fffaf2;
+}
+.stolen .caption { font-size: 0.95rem; color: var(--muted); }
+/* l'addition : une ligne par perte, alignée, comme un ticket */
 .racket-bill:empty { display: none; }
-.racket-bill { display: flex; flex-direction: column; gap: 2px; align-items: center; }
-.racket-grudge { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; color: var(--coral); margin-top: 8px !important; }
+.racket-bill {
+  list-style: none; margin: 0; padding: 8px 14px; width: 100%;
+  display: flex; flex-direction: column; gap: 6px;
+  background: #fffaf2; border: 2px dashed #e7dfd0; border-radius: 12px 16px 14px 18px;
+}
+.racket-bill li { display: flex; gap: 10px; align-items: baseline; font-size: 0.92rem; text-align: left; }
+.racket-bill li > span { flex: none; min-width: 96px; font-weight: 800; font-size: 1rem; text-align: right; }
+.racket-grudge { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; color: var(--coral); line-height: 1.35; }
 /* le décor : la main tendue insiste, le robinet goutte, le cartable serre */
 .racket-hand { animation: insiste 2.4s ease-in-out infinite; transform-origin: 110px 80px; }
 @keyframes insiste { 0%, 70%, 100% { transform: none; } 80% { transform: translateX(-5px); } 90% { transform: translateX(-2px); } }
@@ -536,7 +555,6 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .drip { animation: goutte 2.8s linear infinite; }
 @keyframes goutte { 0%, 60% { opacity: 0; transform: none; } 65% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
 
-.ready-taunt { font-family: 'Patrick Hand', cursive; font-size: 1.15rem; color: var(--coral); margin: -4px 0 6px; }
 .interlude-cry.takeback { font-size: 1.15rem; opacity: 0.9; }
 
 /* les souvenirs : même planche, mais délavée, comme une photo qu'on a trop regardée */

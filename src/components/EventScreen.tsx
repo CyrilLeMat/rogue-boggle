@@ -177,28 +177,27 @@ function Racket({ ev }: { ev: RacketEvent }) {
   }
 
   const stolen = ev.demanded ? relic(ev.demanded) : null;
-  const lines = [
-    ev.refused ? t.stood : t.swap,
-    ev.refused ? t.stoodSub : t.swapSub,
-  ];
+  // trois temps, séparés : l'échange, ce qu'il emporte, ce que ça t'a coûté.
   return (
     <div className="racket-outcome">
-      {lines.map((l, i) => (
-        <p key={l} className={i ? 'sage-ask' : ''} style={{ animationDelay: `${(0.1 + i * 0.6).toFixed(2)}s` }}>{say(l)}</p>
-      ))}
+      <p className="beat" style={{ animationDelay: '0.1s' }}>{say(ev.refused ? t.stood : t.swap)}</p>
+      <p className="beat him" style={{ animationDelay: '0.7s' }}>{say(ev.refused ? t.stoodSub : t.swapSub)}</p>
+
       {stolen && (
-        <div className="stolen" style={{ animationDelay: '1.3s' }}>
+        <div className="stolen" style={{ animationDelay: '1.4s' }}>
           <RelicCard relic={stolen} />
-          <p className="ko">{say(t.took(say(stolen.name)))}</p>
+          <span className="stamp-pris">pris</span>
+          <p className="caption">{say(t.took)}</p>
         </div>
       )}
-      <div className="racket-bill" style={{ animationDelay: '1.9s' }}>
-        {ev.refused && ev.toll === 0 && <p className="ko">Il te pousse contre le carrelage. Un bon point de moins.</p>}
-        {ev.toll > 0 && <p className="ko">Il compte tes billes devant toi. {money(ev.toll)} en moins.</p>}
-        {ev.refused && <p className="ok">Tu repars avec La rancune : +3 pts sur chaque mot, jusqu'à la fin de l'année.</p>}
-      </div>
-      <p style={{ animationDelay: '2.4s' }}>{say(t.lost)}</p>
-      <p className="sage-ask" style={{ animationDelay: '2.7s' }}>{say(t.lostSub)}</p>
+
+      <ul className="racket-bill" style={{ animationDelay: '2.1s' }}>
+        {ev.refused && ev.toll === 0 && <li className="ko"><span>−1</span> bon point · il te pousse contre le carrelage</li>}
+        {ev.toll > 0 && <li className="ko"><span>−{money(ev.toll)}</span> il compte tes billes devant toi</li>}
+        {ev.refused && <li className="ok"><span>+ La rancune</span> +3 pts sur chaque mot, jusqu'à la fin de l'année</li>}
+      </ul>
+
+      <p className="beat" style={{ animationDelay: '2.7s' }}>{say(t.lost)} {say(t.lostSub)}</p>
       <p className="racket-grudge" style={{ animationDelay: '3.3s' }}>{say(t.grudge)}</p>
     </div>
   );

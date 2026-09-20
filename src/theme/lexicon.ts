@@ -59,14 +59,14 @@ export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profil
 
 // Réponses de secours pour le bouton « Surprends-moi » de la fiche de renseignements.
 export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
-  salut: ['Salut la compagnie créole', 'Wesh les gros', 'Bonjour à tous, camarades', 'Yo les cocos', 'Hey hey, ca sent le pâté ou quoi'],
+  salut: ['Salut la compagnie créole', 'Wesh les gros', 'Bonjour à tous, camarades', 'Yo les cocos', 'Hey hey, ca sent le pâté ou quoi', 'Salut dans le bus les minus'],
   phrase: ['Six seeeveeeeeeen', 'Tranquilou Bilou', 'C\'est pas ma faute à moi, moi lolita', 'Même pas mal', 'H.I.P H.O.P c\'est moi le roi de la récré'],
   cour: ['des parties de foot', 'du rap pour sortir sa haine', 'du racketage des CPs', 'du vol de cartes pokemon', 'de l\'entrainement à l\'hyrox'],
-  heros: ['Psykokwak', 'Le teletubbies jaune', 'Bioman', 'Astérix', 'Bob l\'éponge'],
-  plat: ['les pâtes au beurre', 'les frites surgelées', 'le gratin de mamie', 'la soupe de nuggets', 'les narines de porcs'],
+  heros: ['Psykokwak', 'Le teletubbies jaune', 'Bioman', 'Astérix', 'Bob l\'éponge', 'Edward Elric, l\'alchimiste FullMetal'],
+  plat: ['les pâtes au beurre', 'les frites surgelées', 'le gratin de mamie', 'la soupe de nuggets', 'les narines de porcs', 'purée et magret de canard'],
   horreur: ['les endives', 'le poisson pané', 'les plats de prolétaire', 'les légumes non bios', 'le chou-fleur'],
   metier: ['pompier bodybulder', 'vétérinaire à coeur ouvert', 'astronaute espion', 'youtubeur en paris sportifs', 'président du monde libre', 'videur en boîte de nuit'],
-  chanson: ['Ils tapent sur des bambous', 'Le best-of de Zazie', 'l\'hymne de l\'URSS', 'Francky Vincent', 'Le générique du Big Deal'],
+  chanson: ['Ils tapent sur des bambous', 'Le best-of de Zazie', 'l\'hymne de l\'URSS', 'Francky Vincent', 'Le générique du Big Deal', 'Le Maillot de Yanns'],
   admire: ['Ma grand-mère', 'Richard Nixon', 'Mes ancètres les australopitèques', 'Madonna', 'Ma papa et ma maman', 'Rider de la Pat-patrouille'],
   surnom: ['Toto la seringue', 'Barbou le fou', 'José le taliban', 'Crevette fachée', 'Bouboule', 'Mimi la souris'],
   rigolo: ['caca prout', 'bidule-truc', 'patatoide', 'zigouigoui', 'plouf', 'gloubiboulga'],
@@ -74,12 +74,12 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   adjectif2: ['majestueux', 'poisseux', 'redoutable', 'discret', 'tordu', 'brillant', 'ennivrant', 'risible'],
   adjectif3: ['poisseux', 'immense', 'inquiétant', 'ridicule', 'somptueux', 'spongieux', 'insuportable', 'écœurant'],
   objet: ['une tapette à souris', 'un vieux grille-pain', 'une chaussette en bois', 'un tournevis fait en taillant une carotte', 'un ballon crevé en tirant sur un hérisson', 'une boule à neige Douarnenez'],
-  animal: ['un hérisson', 'une otarie fachée', 'un pigeon robot', 'une vache obèse', 'un lombric', 'un furet'],
+  animal: ['un hérisson', 'une otarie fachée', 'un pigeon robot', 'une vache obèse', 'un lombric', 'un furet', 'un paon'],
   corps: ['le genou droit', 'le coude', 'l\'oreille gauche', 'le gros orteil', 'la nuque', 'le menton'],
-  distance: ['trois mètres', 'deux kilomètres', 'un bras tendu', 'quarante centimètres', 'une cour de récré'],
+  distance: ['trois mètres', 'deux kilomètres', 'un bras tendu', 'quarante centimètres', 'une cour de récré', 'onze centimètre'],
   nombre: ['douze', 'quarante-deux', 'trois', 'mille', 'sept', 'cent'],
   action: ['sauter partout en criant', 'courir dans les couloirs', 'faire du vélo de vitesse', 'crier très fort pour appeler maman', 'grimper aux arbres'],
-  cri: ['AAAAAH< JE SUIS ATTAQUÉ!', 'AU SECOURS! APPELER LA POLICE!', 'MAMAN SAUVE MOI', 'NON NON NON JE REFUSE', 'ENLEVEZ-LA'],
+  cri: ['AAAAAH! JE SUIS ATTAQUÉ!', 'AU SECOURS! APPELEZ LA POLICE!', 'MAMAN SAUVE MOI', 'NON NON NON JE REFUSE', 'ENLEVEZ-LA'],
   faute: ['nénuphard', 'aujourdhui', 'parmis', 'quand même', 'beaucoups', 'malgrés'],
 };
 
@@ -593,6 +593,13 @@ export const LESSON_SCENES = [
 // L'affrontement : entre la dixième dictée et la dernière, il n'y a plus de note, il n'y a que lui.
 export const DUEL = {
   title: 'L\'affrontement',
+  // la scène d'abord, en grand : on ne tombe pas sur une grille sans avoir vu la salle
+  intro: [
+    'Le lendemain matin, avant la sonnerie. La classe est vide, les chaises encore retournées sur les tables. Sauf deux.',
+    'Kévin a descendu la sienne et la tienne, et il les a mises face à face, au milieu de l\'allée.',
+    'Il est assis, bien droit, les deux mains à plat. Pour la première fois de l\'année, il a sorti une feuille et un stylo.',
+  ],
+  cta: 'T\'asseoir en face de lui',
   sub: 'Pas de note, pas de copie à rendre. Il est sur ta feuille, entre tes lettres.',
   lesson: `Chaque mot dont le tracé lui passe dessus lui rentre dedans. Fais-le tomber avant la sonnerie.`,
   taunt: `Il te regarde en face et articule, assez fort pour le couloir entier : « Aujourd'hui, t'as ${INSULTE}. »`,
@@ -615,6 +622,8 @@ export const DUEL = {
   lostCry: 'La prochaine fois, {surnom}. La prochaine fois.',
   lostKeep: (what: string) => `« ${what} » reste dans SON cartable. Tu feras la dernière dictée sans.`,
   lostFall: 'Il reste une dictée. Une seule. Et tu la passeras en colère.',
+  next: 'Le laisser finir',
+  nextLost: 'Le regarder partir',
   leave: 'Aller à la dernière dictée',
 };
 
@@ -677,7 +686,7 @@ export const EV = {
     swapSub: '« Non. Ça. » Sa main est déjà dans ton cartable. Il savait avant toi ce qu\'il y avait dedans.',
     stood: 'Tu serres les bretelles à deux mains. Tu tiens quatre secondes entières.',
     stoodSub: 'Quatre secondes, {nom}. Devant Kévin. Personne ne le saura jamais, et pourtant c\'est arrivé.',
-    took: (what: string) => `« ${what} ». Il le range dans SON cartable, comme si ça lui appartenait depuis la rentrée.`,
+    took: 'Il le range dans SON cartable, comme si ça lui appartenait depuis la rentrée.',
     won: '', wonSub: '',
     lost: 'Tu n\'as rien fait de mal.',
     lostSub: 'C\'est pourtant toi qui ressors avec {corps} qui tremble et les yeux qui piquent. Il te tient la porte, en plus.',

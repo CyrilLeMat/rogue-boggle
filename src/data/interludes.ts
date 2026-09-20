@@ -82,10 +82,11 @@ export const INTERLUDES: Interlude[] = [
     era: 'Deux ans plus tôt',
     lines: [
       'La cuisine de ta grand-mère. Les carottes. Le couteau qui ne s’arrête jamais.',
-      'Elle ne lève pas les yeux. Le couteau fait un bruit {adjectif3}. Elle dit un mot, tu l’épelles, elle dit le suivant. Depuis deux heures.',
+      'Elle ne lève pas les yeux. Un mot, tu l’épelles. Le mot suivant, tu l’épelles. Depuis deux heures, dans une odeur {adjectif3} de soupe.',
+      'À « {faute} », tu t’es tromp[é|ée] quatre fois. À la quatrième, elle a posé le couteau. Elle n’a rien dit, et c’était bien pire.',
     ],
-    cry: 'On ne triche pas avec les mots, petit. Les mots, eux, ne trichent pas avec toi.',
-    fall: 'Elle a eu son certificat d’études en 1954. Elle en parle encore. Tu sais très bien d’où te vient cette manie.',
+    cry: 'Je les aurai tous. Un par un. Même celui-là. Même s’il me faut l’été entier.',
+    fall: 'Elle a eu son certificat d’études en 1954. Elle en parle encore. Au dîner il y avait {horreur}, et tu as tout mangé sans discuter.',
   },
   {
     id: 'pluie',

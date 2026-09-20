@@ -33,7 +33,7 @@ import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'appel' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'duelEnd' | 'interlude' | 'event' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'appel' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'duelIntro' | 'duelEnd' | 'interlude' | 'event' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -146,6 +146,7 @@ interface Store {
   racketOffer(relicId: string): void; // tu tends quelque chose ; il prend autre chose
   racketRefuse(): void;
   eventGiveUp(): void;
+  startDuel(): void; // la planche d'annonce lance l'affrontement
   leaveDuel(): void; // la planche « Kévin à terre » renvoie à la dernière dictée
   leaveEvent(): void;
   enterShop(): void;
@@ -669,6 +670,11 @@ export const useRunStore = create<Store>((set, get) => ({
     payoutEvent(done);
   },
 
+  startDuel() {
+    if (get().phase !== 'duelIntro') return;
+    get().startManche();
+  },
+
   leaveDuel() {
     if (get().phase !== 'duelEnd') return;
     set({ manche: null });
@@ -731,8 +737,7 @@ export const useRunStore = create<Store>((set, get) => ({
     // Avant la dernière dictée, Kévin t'attend. Ce n'est pas une dictée : il n'y a pas de note,
     // il n'y a que lui. On ne change donc pas encore de dictée.
     if (manche === TOTAL_MANCHES && !run.duelDone) {
-      set({ run: { ...run, nextMutatorId: 'duel', pendingScene: null }, shop: [] });
-      get().startManche();
+      set({ run: { ...run, nextMutatorId: 'duel', pendingScene: null }, shop: [], phase: 'duelIntro' });
       return;
     }
     // Une dictée sur deux, il se passe quelque chose en classe et tu dois réagir.

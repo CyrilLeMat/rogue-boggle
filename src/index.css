@@ -99,6 +99,10 @@ input:focus { outline: none; border-color: var(--accent); }
 .appel-box.on .portrait { transform: scale(1.06); }
 .appel-box.on { border-color: var(--accent); background: #f6f2ff; }
 .appel-foot { display: flex; justify-content: space-between; gap: 10px; }
+/* la liste complète des questions défile, les raccourcis restent en haut */
+.appel-foot.sticky { position: sticky; top: 0; z-index: 3; background: var(--panel); padding: 6px 0 8px; margin-bottom: 2px; }
+.appel-list { display: flex; flex-direction: column; gap: 12px; }
+.appel { max-width: 460px; }
 .appel-levels { display: flex; flex-direction: column; gap: 6px; }
 .appel-level {
   display: flex; flex-direction: column; gap: 2px; text-align: left; align-items: flex-start;
@@ -221,6 +225,15 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
   max-width: 460px; font-size: 0.88rem; color: var(--text); text-align: left; animation: reveal 0.3s ease-out both;
 }
 .rules-note p { margin: 4px 0; }
+/* la démonstration du tracé */
+.trace-demo { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.trace-demo svg { width: 130px; height: 130px; }
+.trace-demo figcaption { font-size: 0.8rem; color: var(--muted); font-weight: 700; text-align: center; max-width: 220px; }
+.trace-line { stroke-dasharray: 150; animation: trace 3.2s linear infinite; }
+@keyframes trace {
+  0%, 12% { stroke-dashoffset: 150; }
+  72%, 100% { stroke-dashoffset: 0; }
+}
 /* le champ de graine : une étiquette de cahier */
 .seed-label {
   display: inline-flex; align-items: center; gap: 10px; background: #fffdf9; border: 2px solid #e7dfd0;

@@ -1,6 +1,7 @@
 // mulberry32 : RNG seedé, suffisant pour un jeu, reproductible pour le daily run.
 export interface Rng {
   next(): number; // [0, 1)
+  state(): number; // position du générateur, pour reprendre une partie sauvegardée
   int(maxExclusive: number): number;
   pick<T>(arr: readonly T[]): T;
   shuffle<T>(arr: readonly T[]): T[];
@@ -27,6 +28,7 @@ export function createRng(seed: string | number): Rng {
   };
   const rng: Rng = {
     next,
+    state: () => a >>> 0,
     int: (max) => Math.floor(next() * max),
     pick: (arr) => arr[Math.floor(next() * arr.length)],
     shuffle: (arr) => {

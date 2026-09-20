@@ -746,3 +746,14 @@ le reste est posé dessous sur le papier.
 - Feuille de présence : deux portraits dessinés à la place des cases à cocher,
   et moins de gras sur les niveaux.
 - `src/theme/tokenGuard.ts` surveille en développement tout `{jeton}` affiché brut.
+
+## Avant de partager le lien (2026-09-20)
+
+- Fiche de renseignements : une seule liste déroulante de 21 questions, avec « Tout tirer au sort »
+  et « Passer » collés en haut. Plus de pagination.
+- Démonstration du tracé (`TraceDemo`) : un doigt glisse sur une mini-grille, dans les règles de
+  l'accueil et sur le premier briefing tant que le joueur n'a jamais validé de mot (`rb-traced`).
+- Niveau par défaut : « J'ai plutôt genre 12 ans », recommandé à qui n'a jamais fait de Boggle.
+- Sauvegarde de l'année en cours (`rb-run`) aux respirations : début de dictée, couloir, coopérative.
+  Reprendre relance la dictée en cours depuis son début. `Rng.state()` permet de rejouer la graine
+  au bon endroit. La sauvegarde est effacée en fin d'année et à chaque nouvelle partie.

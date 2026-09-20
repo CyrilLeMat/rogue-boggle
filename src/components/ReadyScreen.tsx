@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { sfx } from '../audio/sfx';
 import { mutator } from '../data/registry';
 import { TOTAL_MANCHES } from '../engine/rules';
-import { useRunStore } from '../state/runStore';
+import { hasEverTraced, useRunStore } from '../state/runStore';
 import { L, money, say } from '../theme/lexicon';
+import { TraceDemo } from './TraceDemo';
 
 // Le briefing d'avant-dictée porte tout ce qu'on ne veut plus lire pendant :
 // où on en est, ce qu'il faut atteindre, ce qui va nous tomber dessus.
@@ -14,6 +15,7 @@ export function ReadyOverlay() {
   const reroll = useRunStore((s) => s.rerollGrid);
   const draw = useRunStore((s) => s.drawThought);
   const [thought, setThought] = useState<string | null>(null);
+  const [novice] = useState(() => !hasEverTraced());
 
   // Le temps de souffler avant la dictée : une pensée qu'on lit à son rythme, puis le chrono.
   const brace = () => {
@@ -44,6 +46,7 @@ export function ReadyOverlay() {
       {mut
         ? <p className="ready-lesson"><strong>{L.theme} — {say(mut.name, run.identity)}.</strong> {say(mut.description, run.identity)}</p>
         : <p className="ready-lesson plain">{say(L.pretClassique, run.identity)}</p>}
+      {novice && <TraceDemo />}
       <button className="ready-cta" onClick={brace}>{L.lancer}</button>
       <div className="ready-foot">
         <span className="bons-points">{'★'.repeat(run.lives)}{'☆'.repeat(Math.max(0, 3 - run.lives))}</span>

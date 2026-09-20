@@ -118,6 +118,7 @@ interface Store {
   feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; path?: Pos[]; id: number } | null;
 
   startRun(seed?: string): void;
+  resumeRun(): boolean;
   setIdentity(identity: Identity, levelId: string): void;
   drawThought(): string;
   acceptChallenge(): void; // prologue → fourniture de rentrée
@@ -185,6 +186,7 @@ export const useRunStore = create<Store>((set, get) => ({
   feedback: null,
 
   startRun(seed = randomSeed()) {
+    clearSavedRun(); // une nouvelle année efface l'ancienne sauvegarde
     const rng = createRng(seed);
     const startChoices = ARCHETYPES.map((a) => a.id);
     set({
@@ -202,6 +204,25 @@ export const useRunStore = create<Store>((set, get) => ({
   },
 
   // L'appel : le prénom sur la feuille de présence, et la case cochée.
+  // Reprendre l'année sauvegardée : on rejoue la dictée en cours depuis son début.
+  resumeRun() {
+    let saved: SavedRun | null = null;
+    try {
+      const raw = localStorage.getItem(RUN_KEY);
+      saved = raw ? (JSON.parse(raw) as SavedRun) : null;
+    } catch { saved = null; }
+    if (!saved || saved.v !== 1) return false;
+    const run: RunState = {
+      ...saved.run,
+      rng: createRng(saved.run.rng),
+      snailRng: createRng(saved.run.snailRng),
+    };
+    set({ run, phase: saved.phase, manche: null, lastResult: null, shop: [], event: null, feedback: null });
+    if (saved.phase === 'ready') get().startManche();
+    if (saved.phase === 'shop') openShop();
+    return true;
+  },
+
   setIdentity(identity, levelId) {
     const { run } = get();
     if (!run) return;
@@ -260,12 +281,9 @@ export const useRunStore = create<Store>((set, get) => ({
     draft.gridRerollsLeft = resolveRelics(run.relicIds).reduce((n, r) => n + (r.gridRerolls ?? 0), 0);
     buildGrid(draft, run, hooks, mut, size);
     const consumables = run.consumables.map((c) => ({ id: c.id, charges: consumable(c.id).usesPerManche }));
-    set({
-      phase: 'ready',
-      manche: draft,
-      feedback: null,
-      run: { ...run, pendingCurseIds: [], consumables, seenEnemies: run.seenEnemies || draft.enemies.length > 0 },
-    });
+    const nextRun = { ...run, pendingCurseIds: [], consumables, seenEnemies: run.seenEnemies || draft.enemies.length > 0 };
+    saveRun('ready', nextRun);
+    set({ phase: 'ready', manche: draft, feedback: null, run: nextRun });
   },
 
   rerollGrid() {
@@ -330,6 +348,7 @@ export const useRunStore = create<Store>((set, get) => ({
     const links = manche.elapsed - manche.streak.lastAt <= rules.window ? manche.streak.links + 1 : 1;
     const streakMult = 1 + rules.step * Math.min(links - 1, rules.maxLinks);
     if (streakMult > 1) extra.push({ final: streakMult });
+    markTraced();
     const result = resolvePath(manche.grid, path, dictionary, already, (w) => collectModifiers(w, hooks, ctx, extra), manche.elapsed, jokerMinLength(resolveRelics(run.relicIds), JOKER_MIN_LENGTH, MIN_WORD_LENGTH));
     const fb = { kind: result.kind, id: ++feedbackId, path } as NonNullable<Store['feedback']>;
     if (result.kind === 'ok') {
@@ -498,6 +517,7 @@ export const useRunStore = create<Store>((set, get) => ({
       const ctx = makeContext(run.rng, run, cloneManche(manche!), dictionary);
       const endBonus = runRunEnd(hooks, ctx);
       saveLastYear(run, run.lives > 0);
+      clearSavedRun();
       set({ phase: run.lives <= 0 ? 'gameover' : 'victory', run: { ...run, endBonus, score: run.score + endBonus } });
       return;
     }
@@ -929,6 +949,44 @@ function saveLastYear(run: RunState, victory: boolean) {
     mention: mention(moyenne, victory).label, seed: run.seed, victory,
   };
   try { localStorage.setItem(LAST_KEY, JSON.stringify(value)); } catch { /* stockage indisponible */ }
+}
+
+// La partie en cours est sauvegardée aux respirations : début de dictée, couloir, coopérative.
+// On ne sauvegarde pas pendant le chrono : reprendre relance la dictée au début.
+const RUN_KEY = 'rb-run';
+const SAVED_PHASES: Phase[] = ['ready', 'scenePick', 'recap', 'interlude', 'event', 'shop', 'startPick'];
+
+interface SavedRun { v: 1; phase: Phase; run: Omit<RunState, 'rng' | 'snailRng'> & { rng: number; snailRng: number } }
+
+function saveRun(phase: Phase, run: RunState) {
+  if (!SAVED_PHASES.includes(phase)) return;
+  const at = phase === 'playing' ? 'ready' : phase;
+  const payload: SavedRun = { v: 1, phase: at, run: { ...run, rng: run.rng.state(), snailRng: run.snailRng.state() } };
+  try { localStorage.setItem(RUN_KEY, JSON.stringify(payload)); } catch { /* stockage indisponible */ }
+}
+
+export function loadSavedRun(): { phase: Phase; manche: number } | null {
+  try {
+    const raw = localStorage.getItem(RUN_KEY);
+    if (!raw) return null;
+    const saved = JSON.parse(raw) as SavedRun;
+    if (saved.v !== 1 || !saved.run) return null;
+    return { phase: saved.phase, manche: saved.run.currentManche };
+  } catch { return null; }
+}
+
+export function clearSavedRun() {
+  try { localStorage.removeItem(RUN_KEY); } catch { /* stockage indisponible */ }
+}
+
+const TRACED_KEY = 'rb-traced';
+
+export function hasEverTraced(): boolean {
+  try { return localStorage.getItem(TRACED_KEY) === '1'; } catch { return true; }
+}
+
+function markTraced() {
+  try { localStorage.setItem(TRACED_KEY, '1'); } catch { /* stockage indisponible */ }
 }
 
 export function loadLastYear(): LastYear | null {

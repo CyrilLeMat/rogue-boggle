@@ -6,7 +6,7 @@ import { DEFAULT_PROFILE, PROFILE_IDEAS, type Gender, type Profile } from '../th
 const MAX_NAME = 24;
 const MAX_ANSWER = 60;
 
-const QUESTIONS: { key: keyof Profile; label: string }[][] = [
+const PAGES: { key: keyof Profile; label: string }[][] = [
   [
     { key: 'salut', label: 'Comment je dis bonjour à mes amis' },
     { key: 'phrase', label: 'Ma phrase fétiche' },
@@ -38,7 +38,7 @@ const QUESTIONS: { key: keyof Profile; label: string }[][] = [
   ],
 ];
 
-const ALL_QUESTIONS = QUESTIONS.flat();
+const QUESTIONS = PAGES.flat();
 
 const pick = (list: string[]) => list[Math.floor(Math.random() * list.length)];
 
@@ -74,58 +74,51 @@ export function Appel() {
   const ready = clean.length > 0 && gender !== null;
 
   const surprise = () => setProfile(
-    Object.fromEntries(ALL_QUESTIONS.map((q) => [q.key, pick(PROFILE_IDEAS[q.key])])) as unknown as Profile,
+    Object.fromEntries(QUESTIONS.map((q) => [q.key, pick(PROFILE_IDEAS[q.key])])) as unknown as Profile,
   );
 
   const submit = () => {
     if (!ready) return;
     const filled = Object.fromEntries(
-      ALL_QUESTIONS.map((q) => [q.key, profile[q.key].trim() || DEFAULT_PROFILE[q.key]]),
+      QUESTIONS.map((q) => [q.key, profile[q.key].trim() || DEFAULT_PROFILE[q.key]]),
     ) as unknown as Profile;
     setIdentity({ name: clean, gender: gender!, profile: filled }, levelId);
   };
 
   if (page > 0) {
-    const last = page === QUESTIONS.length;
     return (
       <div className="panel appel">
         <h2>Fiche de renseignements</h2>
-        <p className="appel-sub">
-          {page === 1
-            ? 'Elle garde ça dans un classeur. Elle s\'en sert plus tard.'
-            : page === 2
-              ? 'Deuxième feuillet. Elle a tout son temps, et toi aussi.'
-              : 'Dernier feuillet. Celui-là, personne ne sait pourquoi il existe.'}
-        </p>
-        <form className="appel-form" onSubmit={(e) => { e.preventDefault(); if (last) submit(); else setPage(page + 1); }}>
-          {QUESTIONS[page - 1].map((q) => (
-            <label className="appel-field" key={q.key}>
-              <span>{q.label}</span>
-              <span className="appel-input">
-                <input
-                  value={profile[q.key]}
-                  maxLength={MAX_ANSWER}
-                  onChange={(e) => setProfile({ ...profile, [q.key]: e.target.value })}
-                />
-                <button
-                  type="button"
-                  className="dice"
-                  title="Inspire-moi"
-                  onClick={() => setProfile({ ...profile, [q.key]: pick(PROFILE_IDEAS[q.key]) })}
-                >
-                  🎲
-                </button>
-              </span>
-            </label>
-          ))}
-          <button className="ready-cta" type="submit">
-            {last ? `Présent${gender === 'f' ? 'e' : ''} !` : 'Feuillet suivant →'}
-          </button>
-          <div className="appel-foot">
-            <button type="button" className="secondary small" onClick={() => setPage(page - 1)}>← Retour</button>
+        <p className="appel-sub">Elle garde ça dans un classeur. Elle s'en sert plus tard. Rien n'est obligatoire.</p>
+        <form className="appel-form" onSubmit={(e) => { e.preventDefault(); submit(); }}>
+          <div className="appel-foot sticky">
+            <button type="button" className="secondary small" onClick={() => setPage(0)}>← Retour</button>
             <button type="button" className="secondary small" onClick={surprise}>Tout tirer au sort</button>
-            {!last && <button type="button" className="secondary small" onClick={submit}>Passer le reste</button>}
+            <button type="button" className="secondary small" onClick={submit}>Passer →</button>
           </div>
+          <div className="appel-list">
+            {QUESTIONS.map((q) => (
+              <label className="appel-field" key={q.key}>
+                <span>{q.label}</span>
+                <span className="appel-input">
+                  <input
+                    value={profile[q.key]}
+                    maxLength={MAX_ANSWER}
+                    onChange={(e) => setProfile({ ...profile, [q.key]: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    className="dice"
+                    title="Inspire-moi"
+                    onClick={() => setProfile({ ...profile, [q.key]: pick(PROFILE_IDEAS[q.key]) })}
+                  >
+                    🎲
+                  </button>
+                </span>
+              </label>
+            ))}
+          </div>
+          <button className="ready-cta" type="submit">Présent{gender === 'f' ? 'e' : ''} !</button>
         </form>
       </div>
     );
@@ -164,7 +157,7 @@ export function Appel() {
             ))}
           </div>
         </div>
-        <button className="ready-cta" type="submit" disabled={!ready}>Suite de la fiche →</button>
+        <button className="ready-cta" type="submit" disabled={!ready}>La fiche de renseignements →</button>
       </form>
     </div>
   );

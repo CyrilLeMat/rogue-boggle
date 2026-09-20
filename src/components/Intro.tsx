@@ -22,7 +22,7 @@ const PANELS = [
       'Tu pensais encore au menu de la cantine, tout à l\'heure : {plat}. Tu n\'as rien vu venir.',
       '{Maitresse} se retourna d\'un bloc. La craie hurla sur le tableau. Six lettres, un accent aigu, tranchant comme une lame.',
     ],
-    cry: 'DICTÉE !!! Et que ça saute ! Vous allez souffrir, et vos parents aussi !',
+    cry: 'DICTÉE !!! Et que ça saute ! Vous allez souffrir !',
     after: [
       'Vingt-six cœurs de CE2 cessèrent de battre. Le tien, lui, se souvint d\'une loi qu\'aucun règlement n\'a jamais écrite : on ne cède pas.',
     ],

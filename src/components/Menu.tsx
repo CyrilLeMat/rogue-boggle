@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { loadLastYear, useRunStore } from '../state/runStore';
+import { loadLastYear, loadSavedRun, useRunStore } from '../state/runStore';
 import { BLURBS, GAME_SUBTITLE, GAME_TITLE, HOME, TAGLINE } from '../theme/lexicon';
 import { Classroom } from './Classroom';
+import { TraceDemo } from './TraceDemo';
 
 // La salle occupe l'écran, le reste est posé dessus comme sur un bureau.
 export function Menu() {
@@ -10,6 +11,8 @@ export function Menu() {
   const [showSeed, setShowSeed] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [last] = useState(loadLastYear);
+  const [saved] = useState(loadSavedRun);
+  const resume = useRunStore((s) => s.resumeRun);
   return (
     <div className="menu-screen">
       <h1 className="sr-only">{GAME_TITLE} — {GAME_SUBTITLE}</h1>
@@ -35,7 +38,14 @@ export function Menu() {
           ))}
         </div>
 
-        <button className="menu-cta" onClick={() => start(seed || undefined)}>Entrer en classe</button>
+        {saved
+          ? (
+            <>
+              <button className="menu-cta" onClick={resume}>Reprendre l'année · dictée {saved.manche}</button>
+              <button className="linkish" onClick={() => start(seed || undefined)}>recommencer une nouvelle année</button>
+            </>
+          )
+          : <button className="menu-cta" onClick={() => start(seed || undefined)}>Entrer en classe</button>}
 
         <div className="menu-links">
           <button className="linkish" onClick={() => setShowRules(!showRules)}>{HOME.rules}</button>
@@ -45,6 +55,7 @@ export function Menu() {
         {showRules && (
           <div className="rules-note">
             {HOME.rulesLines.map((l) => <p key={l}>{l}</p>)}
+            <TraceDemo />
           </div>
         )}
         {showSeed && (

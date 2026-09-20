@@ -89,6 +89,11 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .stat.mood-aride .value { color: var(--ko); }
 
 .live-euros { color: var(--gold); font-size: 0.9rem; margin-left: 2px; }
+/* le bulletin se découvre en trois temps */
+.recap .act { animation: reveal 0.45s ease-out both; }
+.recap .big { font-size: 3rem; font-variant-numeric: tabular-nums; }
+.recap-wait { color: var(--muted); letter-spacing: 0.3em; margin: 6px 0 0; animation: shakeText 0.6s ease-in-out infinite alternate; }
+
 /* l'appréciation du bulletin : stylo rouge sur la copie */
 .appreciation { position: relative; margin: 12px 0; padding: 10px 14px 22px; background: #fffaf2; border: 2px dashed #f0cfcd; border-radius: 14px 18px 16px 20px; }
 .appreciation-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 800; }

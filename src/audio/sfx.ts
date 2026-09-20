@@ -73,6 +73,10 @@ export const sfx = {
   bonus() {
     [0, 4, 7, 12].forEach((n, i) => tone({ freq: semi(659, n), at: i * 0.06, dur: 0.2, wave: 'triangle', gain: 0.18 }));
   },
+  // le stylo rouge de la maîtresse : trois traits secs sur la copie
+  redPen() {
+    [0, 1, 2].forEach((i) => tone({ freq: 340 - i * 40, at: i * 0.07, dur: 0.06, wave: 'square', gain: 0.08, slide: 0.6 }));
+  },
   duplicate() { tone({ freq: 330, dur: 0.09, gain: 0.12 }); tone({ freq: 330, at: 0.11, dur: 0.09, gain: 0.1 }); },
   invalid() { tone({ freq: 200, dur: 0.18, wave: 'triangle', gain: 0.18, slide: 0.7 }); },
   success() { [0, 4, 7, 12].forEach((n, i) => tone({ freq: semi(523, n), at: i * 0.11, dur: 0.35, gain: 0.2 })); },

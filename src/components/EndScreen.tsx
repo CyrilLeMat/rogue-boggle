@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
-import { L, SIGNATURE, appreciation, mention, noteSur20, say } from '../theme/lexicon';
+import { L, SIGNATURE, mention, noteSur20, say } from '../theme/lexicon';
 
 export function EndScreen({ victory }: { victory: boolean }) {
   const run = useRunStore((s) => s.run);
@@ -46,7 +46,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
                   <td>{h.manche}</td>
                   <td>{h.gridSize}×{h.gridSize}</td>
                   <td className="note-cell">{note}<span className="sur">/20</span></td>
-                  <td className="appr-cell">{say(appreciation(h.score / Math.max(1, h.threshold), h.success, h.livesAfter, h.score), run.identity)}</td>
+                  <td className="appr-cell">{say(h.appreciation, run.identity)}</td>
                 </tr>
               );
             })}

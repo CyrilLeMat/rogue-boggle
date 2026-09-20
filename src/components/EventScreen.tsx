@@ -41,7 +41,7 @@ function Hunt({ ev }: { ev: HuntEvent }) {
   return (
     <>
       {playing && <Chrono left={ev.timeLeft} total={ev.seconds} />}
-      {ev.id === 'inspecteur' && <p className="sage-ask target-word">« {ev.word} »</p>}
+      {ev.id !== 'sage' && <p className="sage-ask target-word">« {ev.word} »</p>}
       <div className="sage-board">
         <Grid
           grid={ev.grid}
@@ -57,7 +57,7 @@ function Hunt({ ev }: { ev: HuntEvent }) {
       </div>
       {playing && ev.hintGiven && <p className="muted small-hint">{EV[ev.id].hint}</p>}
       {playing && ev.attempts > 0 && (
-        <p className="ko small-hint">{ev.id === 'inspecteur' ? EV.inspecteur.wrong : scold(SCOLDS, ev.attempts)}</p>
+        <p className="ko small-hint">{ev.id === 'sage' ? scold(SCOLDS, ev.attempts) : EV[ev.id].wrong}</p>
       )}
     </>
   );
@@ -176,7 +176,7 @@ export function EventScreen() {
           {text.intro.map((l) => <p key={l}>{say(l)}</p>)}
         </div>
         <p className="sage-ask">
-          {ev.kind === 'hunt' ? (ev.id === 'sage' ? EV.sage.ask(ev.word.length) : EV.inspecteur.ask()) : ''}
+          {ev.kind === 'hunt' ? say(EV[ev.id].ask(ev.word.length)) : ''}
           {ev.kind === 'choice' ? EV.reserve.ask() : ''}
           {ev.kind === 'harvest' ? (ev.id === 'billes' ? EV.billes.ask() : ruleLabel(ev.ruleId ?? '')) : ''}
         </p>
@@ -191,7 +191,7 @@ export function EventScreen() {
         <div className="frame sage-frame"><EventArt id={ev.id} /></div>
         <div className="sage-speech">
           <h2>{text.title}</h2>
-          {ev.kind === 'hunt' && <p className="sage-ask">{ev.id === 'sage' ? EV.sage.ask(ev.word.length) : EV.inspecteur.ask()}</p>}
+          {ev.kind === 'hunt' && <p className="sage-ask">{say(EV[ev.id].ask(ev.word.length))}</p>}
           {ev.kind === 'choice' && <p className="sage-ask">{EV.reserve.ask()}</p>}
         </div>
       </div>

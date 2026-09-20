@@ -104,7 +104,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Catastrophe, ou miracle, personne n\'arrive à trancher : la maîtresse est absente.',
       'À sa place, un jeune homme pâle serre un classeur contre sa poitrine comme un bouclier. Il ne connaît ni vos prénoms, ni les règles, ni le règlement.',
-      'Il tremble. Il sourit. Il est perdu. Toute la classe se tourne vers toi, parce que c\'est toi qui es assis[|e] devant.',
+      'Il tremble. Il sourit. Il est perdu. Sur sa trousse, un porte-clés {heros} qui ne trompe personne : il a douze ans d\'écart avec vous et aucune autorité.',
     ],
     choices: [
       {

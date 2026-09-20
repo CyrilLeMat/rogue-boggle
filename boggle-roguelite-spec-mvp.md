@@ -694,3 +694,15 @@ et la ligne « Passe-temps déclaré » du bulletin.
 Toujours valider avec `npm run build`.
 `say(texte, identity)` fait le rendu, `useSay()` le branche sur la partie en cours.
 Un test vérifie qu'aucun marqueur ne subsiste dans les monologues, planches et transitions.
+
+## Retours de partie complète (2026-09-20)
+
+- La pensée d'avant-dictée attend un clic ou le bouton, plus de minuterie.
+- `drawThought()` dans le store : jamais deux fois la même pensée dans l'année,
+  et aucune mention de Kévin tant que sa planche de présentation n'est pas passée.
+- L'appréciation est choisie à la remise de copie et stockée dans le résultat
+  (`pickAppreciation`, jamais deux fois la même tant que le vivier tient) : 45 phrases, huit paliers.
+- Nouvel événement de couloir « Kévin te barre le couloir » (hunt, 45 s, +35 / −25 billes).
+  Le Sage et Kévin sont désormais garantis dans le programme de l'année.
+- Le personnage préféré ressort dans le monologue, les soupçons, les compliments, les doublons,
+  la coopérative, la partie de billes, le remplaçant, le miroir et six appréciations.

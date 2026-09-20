@@ -3,7 +3,7 @@ import { sfx } from '../audio/sfx';
 import type { Pos } from '../engine/types';
 import { findPathForWord } from '../engine/wordFinder';
 import { useRunStore } from '../state/runStore';
-import { L, SIGNATURE, appreciation, money } from '../theme/lexicon';
+import { L, SIGNATURE, money } from '../theme/lexicon';
 import { useSay } from '../theme/useSay';
 import { MiniGrid } from './MiniGrid';
 
@@ -81,7 +81,7 @@ export function MancheRecap() {
       {act >= 2 && (
       <div className="appreciation act">
         <span className="appreciation-label">Appréciation</span>
-        <p>{say(appreciation(result.score / Math.max(1, result.threshold), result.success, run.lives, result.score))}</p>
+        <p>{say(result.appreciation)}</p>
         <span className="signature">{SIGNATURE}</span>
       </div>
       )}

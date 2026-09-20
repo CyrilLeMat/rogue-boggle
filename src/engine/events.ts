@@ -12,7 +12,7 @@ import type { WordSearch } from './wordFinder';
 export const EVENT_AFTER = [2, 4, 6, 8];
 export const EVENT_GRID_SIZE = 5;
 
-export type EventId = 'sage' | 'inspecteur' | 'reserve' | 'billes' | 'recitation';
+export type EventId = 'sage' | 'inspecteur' | 'kevin' | 'reserve' | 'billes' | 'recitation';
 
 export function isEventManche(manche: number): boolean {
   return EVENT_AFTER.includes(manche);
@@ -20,10 +20,11 @@ export function isEventManche(manche: number): boolean {
 
 // Le programme de l'année, tiré à la rentrée : quatre événements pour quatre créneaux,
 // jamais deux fois le même, et le Sage du CM1 est toujours du voyage (à une place variable).
+// Le Sage et Kévin sont toujours du voyage : l'un porte la sagesse, l'autre la rancune.
 export function planEvents(rng: Rng): EventId[] {
   const pool: EventId[] = ['inspecteur', 'reserve', 'billes', 'recitation'];
-  const others = rng.shuffle(pool).slice(0, EVENT_AFTER.length - 1);
-  return rng.shuffle<EventId>(['sage', ...others]);
+  const others = rng.shuffle(pool).slice(0, EVENT_AFTER.length - 2);
+  return rng.shuffle<EventId>(['sage', 'kevin', ...others]);
 }
 
 interface Base {
@@ -39,7 +40,7 @@ interface Base {
 // On trace un mot désigné : le sage grise les autres cases, l'inspecteur ne t'aide pas.
 export interface HuntEvent extends Base {
   kind: 'hunt';
-  id: 'sage' | 'inspecteur';
+  id: 'sage' | 'inspecteur' | 'kevin';
   word: string;
   grid: Grid;
   solution: Pos[];
@@ -138,6 +139,9 @@ export function ruleAccepts(ruleId: string | null, word: string, dict: Dictionar
 // --- Réglages ------------------------------------------------------------------------------
 export const SAGE_CONSOLATION = 10;
 export const INSPECTOR_SECONDS = 40;
+export const KEVIN_SECONDS = 45;   // [tuning]
+export const KEVIN_REWARD = 35;    // [tuning] il paie en billes, il n'a que ça
+export const KEVIN_PENALTY = 25;   // [tuning] il repart avec les tiennes
 export const INSPECTOR_REWARD = 25;
 export const INSPECTOR_PENALTY = 30;
 export const INSPECTOR_MIN_LEN = 6;
@@ -166,10 +170,10 @@ function plantWord(word: string, rng: Rng, size = EVENT_GRID_SIZE) {
   return { grid: { size, cells } as Grid, solution };
 }
 
-export function createHunt(id: 'sage' | 'inspecteur', pool: readonly string[], rng: Rng): HuntEvent {
+export function createHunt(id: 'sage' | 'inspecteur' | 'kevin', pool: readonly string[], rng: Rng): HuntEvent {
   const word = rng.pick(pool);
   const { grid, solution } = plantWord(word, rng);
-  const seconds = id === 'sage' ? sageSeconds(word.length) : INSPECTOR_SECONDS;
+  const seconds = id === 'sage' ? sageSeconds(word.length) : id === 'kevin' ? KEVIN_SECONDS : INSPECTOR_SECONDS;
   return {
     kind: 'hunt', id, word, grid, solution,
     active: solution.map(([r, c]) => posKey(r, c)),

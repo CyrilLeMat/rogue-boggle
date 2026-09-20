@@ -244,44 +244,65 @@ const APPRECIATIONS: Record<string, string[]> = {
     '{nom}, je convoque tes parents lundi. Nous parlerons de ton avenir, s\'il y en a un.',
     'À ce stade je ne corrige plus, je constate.',
     'J\'ai gardé ta copie. Pas pour l\'encadrer.',
+    'Tu penseras à {cour} toute ta vie, et ta vie sera courte.',
+    'J\'ai prévenu la maîtresse de CE2 de l\'an prochain. Elle a demandé une mutation.',
+    'Ce soir, pas de {plat}. Ce soir, on révise.',
   ],
   presque: [
     'Si près. J\'ai failli arrondir, puis j\'ai repensé à ton attitude de mardi.',
     'Deux points. Deux. Je vais y penser toute la nuit, et j\'espère bien que toi aussi.',
     'Tu y étais presque, et c\'est encore pire que si tu avais été loin.',
+    'À un cheveu. Même {heros} aurait grimacé.',
+    'La prochaine fois, arrête de regarder la pendule. Elle ne t\'aime pas.',
   ],
   rate: [
     'J\'ai relu trois fois en espérant m\'être trompée. Je ne me trompe jamais.',
     'Ce n\'est rien. Tout le monde ne peut pas réussir, il faut bien des gens pour le reste.',
     'Tu trouveras ta voie. Elle sera manuelle, mais tu la trouveras.',
     'J\'ai montré ta copie en salle des maîtres. Personne n\'a ri. Le silence était pire.',
+    'Tu as passé l\'année à {cour}. Voilà le résultat, {nom}.',
+    'Kévin a fait mieux. Kévin n\'a pas de stylo.',
+    'Je range cette copie dans le tiroir du bas. Celui qui ferme à clé.',
   ],
   prodige: [
     'Je vais encadrer cette copie et l\'accrocher dans mon salon, au-dessus du buffet.',
     'C\'est le plus beau jour de ma vie. J\'ai appelé ma sœur pendant la récréation.',
     'J\'aimerais que tu sois [mon fils|ma fille], {nom}. Ne le répète pas à ta mère.',
     'Je n\'avais pas vu ça depuis 1987. Cet élève-là a mal fini, mais quel talent.',
+    'Ce soir je cuisine {plat} pour toute ma famille, et je leur raconterai ta copie.',
+    'J\'ai pleuré dans la réserve. Ne dis rien à personne, {nom}.',
+    'Même {heros} peut aller se rhabiller.',
   ],
   suspect: [
     'Trop beau, {nom}. Je ne sais pas encore comment tu as fait, mais je le saurai.',
     'Excellent. Un peu trop, même. Je te surveillerai de très près désormais.',
     'Superbe. J\'ai photographié ta copie, pour mes archives personnelles.',
     'Personne n\'écrit ça à ton âge, {nom}. Personne. Nous en reparlerons toi et moi.',
+    'Remarquable. Tu me diras un jour qui te souffle. {heros}, peut-être ?',
+    'Je t\'ai regardé[|e] pendant toute la dictée. Je n\'ai rien vu. Ça m\'inquiète.',
   ],
   bien: [
     'Bon travail. J\'ai souri, et ça ne m\'était pas arrivé depuis des années.',
     'C\'est bien. Étrangement bien. Tu avais les yeux baissés tout le long.',
     'Très bonne copie. J\'ai vérifié deux fois, par acquit de conscience.',
+    'Voilà du travail sérieux. Continue et je t\'invite à manger {plat}.',
+    'Bien. Tu vois ce qui arrive quand tu penses à autre chose qu\'à {cour} ?',
+    'C\'est propre, c\'est juste, c\'est presque agaçant.',
   ],
   correct: [
     'Correct, {nom}. Nous savons tous les deux que tu peux mieux faire, et que tu ne le feras pas.',
     'Passable. Ta voisine a fait mieux sans se donner cette peine.',
     'Acceptable. J\'attendais autre chose de toi, mais j\'attends toujours trop.',
+    'Ça ira. Ça ira, mais ça ne restera pas dans les mémoires.',
+    'Moyen. Comme la purée de la cantine, et avec autant de saveur.',
+    'Tu as fait le minimum. Le minimum a été fait. Nous sommes quittes.',
   ],
   justesse: [
     'Juste, tout juste, {nom}. Le stylo rouge était déjà décapuchonné.',
     'Tu passes. Je te préviens tout de suite que cela ne se reproduira pas.',
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
+    'Un point de plus et je te félicitais. Un point de moins et j\'appelais chez toi.',
+    'Tu as eu chaud. Moi aussi, figure-toi.',
   ],
 };
 
@@ -296,9 +317,12 @@ function band(ratio: number, success: boolean, lives: number): keyof typeof APPR
   return 'justesse';
 }
 
-export function appreciation(ratio: number, success: boolean, lives: number, seed = 0): string {
+// Une appréciation jamais servie cette année : même avec des notes identiques, elle se renouvelle.
+export function pickAppreciation(ratio: number, success: boolean, lives: number, used: readonly string[], seed: number): string {
   const pool = APPRECIATIONS[band(ratio, success, lives)];
-  return pool[Math.abs(Math.round(seed * 7 + ratio * 100)) % pool.length];
+  const fresh = pool.filter((t) => !used.includes(t));
+  const list = fresh.length ? fresh : pool;
+  return list[Math.abs(Math.round(seed * 7 + ratio * 100)) % list.length];
 }
 
 export const SIGNATURE = 'La maîtresse';
@@ -406,6 +430,24 @@ export const EV = {
     giveUp: 'Je donne ma langue au chat',
     leave: 'Reprendre le couloir',
   },
+  kevin: {
+    title: 'Kévin te barre le couloir',
+    intro: [
+      'Il t\'attendait. Il a même prévu une feuille, ce qui ne lui ressemble pas.',
+      'Depuis la rentrée il copie sur toi, et depuis la rentrée ça ne lui suffit plus.',
+      'Il plaque la feuille contre le mur et pose un mot dessus, bien fort, pour que le couloir entende.',
+    ],
+    ask: (n: number) => `— Ce mot fait ${n} lettres. Tu le trouves, ou tout le monde saura que tu n\'es rien sans ta maîtresse.`,
+    hint: 'Il soupire et tapote la feuille du doigt, là où le mot commence.',
+    wrong: 'Il ricane. Deux CM1 se sont arrêtés pour regarder.',
+    won: 'Kévin recule d\'un pas. Il ne ricane plus du tout.',
+    wonSub: '— C\'était un coup de chance. On se revoit à la prochaine dictée.',
+    lost: 'Kévin plie la feuille en quatre et la met dans sa poche.',
+    lostSub: '— Je la garde. Elle me servira contre toi.',
+    start: 'Relever le défi',
+    giveUp: 'Lui laisser le couloir',
+    leave: 'Rentrer en classe',
+  },
   inspecteur: {
     title: 'L\'inspecteur d\'académie',
     intro: [
@@ -413,7 +455,7 @@ export const EV = {
       'La maîtresse blêmit. Vingt-six élèves cessent de respirer. Il te désigne du menton.',
       'Il ouvre son carnet, décapuchonne son stylo, et prononce un mot :',
     ],
-    ask: () => 'Trouve-le dans la feuille. Toute la classe te regarde.',
+    ask: (_n: number) => 'Trouve-le dans la feuille. Toute la classe te regarde.',
     hint: 'Il tapote la table, agacé, à l\'endroit où commence le mot.',
     wrong: 'Il note quelque chose. On n\'entend que son stylo.',
     won: 'Il referme son carnet. Un silence. Puis, presque un sourire.',
@@ -445,6 +487,7 @@ export const EV = {
       'Le cercle est tracé dans la poussière. Les grands regardent.',
       'C\'est le rituel : tu mises, tu joues, tu assumes.',
       'Sauf qu\'ici, on ne joue pas aux billes. On joue aux mots.',
+      'Sur le sac de l\'un d\'eux, un autocollant {heros} à moitié décollé. Ça te donne du courage.',
     ],
     ask: () => 'Combien tu mises ?',
     goal: (n: number) => `Trouve ${n} mots avant la fin`,

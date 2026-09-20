@@ -3,9 +3,7 @@ import { sfx } from '../audio/sfx';
 import { mutator } from '../data/registry';
 import { TOTAL_MANCHES } from '../engine/rules';
 import { useRunStore } from '../state/runStore';
-import { L, MONOLOGUE, money, say } from '../theme/lexicon';
-
-const PSYCHE_MS = 2800; // [tuning]
+import { L, money } from '../theme/lexicon';
 
 // Le briefing d'avant-dictée porte tout ce qu'on ne veut plus lire pendant :
 // où on en est, ce qu'il faut atteindre, ce qui va nous tomber dessus.
@@ -14,13 +12,13 @@ export function ReadyOverlay() {
   const run = useRunStore((s) => s.run);
   const begin = useRunStore((s) => s.beginPlay);
   const reroll = useRunStore((s) => s.rerollGrid);
+  const draw = useRunStore((s) => s.drawThought);
   const [thought, setThought] = useState<string | null>(null);
 
-  // Le temps de souffler avant la dictée : une pensée, deux battements de cœur, puis le chrono.
+  // Le temps de souffler avant la dictée : une pensée qu'on lit à son rythme, puis le chrono.
   const brace = () => {
-    setThought(say(MONOLOGUE[Math.floor(Math.random() * MONOLOGUE.length)], run?.identity));
+    setThought(draw());
     sfx.heartbeat();
-    window.setTimeout(begin, PSYCHE_MS);
   };
   if (!manche || !run) return null;
   const mut = manche.mutatorId ? mutator(manche.mutatorId) : null;
@@ -30,6 +28,7 @@ export function ReadyOverlay() {
         <p><span className="q">«</span> {thought} <span className="q">»</span></p>
         <cite>{run.identity.name}, élève de CE2</cite>
       </blockquote>
+      <button className="ready-cta psyche-go" onClick={begin}>{L.lancer}</button>
     </div>
   );
   return (

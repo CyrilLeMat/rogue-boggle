@@ -26,6 +26,41 @@ const ARTS: Record<EventId, () => ReactElement> = {
       <text x="72" y="96" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="15" fill="#9a93a8" className="sage-murmur">« hmmm… »</text>
     </>
   ),
+  // Kévin te coince dans le couloir, feuille contre le mur
+  kevin: () => (
+    <>
+      <rect width="200" height="150" fill="#e7ecef" />
+      <rect y="118" width="200" height="32" fill="#c8c3b4" />
+      <g stroke="#d4dade" strokeWidth="2"><path d="M0 40 h200 M0 74 h200" /></g>
+      {/* les porte-manteaux du couloir */}
+      <path d="M0 30 h200" stroke="#3f3a55" strokeWidth="3" />
+      {[24, 58].map((x) => (
+        <g key={x}><path d={`M${x} 30 v7`} stroke="#3f3a55" strokeWidth="3" /><path d={`M${x} 37 q-9 16 -5 28 q5 11 10 0 q4 -12 -5 -28`} fill="#b8c9d8" stroke="#3f3a55" strokeWidth="2" /></g>
+      ))}
+      {/* la feuille plaquée au mur */}
+      <g transform="rotate(-4 118 74)">
+        <rect x="92" y="52" width="52" height="42" rx="2" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2.5" />
+        <g stroke="#b9b1c9" strokeWidth="1.5"><path d="M98 62 h40 M98 70 h40 M98 78 h30" /></g>
+      </g>
+      {/* Kévin, bras tendu contre le mur */}
+      <g>
+        <circle cx="160" cy="62" r="15" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M152 58 h6 M164 58 h6" {...ink} strokeWidth="2" />
+        <path d="M152 72 q8 6 16 0" {...ink} strokeWidth="2" />
+        <path d="M160 77 v26 M160 84 l-22 -8 M160 84 l12 14 M160 103 l-8 18 M160 103 l8 18" {...ink} />
+      </g>
+      {/* toi, plus petit, adossé */}
+      <g>
+        <circle cx="52" cy="76" r="12" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <circle cx="47" cy="74" r="2.6" fill="#fff" stroke="#3f3a55" strokeWidth="1.3" />
+        <circle cx="57" cy="74" r="2.6" fill="#fff" stroke="#3f3a55" strokeWidth="1.3" />
+        <circle cx="47" cy="74" r="1.2" fill="#3f3a55" /><circle cx="57" cy="74" r="1.2" fill="#3f3a55" />
+        <path d="M47 85 q5 -3 10 0" {...ink} strokeWidth="1.8" />
+        <path d="M52 88 v20 M52 94 l-10 10 M52 94 l10 10 M52 108 l-7 13 M52 108 l7 13" {...ink} />
+      </g>
+      <g className="sweat" stroke="#8fb6d9" strokeWidth="2" strokeLinecap="round"><path d="M40 66 v7" /></g>
+    </>
+  ),
   inspecteur: () => (
     <>
       <rect width="200" height="150" fill="#e9e3f4" />

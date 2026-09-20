@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
 import { SCENES } from '../../data/scenes';
-import { EV, L, SHOP_INTRO, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, say } from '../../theme/lexicon';
+import { EV, L, SHOP_INTRO, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
 
 describe('planches de transition', () => {
@@ -53,7 +53,8 @@ describe('accords et prénom', () => {
       ...MONOLOGUE, ...SUSPICIONS, ...PRAISES_HUGE, ...TOO_SHORT, ...DUPLICATES,
       ...INTERLUDES.flatMap((i) => [...i.lines, i.cry ?? '', i.fall]),
       ...SCENES.flatMap((s) => [...s.lines, ...s.choices.map((c) => c.detail)]),
-      ...SCOLDS, ...PRAISES_BIG, ...PRAISES_SMALL, ...SHOP_INTRO.lines, ...EV.sage.intro,
+      ...SCOLDS, ...PRAISES_BIG, ...PRAISES_SMALL, ...SHOP_INTRO.lines,
+      ...EV.sage.intro, ...EV.kevin.intro, ...EV.billes.intro, EV.kevin.ask(6),
       L.victoireSub, L.gameoverSub(4),
     ];
     for (const gender of ['m', 'f'] as const) {
@@ -62,5 +63,22 @@ describe('accords et prénom', () => {
         expect(out).not.toMatch(/[[\]{}|]/);
       }
     }
+  });
+});
+
+describe('la maîtresse se répète le moins possible', () => {
+  it('sert une appréciation neuve tant que le vivier n\'est pas épuisé', () => {
+    const used: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      const line = pickAppreciation(1.15, true, 3, used, 90 + i);
+      expect(used).not.toContain(line);
+      used.push(line);
+    }
+  });
+
+  it('retombe sur le vivier complet une fois tout servi', () => {
+    const used: string[] = [];
+    for (let i = 0; i < 40; i++) used.push(pickAppreciation(1.15, true, 3, used, i));
+    expect(used.length).toBe(40);
   });
 });

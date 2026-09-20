@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { DEFAULT_LEVEL, level as resolveLevel } from '../data/levels';
-import { DEFAULT_IDENTITY, DEFAULT_PROFILE, type Identity } from '../theme/lexicon';
+import { DEFAULT_IDENTITY, DEFAULT_PROFILE, MONOLOGUE, pickAppreciation, say, type Identity } from '../theme/lexicon';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
@@ -15,7 +15,7 @@ import { CRITTER_MOVE_SECONDS, CRITTER_MULTIPLIER, moveCritter, spawnCritters, t
 import { pickQuest, updateQuest } from '../engine/quests';
 import { SAGE_HINT_RATIO, isCorrect, wordFromPath } from '../engine/sage';
 import {
-  INSPECTOR_PENALTY, INSPECTOR_REWARD, RECITATION_PER_WORD, SAGE_CONSOLATION,
+  INSPECTOR_PENALTY, INSPECTOR_REWARD, KEVIN_PENALTY, KEVIN_REWARD, RECITATION_PER_WORD, SAGE_CONSOLATION,
   createChoice, createHarvest, createHunt, isEventManche, planEvents, ruleAccepts, sageReward,
   type EventId, type GameEvent,
 } from '../engine/events';
@@ -55,6 +55,7 @@ export interface MancheResult {
   missed: string[];
   grid: Grid;                 // grille finale de la manche, pour le récap
   cursedWord: string | null;  // révélé après coup
+  appreciation: string;       // choisie à la remise de copie, jamais deux fois la même dans l'année
 }
 
 export interface OwnedConsumable { id: string; charges: number }
@@ -93,6 +94,8 @@ export interface RunState extends RunView {
   eventPlan: EventId[];   // le programme de l'année, tiré à la rentrée
   scenePlan: string[];    // les planches de l'année, une par dictée paire
   seenInterludes: string[]; // les transitions déjà jouées : on ne repasse pas deux fois au même endroit
+  saidThoughts: string[];        // pensées déjà déclamées : jamais deux fois la même dans l'année
+  saidAppreciations: string[];   // idem pour le stylo rouge de la maîtresse
   pendingScene: { sceneId: string; choice: number; lessonId: string | null } | null;
   history: MancheResult[];
   endBonus: number;
@@ -116,6 +119,7 @@ interface Store {
 
   startRun(seed?: string): void;
   setIdentity(identity: Identity, levelId: string): void;
+  drawThought(): string;
   acceptChallenge(): void; // prologue → fourniture de rentrée
   pickStartRelic(id: string): void;
   pickSceneChoice(choice: number): void;
@@ -189,7 +193,7 @@ export const useRunStore = create<Store>((set, get) => ({
         identity: loadIdentity(), levelId: loadLevel(), seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
         consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
-        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [],
+        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [], saidThoughts: [], saidAppreciations: [],
       },
       lastResult: null,
       startChoices,
@@ -204,6 +208,18 @@ export const useRunStore = create<Store>((set, get) => ({
     saveIdentity(identity);
     saveLevel(levelId);
     set({ run: { ...run, identity, levelId }, phase: 'intro' });
+  },
+
+  // Une pensée jamais entendue cette année, et jamais de Kévin avant qu'il se soit présenté.
+  drawThought() {
+    const { run } = get();
+    if (!run) return '';
+    const knowsKevin = run.seenInterludes.includes('kevin1');
+    const allowed = MONOLOGUE.filter((t) => knowsKevin || !t.includes('Kévin'));
+    const fresh = allowed.filter((t) => !run.saidThoughts.includes(t));
+    const text = run.rng.pick(fresh.length ? fresh : allowed);
+    set({ run: { ...run, saidThoughts: [...run.saidThoughts, text] } });
+    return say(text, run.identity);
   },
 
   acceptChallenge() {
@@ -449,6 +465,13 @@ export const useRunStore = create<Store>((set, get) => ({
       bestWord: manche.found.reduce<FoundWord | null>((b, f) => (!b || f.score > b.score ? f : b), null),
       words: manche.found, missed,
       grid: manche.grid, cursedWord: manche.cursedWord,
+      appreciation: pickAppreciation(
+        manche.score / Math.max(1, t),
+        success,
+        success ? run.lives : run.lives - 1,
+        run.saidAppreciations,
+        manche.score,
+      ),
     };
     set({
       phase: 'recap',
@@ -460,6 +483,7 @@ export const useRunStore = create<Store>((set, get) => ({
         euros: run.euros + euros,
         lives: success ? run.lives : run.lives - 1,
         lostLifeLastManche: !success,
+        saidAppreciations: [...run.saidAppreciations, result.appreciation],
         history: [...run.history, result],
       },
     });
@@ -524,7 +548,9 @@ export const useRunStore = create<Store>((set, get) => ({
       }
       const won: GameEvent = event.id === 'sage'
         ? { ...event, outcome: 'won', reward: sageReward(event.word.length, event.timeLeft) }
-        : { ...event, outcome: 'won', reward: INSPECTOR_REWARD, extraLife: true };
+        : event.id === 'kevin'
+          ? { ...event, outcome: 'won' as const, reward: KEVIN_REWARD }
+          : { ...event, outcome: 'won' as const, reward: INSPECTOR_REWARD, extraLife: true };
       set({ event: won });
       payoutEvent(won);
       return;
@@ -765,7 +791,9 @@ function finishEvent(e: GameEvent): GameEvent {
   if (e.kind === 'hunt') {
     return e.id === 'sage'
       ? { ...e, outcome: 'lost', reward: SAGE_CONSOLATION }
-      : { ...e, outcome: 'lost', reward: -INSPECTOR_PENALTY };
+      : e.id === 'kevin'
+        ? { ...e, outcome: 'lost' as const, reward: -KEVIN_PENALTY }
+        : { ...e, outcome: 'lost' as const, reward: -INSPECTOR_PENALTY };
   }
   if (e.kind === 'harvest') {
     if (e.id === 'recitation') return { ...e, outcome: 'won', reward: e.found.length * RECITATION_PER_WORD };
@@ -809,6 +837,7 @@ function payoutEvent(e: GameEvent) {
 function buildEvent(id: EventId, run: RunState): GameEvent {
   if (id === 'sage') return createHunt('sage', sageWords(), run.rng);
   if (id === 'inspecteur') return createHunt('inspecteur', inspectorWords(), run.rng);
+  if (id === 'kevin') return createHunt('kevin', inspectorWords(), run.rng);
   if (id === 'reserve') return createChoice(drawFreeRelics(shopInput(run), run.rng, 3));
   return createHarvest(id, dictionary, run.rng, run.euros);
 }

@@ -28,7 +28,7 @@ export const INTERLUDES: Interlude[] = [
       'Les lavabos. L’eau froide. Ton reflet te fixe comme un adversaire.',
       'Tu t’agrippes à la faïence des deux mains et tu murmures, les dents serrées :',
     ],
-    cry: 'Ce n’était qu’une dictée. Je ne m’arrêterai pas là.',
+    cry: 'Ce n’était qu’une dictée. {heros} ne se serait pas arrêté là, et moi non plus.',
     fall: 'Il en reste neuf. Ensuite, ce sont les vacances de la Toussaint.',
   },
   {

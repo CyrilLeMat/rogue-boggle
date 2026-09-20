@@ -40,7 +40,7 @@ export const SCENES: Scene[] = [
     title: 'Le stylo de Sophie',
     lines: [
       'Catastrophe : le stylo de Sophie, ta voisine, tombe par terre.',
-      'Il explose au contact du sol. Tu hurles « {cri} » avant même de comprendre pourquoi. La coulée violette avance vers toi et pourrait t\'engloutir.',
+      'Il explose au contact du sol. Tu hurles « {cri} » avant même de comprendre pourquoi. Le liquide violet est {adjectif2}, il avance vers toi et pourrait t\'engloutir.',
       'Mais tu vois aussi la détresse de Sophie, qui tombe à genoux, en larmes, et hurle au ciel : « Noooon, c\'était mon seul crayon !! »',
     ],
     choices: [
@@ -61,7 +61,7 @@ export const SCENES: Scene[] = [
     title: 'Le bocal de la leçon de choses',
     lines: [
       'Le bocal gît sur le carrelage. {Nombre} escargots ont recouvré leur liberté.',
-      'Ils progressent vers l\'ouest et ont déjà parcouru {distance}. Personne ne les arrêtera. Personne n\'essaiera.',
+      'Ils progressent vers l\'ouest et ont déjà parcouru {distance}. Le spectacle est {adjectif}. Personne ne les arrêtera, personne n\'essaiera.',
       'La maîtresse fixe le plafond en silence. Elle a fait sept ans d\'études.',
     ],
     choices: [
@@ -81,7 +81,7 @@ export const SCENES: Scene[] = [
     id: 'place',
     title: 'Le changement de place',
     lines: [
-      'Sans prévenir, {maitresse} annonce un changement de place. La classe retient son souffle : c\'est là que se jouent les destins.',
+      'Sans prévenir, {maitresse} annonce un changement de place. Le silence devient {adjectif} : c\'est là que se jouent les destins.',
       'Deux tables restent libres. L\'une à côté de Kévin, qui n\'a plus de stylo depuis le CP et qui te fixe déjà en souriant.',
       'L\'autre contre la fenêtre du fond, celle qui ne ferme plus depuis 1996 et par laquelle entre un vent polaire.',
     ],
@@ -125,7 +125,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Quelqu\'un a écrit « {rigolo} » au tableau pendant la récré. En lettres capitales. C\'est le nom de la maîtresse.',
       '{Maitresse} a blêmi, puis exigé un coupable. Sans aveu, la classe entière sera punie. Le silence dure une éternité.',
-      'Puis vingt-six têtes se tournent lentement vers toi, parce que tu es le plus près du tableau et que la justice a ses raisons.',
+      'Puis vingt-six têtes se tournent lentement vers toi, dans un silence {adjectif}, parce que tu es le plus près du tableau et que la justice a ses raisons.',
     ],
     choices: [
       {
@@ -146,7 +146,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Le photographe s\'appelle Gérard. Gérard exerce depuis trente et un ans.',
       'Gérard a photographié ta mère dans cette salle, au même endroit, avec le même appareil.',
-      'Gérard ne sourit plus depuis 1998. Il demande un ouistiti. Tu réponds : « {phrase} ». Gérard ne relève pas.',
+      'Gérard ne sourit plus depuis 1998. Son bonjour est {adjectif}. Il demande un ouistiti, tu réponds « {phrase} », et Gérard ne relève pas.',
     ],
     choices: [
       {
@@ -167,7 +167,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Elles ralentissent. Elles s\'arrêtent à {distance} de la porte. La maîtresse blanchit d\'un coup.',
       '{Directeur} n\'entre jamais sans raison, et {directeur} n\'a jamais de raison. C\'est le frère de la maîtresse. Personne n\'en parle jamais.',
-      'La poignée tourne au ralenti, comme dans les films où tout le monde meurt à la fin. Dans ta tête, une seule phrase tourne en boucle : « {cri} ».',
+      'La poignée tourne au ralenti, dans un bruit {adjectif}, comme dans les films où tout le monde meurt à la fin. Dans ta tête, une seule phrase : « {cri} ».',
     ],
     choices: [
       {
@@ -188,7 +188,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Il est sur la table de la cuisine, à côté du beurre. Tu le vois d\'ici. Tu le verras toute la journée.',
       'Elle ouvre son tiroir et en sort une feuille volante. Froissée. Jaunie.',
-      'Cette feuille a connu des choses dont on ne parle pas.',
+      'Cette feuille a un grain {adjectif} et elle a connu des choses dont on ne parle pas.',
     ],
     choices: [
       {
@@ -209,7 +209,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Il est midi. Kévin a fait la queue deux fois et revient à table avec deux plateaux.',
       'Il pose le second devant toi, sans un mot. Au menu : {horreur}, avec {objet} posé à côté, on ne saura jamais pourquoi.',
-      'Toute la table s\'est tue. Kévin te regarde comme {animal} regarde un plus petit que lui. Kévin attend.',
+      'Toute la table s\'est tue. Kévin te regarde comme {animal} regarde un plus petit que lui, avec un sourire {adjectif}. Kévin attend.',
     ],
     choices: [
       {
@@ -228,7 +228,7 @@ export const SCENES: Scene[] = [
     id: 'anniversaire',
     title: 'L\'anniversaire de Léa',
     lines: [
-      'Gâteau au chocolat industriel sur le bureau, et même {plat} pour ceux qui ont apporté quelque chose. Léa a huit ans.',
+      'Gâteau au chocolat industriel et {adjectif} sur le bureau, et même {plat} pour ceux qui ont apporté quelque chose. Léa a huit ans.',
       'Léa aura huit ans toute l\'année, comme tout le monde, mais aujourd\'hui c\'est officiel.',
       'Quelqu\'un a mis {chanson} sur le poste de la classe. Personne n\'ose danser.',
       'La dictée est maintenue. Bien sûr que la dictée est maintenue.',

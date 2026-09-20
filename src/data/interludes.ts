@@ -16,7 +16,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'win',
     lines: [
       'Tu ne marches pas. Tu cours.',
-      'La porte des toilettes claque derrière toi. Tu trembles de tout ton corps, le poing serré si fort que tes ongles entrent dans ta paume.',
+      'La porte des toilettes claque derrière toi. Le carrelage est {adjectif}. Tu trembles de tout ton corps, le poing serré si fort que tes ongles entrent dans ta paume.',
     ],
     cry: '{Admire}. Je ne te ferai pas honte. L’honneur de la famille est entre mes mains.',
     fall: 'Ton père est comptable. Il ignore qu’il y avait dictée aujourd’hui.',
@@ -36,7 +36,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'win',
     lines: [
       'Dehors, sous le préau, la pluie tombe comme dans les dernières pages.',
-      'Tu lèves les yeux vers le ciel gris, bras le long du corps, et tu laisses l’eau couler sur ton visage sans ciller.',
+      'Tu lèves les yeux vers un ciel gris et {adjectif}, bras le long du corps, et tu laisses l’eau couler sur ton visage sans ciller.',
     ],
     cry: 'Je les ai tous dépassés. « {phrase} », comme on dit. Et pourtant je ne ressens rien.',
     fall: 'La récréation dure douze minutes.',
@@ -46,7 +46,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'loss',
     lines: [
       'Le couloir est vide. Tu t’adosses au mur sous les porte-manteaux et tu glisses lentement jusqu’au sol.',
-      'Le carrelage est froid, et le froid remonte jusqu’à {corps}. Tu ne clignes pas des yeux. Tout au fond, quelque chose voudrait sortir :',
+      'Le carrelage est froid et {adjectif}, et ce froid remonte jusqu’à {corps}. Tu ne clignes pas des yeux. Tout au fond, quelque chose voudrait sortir :',
     ],
     cry: '{Cri}.',
     fall: 'Tu as eu onze. La moyenne de la classe est de douze. Au menu ce soir : {horreur}.',
@@ -56,7 +56,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'loss',
     lines: [
       'Vingt-deux heures. La maison dort. Une seule lampe brûle encore.',
-      'Tu recopies le mot. Encore. Encore. Ta main tremble, l’encre bave, tu ne t’arrêtes pas.',
+      'Tu recopies le mot. Encore. Encore. Ta main tremble, l’encre bave sur un cahier {adjectif}, tu ne t’arrêtes pas.',
     ],
     cry: 'Cent fois. Mille s’il le faut. J’écrirai jusqu’à ce que {corps} me lâche.',
     fall: '{Admire} dort à l’étage. Tu n’as rien dit à personne. Le mot est ÉCUREUIL.',
@@ -66,7 +66,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Trois ans plus tôt. Le jardin. La pluie.',
-      'Tu récites les mots en -euil, debout, tremp[é|ée], pendant que ta mère te regarde derrière la vitre sans bouger.',
+      'Tu récites les mots en -euil, debout, tremp[é|ée], dans un jardin {adjectif}, pendant que ta mère te regarde derrière la vitre sans bouger.',
     ],
     cry: 'Encore. Depuis le début.',
     fall: 'Elle t’a appel[é|ée] quatre fois pour le goûter. Tu n’as rien entendu.',
@@ -76,7 +76,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'La cuisine de ta grand-mère. Les carottes. Le couteau qui ne s’arrête jamais.',
-      'Elle ne lève pas les yeux. Elle dit un mot, tu l’épelles, elle dit le suivant. Depuis deux heures.',
+      'Elle ne lève pas les yeux. Le couteau fait un bruit {adjectif}. Elle dit un mot, tu l’épelles, elle dit le suivant. Depuis deux heures.',
     ],
     cry: 'On ne triche pas avec les mots, petit. Les mots, eux, ne trichent pas avec toi.',
     fall: 'Elle a eu son certificat d’études en 1954. Elle en parle encore.',
@@ -86,7 +86,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'L\'été dernier. Tout le monde était dehors, tout le monde criait.',
-      'Toi, tu as tout arrêté, {cour} compris, pendant deux mois entiers, pour réviser les mots en -euil, assis[|e] à la table de la cuisine.',
+      'Toi, tu as tout arrêté, {cour} compris, pendant deux mois entiers, pour réviser les mots en -euil, assis[|e] à une table de cuisine au silence {adjectif}.',
     ],
     cry: 'Le plaisir attendra. Le CM1, lui, n\'attend pas.',
     fall: 'Personne ne t\'avait rien demandé.',
@@ -96,7 +96,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Tu ne le connaissais pas ce matin. Il t’a lancé un « {salut} » en arrivant, et ce soir tu ne verras plus que lui.',
-      'Kévin. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords. Il copie sur tout le monde et tout le monde le laisse faire.',
+      'Kévin. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords, et un regard {adjectif2}. Il copie sur tout le monde et tout le monde le laisse faire.',
       'Dans la cour, il traverse le goudron sans se presser, s’arrête à {distance} de toi, sort les mains de ses poches et te désigne du menton.',
     ],
     cry: 'Cette année, c’est toi ma victime.',
@@ -107,7 +107,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Il s’approche de ta table sans un mot et pose quelque chose dessus.',
-      'Un stylo. Le sien. Le seul qu’il ait jamais eu.',
+      'Un stylo {adjectif}, mâchouillé au bout. Le sien. Le seul qu’il ait jamais eu.',
     ],
     cry: 'Tiens. Tu en auras besoin.',
     fall: 'Il n’écrira pas aujourd’hui. Il a déjà décidé.',
@@ -117,7 +117,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Le soir. La classe est éteinte. Tu passes devant la fenêtre et tu t’arrêtes net.',
-      'Kévin est là, seul devant le tableau, à recopier les mots en silence, {objet} posé à ses pieds. Depuis combien de temps, personne ne le saura.',
+      'Kévin est là, seul devant le tableau, à recopier les mots dans un silence {adjectif}, {objet} posé à ses pieds. Depuis combien de temps, personne ne le saura.',
     ],
     cry: 'Tu as changé. Moi aussi.',
     fall: 'Le lendemain, il s’assoit à côté de toi. Il ne te regarde pas.',

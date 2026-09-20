@@ -19,8 +19,10 @@ const PANELS = [
   {
     title: 'II. L\'annonce',
     text: [
-      'La maîtresse se retourna. Six lettres à la craie. Un accent aigu, tranchant comme une lame.',
-      'Dictée.',
+      'La maîtresse se retourna d\'un bloc. La craie hurla sur le tableau. Six lettres, un accent aigu, tranchant comme une lame.',
+    ],
+    cry: 'DICTÉE !!! Et que ça saute ! Vous allez souffrir, et vos parents aussi !',
+    after: [
       'Vingt-six cœurs de CE2 cessèrent de battre. Le tien, lui, se souvint d\'une loi qu\'aucun règlement n\'a jamais écrite : on ne cède pas.',
     ],
     art: <Annonce />,
@@ -76,6 +78,10 @@ function Annonce() {
       <rect x="40" y="18" width="240" height="96" rx="4" fill="#2f5d4b" stroke="#8a5a2b" strokeWidth="6" />
       <text x="160" y="80" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="46" fill="#f6f1e4" className="chalk">DICTÉE</text>
       <path d="M232 24 l-8 18 h10 l-14 24 l5 -18 h-10 z" fill="#f4d35e" className="bolt" />
+      <g stroke="#d9534f" strokeWidth="3" strokeLinecap="round" className="tension">
+        <path d="M296 62 l10 -8 M296 72 h12 M296 82 l10 8" />
+      </g>
+      <text x="300" y="44" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="20" fill="#d9534f" transform="rotate(8 300 44)">!!!</text>
       {/* la maîtresse, de dos, bras levé vers le tableau */}
       <g stroke="#3f3a55" strokeWidth="3" strokeLinecap="round" fill="none">
         <circle cx="270" cy="96" r="11" fill="#3f3a55" />
@@ -159,6 +165,9 @@ export function Intro() {
       <div className="intro-text" key={i}>
         {panel.text.map((l, k) => <p key={k} style={{ animationDelay: `${0.15 + k * 0.7}s` }}>{say(l)}</p>)}
         {'cry' in panel && panel.cry && <p className="intro-cry" style={{ animationDelay: `${0.3 + panel.text.length * 0.7}s` }}>{say(panel.cry)}</p>}
+        {'after' in panel && panel.after?.map((l, k) => (
+          <p key={`after-${k}`} style={{ animationDelay: `${0.9 + (panel.text.length + k) * 0.7}s` }}>{say(l)}</p>
+        ))}
       </div>
       <div className="dots">{PANELS.map((_, k) => <span key={k} className={k === i ? 'on' : ''} />)}</div>
       <button className="intro-cta" onClick={(e) => { e.stopPropagation(); next(); }}>{last ? 'Monter sur la table' : 'Suite →'}</button>

@@ -66,6 +66,8 @@ export function DuelEnd() {
         ))}
       </div>
       <p className="interlude-cry" style={{ animationDelay: `${cry.toFixed(2)}s` }}>« {say(won ? DUEL.wonCry : DUEL.lostCry)} »</p>
+      {/* il retire son insulte de l'année : c'est la seule chose qu'il rend spontanément */}
+      {won && <p className="interlude-cry takeback" style={{ animationDelay: `${(cry + 0.5).toFixed(2)}s` }}>« {say(DUEL.wonTakeback)} »</p>}
       <p className={`duel-deal ${won ? 'ok' : 'ko'}`} style={{ animationDelay: `${(cry + 0.9).toFixed(2)}s` }}>{say(deal)}</p>
       <p className="interlude-fall" style={{ animationDelay: `${(cry + 1.6).toFixed(2)}s` }}>{say(won ? DUEL.wonFall : DUEL.lostFall)}</p>
       <button className="ready-cta" style={{ animationDelay: `${(cry + 2.2).toFixed(2)}s` }} onClick={next}>{DUEL.leave}</button>

@@ -536,6 +536,9 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .drip { animation: goutte 2.8s linear infinite; }
 @keyframes goutte { 0%, 60% { opacity: 0; transform: none; } 65% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
 
+.ready-taunt { font-family: 'Patrick Hand', cursive; font-size: 1.15rem; color: var(--coral); margin: -4px 0 6px; }
+.interlude-cry.takeback { font-size: 1.15rem; opacity: 0.9; }
+
 /* les souvenirs : même planche, mais délavée, comme une photo qu'on a trop regardée */
 .era { font-family: 'Patrick Hand', cursive; font-size: 1.1rem; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase; margin: 0 0 -4px; opacity: 0; animation: reveal 0.8s ease-out both; }
 .flashback .scene-frame { filter: sepia(0.45) saturate(0.7); }

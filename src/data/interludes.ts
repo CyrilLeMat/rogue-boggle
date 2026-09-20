@@ -1,4 +1,5 @@
 import type { Rng } from '../engine/rng';
+import { INSULTE } from '../theme/lexicon';
 
 // Entre deux dictées, la caméra suit l'élève hors de la classe.
 // Il est grave, il est intense, il a huit ans. La dernière ligne remet tout le monde à sa place.
@@ -105,7 +106,7 @@ export const INTERLUDES: Interlude[] = [
       'Kévin. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords, et un regard {adjectif2}. Il copie sur tout le monde et tout le monde le laisse faire.',
       'Dans la cour, il traverse le goudron sans se presser, s’arrête à {distance} de toi, sort les mains de ses poches et te désigne du menton.',
     ],
-    cry: 'Cette année, c’est toi ma victime.',
+    cry: `Cette année, c’est toi ma victime. T’as ${INSULTE}.`,
     fall: 'Il s’assoit juste derrière toi et lit déjà par-dessus ton épaule.',
   },
   {
@@ -117,7 +118,7 @@ export const INTERLUDES: Interlude[] = [
       'Elle regarde Kévin. Kévin baisse les yeux avec un air {adjectif3}, exactement comme quelqu\'un qu\'on aurait copié.',
     ],
     cry: 'C\'est lui ! C\'est lui qui a copié sur moi !!!',
-    fall: 'Tu as été [puni|punie]. Kévin a eu un bon point pour son courage.',
+    fall: `Tu as été [puni|punie]. Kévin a eu un bon point pour son courage. En sortant, il te glisse « t’as ${INSULTE} » sans bouger les lèvres.`,
   },
   {
     id: 'kevin3',

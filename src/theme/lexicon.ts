@@ -116,6 +116,11 @@ export function say(text: string, id: Identity | null | undefined, extra?: Recor
     });
 }
 
+// L'insulte de Kévin : sa signature verbale. Elle revient à chaque fois qu'il ouvre la bouche,
+// de la rentrée au duel — et c'est la première chose qu'il retire quand il est à terre.
+// Formulée « à être » : le mot d'animal de la fiche arrive avec son article (« un hérisson »).
+export const INSULTE = 'une tête à être {animal} {adjectif}';
+
 export const GAME_TITLE = 'Rogue Boggle Warrior';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
 // Les critiques de la presse spécialisée, affichées sous le pitch.
@@ -588,7 +593,8 @@ export const LESSON_SCENES = [
 export const DUEL = {
   title: 'L\'affrontement',
   sub: 'Pas de note, pas de copie à rendre. Il est sur ta feuille, entre tes lettres.',
-  lesson: 'Chaque mot dont le tracé lui passe dessus lui rentre dedans. Fais-le tomber avant la sonnerie.',
+  lesson: `Chaque mot dont le tracé lui passe dessus lui rentre dedans. Fais-le tomber avant la sonnerie.`,
+  taunt: `Il te regarde en face et articule, assez fort pour le couloir entier : « Aujourd'hui, t'as ${INSULTE}. »`,
   hp: 'Kévin',
   lead: 'Tu poses ton cartable au milieu du couloir. Il ne bouge pas. Toi non plus. Puis tu te dis, une seule fois :',
   cry: 'Tu m\'as pris quelque chose. Je viens le reprendre.',
@@ -597,6 +603,7 @@ export const DUEL = {
     'Il ne ricane plus. Il ne copie plus. Il souffle très fort, et sa voix part dans les aigus.',
   ],
   wonCry: 'Pardon… Pardon, {nom}. J\'aurais pas dû. Je te jure que j\'aurais pas dû.',
+  wonTakeback: `Et t'as pas ${INSULTE}. J'ai jamais pensé ça. Enfin, pas tous les jours.`,
   wonBack: (what: string) => `Il fouille dans son cartable, en sort « ${what} », et te le tend à deux mains, en tremblant.`,
   wonEmpty: 'Il n\'a rien à te rendre. Il te tend une bille, sa meilleure, et referme tes doigts dessus.',
   wonFall: 'Tu ranges tout sans un mot. Il reste une dictée. Une seule.',
@@ -639,11 +646,11 @@ export const EV = {
     ],
     ask: (n: number) => `— Alors, {surnom} ? Ce mot fait ${n} lettres, et je suis à {distance} de toi. Tu le trouves, ou tout le couloir saura que tu n\'es rien sans ta maîtresse.`,
     hint: 'Il soupire et tapote la feuille du doigt, là où le mot commence.',
-    wrong: '— Toi, t\'as vraiment une tête de {animal} {adjectif}. Deux CM1 se sont arrêtés pour regarder.',
+    wrong: `— Toi, t'as vraiment ${INSULTE}. Deux CM1 se sont arrêtés pour regarder.`,
     won: 'Kévin recule d\'un pas, {adjectif2} de surprise. Il ne ricane plus du tout, {nom}.',
     wonSub: '— Coup de chance. Va manger {plat} et profites-en. Je reste à {distance}, et je regarde.',
     lost: 'Kévin plie la feuille en quatre et la met dans sa poche.',
-    lostSub: '— Je la garde, et j\'écris « {surnom} » dessus. Tête de {animal} {adjectif}, va.',
+    lostSub: `— Je la garde, et j'écris « {surnom} » dessus. T'as ${INSULTE}, va.`,
     start: 'Relever le défi',
     giveUp: 'Lui laisser le couloir',
     leave: 'Rentrer en classe',
@@ -660,7 +667,7 @@ export const EV = {
     hint: 'Il tend la main, paume ouverte, et ne la baisse pas.',
     wrong: '',
     // Le choix, et ce qu'il en reste
-    open: '— Ouvre. Tu choisis, hein. Je suis sympa, moi.',
+    open: `— Ouvre. Tu choisis, hein, je suis sympa, moi. T'as ${INSULTE}, mais je suis sympa.`,
     give: 'Lui donner',
     empty: 'Il retourne ton cartable. Il tombe une gomme, deux billes et un mouchoir. Il soupire, [déçu|déçue] pour toi.',
     emptyCta: 'Vider tes poches',

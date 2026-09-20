@@ -5,7 +5,7 @@ import { INTERLUDES, hasInterlude, memoryAfter, pickInterlude } from '../src/dat
 import { SCENES, planScenes } from '../src/data/scenes';
 import { planEvents } from '../src/engine/events';
 import {
-  APPRECIATIONS, DEFAULT_PROFILE, DUPLICATES, EV, L, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL,
+  APPRECIATIONS, DEFAULT_PROFILE, DUEL, DUPLICATES, EV, L, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL,
   SCOLDS, SHOP_INTRO, SIGNATURE, SUSPICIONS, TOO_SHORT, mention,
 } from '../src/theme/lexicon';
 
@@ -128,6 +128,12 @@ for (let run = 0; run < RUNS; run++) {
       tally([...it.lines, it.cry, it.fall], seen);
     }
   }
+
+  // l'affrontement, entre la dixième dictée et la dernière : garanti, avec sa planche de fin
+  const duelWon = rng.next() < 0.7;
+  tally([DUEL.taunt, DUEL.lesson, ...(duelWon
+    ? [...DUEL.won, DUEL.wonCry, DUEL.wonTakeback, DUEL.wonFall]
+    : [...DUEL.lost, DUEL.lostCry, DUEL.lostFall])], seen);
 
   // la fin d'année : comptée à part, car elle arrive trop tard pour faire l'effet
   const victory = rng.next() < 0.4;

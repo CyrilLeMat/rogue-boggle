@@ -72,7 +72,10 @@ export function ReadyOverlay() {
         {manche.quest && <span className="chip">{manche.quest.label} · +{money(manche.quest.reward)}</span>}
       </div>
       {boss
-        ? <p className="ready-lesson"><strong>{DUEL.sub}</strong> {say(DUEL.lesson, run.identity)}</p>
+        ? <>
+            <p className="ready-lesson"><strong>{DUEL.sub}</strong> {say(DUEL.lesson, run.identity)}</p>
+            <p className="ready-taunt">{say(DUEL.taunt, run.identity)}</p>
+          </>
         : mut
         ? <p className="ready-lesson"><strong>{L.theme} — {say(mut.name, run.identity)}.</strong> {say(mut.description, run.identity)}</p>
         : <p className="ready-lesson plain">{say(L.pretClassique, run.identity)}</p>}

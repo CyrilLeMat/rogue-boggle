@@ -63,14 +63,21 @@ export function Shop() {
 
   return (
     <div className="panel pick shop">
-      <div className="shop-head">
-        <div className="frame shop-frame"><ShopArt /></div>
-        <div className="shop-intro">
+      {/* tout ce qui sert à décider reste sous les yeux : la bourse, l'arrivage, la sortie */}
+      <div className="shop-bar">
+        <div className="shop-bar-id">
           <h2>{L.boutique}</h2>
-          <p className="muted">{L.boutiqueSub}</p>
-          <div className="wallet"><span className="label">{L.euros}</span><span className="amount">{run.euros}</span></div>
+          <span className="wallet"><span className="label">{L.euros}</span><span className="amount">{run.euros}</span></span>
+        </div>
+        <div className="shop-bar-actions">
+          <button className="reroll" onClick={reroll} disabled={!canReroll}>
+            ↻ {L.changerArticles}
+            <small>{rerollPrice === 0 ? `gratuit · ${rerolls.freeLeft} restant${rerolls.freeLeft > 1 ? 's' : ''}` : money(rerollPrice)}</small>
+          </button>
+          <button className="shop-go" onClick={next}>{L.manche} {run.currentManche + 1} →</button>
         </div>
       </div>
+      <p className="shop-sub muted">{L.boutiqueSub}</p>
 
       {SECTIONS.map((sec) => {
         const items = indexed.filter(({ item }) => sectionOf(item) === sec.key);
@@ -79,7 +86,8 @@ export function Shop() {
           <section key={sec.key} className={`shelf shelf-${sec.key}`}>
             <header className="shelf-head">
               <span className="shelf-icon">{sec.icon}</span>
-              <div><h3>{sec.title}</h3><p>{sec.hint}</p></div>
+              <h3>{sec.title}</h3>
+              <p>{sec.hint}</p>
             </header>
             <div className="shelf-items">
               {items.map(({ item, i }) => {
@@ -103,13 +111,6 @@ export function Shop() {
           </section>
         );
       })}
-
-      <div className="row">
-        <button className="secondary" onClick={reroll} disabled={!canReroll}>
-          ↻ {L.changerArticles} · {rerollPrice === 0 ? `gratuit (${rerolls.freeLeft})` : money(rerollPrice)}
-        </button>
-        <button onClick={next}>{L.manche} {run.currentManche + 1} →</button>
-      </div>
     </div>
   );
 }

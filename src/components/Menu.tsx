@@ -20,12 +20,13 @@ export function Menu() {
       <h1 className="sr-only">{GAME_TITLE} — {GAME_SUBTITLE}</h1>
       <div className="menu-hero">
         <Classroom />
-        {last && (
-        <aside className="last-year">
+        {last && !saved && (
+        <aside className="last-year" title={`Bulletin de ${last.name}, année ${last.seed}`}>
           <span className="pin" />
           <span className="last-label">{HOME.lastYear}</span>
           <strong>{last.moyenne.toFixed(1)}<small>/20</small></strong>
           <span className="last-mention">{last.mention}</span>
+          <span className="last-seed">année {last.seed}</span>
           <button className="linkish" onClick={() => start(last.seed)}>{HOME.replay}</button>
         </aside>
         )}

@@ -206,16 +206,17 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 
 /* le bulletin de l'an dernier, punaisé dans un coin */
 .last-year {
-  position: absolute; bottom: 10px; right: 12px; z-index: 3; width: 128px;
+  position: absolute; bottom: 10px; right: 12px; z-index: 3; width: 136px;
   display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 10px 10px;
   background: #fffdf9; border: 2px solid #e7dfd0; border-radius: 6px; box-shadow: var(--shadow);
   transform: rotate(2.4deg); text-align: center;
 }
 .last-year .pin { position: absolute; top: -7px; width: 12px; height: 12px; border-radius: 50%; background: var(--ko); box-shadow: 0 2px 3px rgba(0,0,0,0.25); }
-.last-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 800; }
+.last-label { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 800; }
 .last-year strong { font-size: 1.6rem; color: var(--ko); font-family: 'Patrick Hand', cursive; line-height: 1; }
 .last-year strong small { font-size: 0.8rem; color: var(--muted); }
 .last-mention { font-size: 0.7rem; color: var(--text); font-weight: 700; line-height: 1.15; }
+.last-seed { font-size: 0.6rem; color: var(--muted); font-weight: 700; letter-spacing: 0.04em; }
 
 .music-hint { font-size: 0.88rem; }
 .badge-advice {

@@ -109,7 +109,7 @@ export const GAME_TITLE = 'Rogue Boggle Warrior';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
 // Les critiques de la presse spécialisée, affichées sous le pitch.
 export const BLURBS = [
-  { text: 'Un jeu à couper le souffle.', source: 'Cyril Le Mat' },
+  { text: 'Un jeu immersif à couper le souffle.', source: 'Cyril Le Mat' },
   { text: 'Le Elden Ring du Boggle.', source: 'Leyu, CE2' },
 ];
 
@@ -175,8 +175,8 @@ export const HOME = {
   ],
   seedLink: 'reprendre une année précise',
   seedLabel: 'Année scolaire',
-  lastYear: 'L\'an dernier',
-  replay: 'Rejouer',
+  lastYear: 'Ton bulletin précédent',
+  replay: 'refaire cette année',
 } as const;
 
 export const TAGLINE = 'La maîtresse a préparé onze dictées. Sauras-tu accomplir ton destin et passer en CM1 ?';

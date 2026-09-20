@@ -713,9 +713,11 @@ Un test vérifie qu'aucun marqueur ne subsiste dans les monologues, planches et 
 `npx vite-node scripts/token-coverage.ts` simule 4000 années et compte les occurrences de chaque jeton,
 en séparant ce qui se lit au calme (planches, pensées, appréciations, bulletin) de ce qui défile
 pendant la dictée, qui ne compte pas : sous la pression du chrono, ces répliques ne sont pas lues.
-Objectif : au moins 2 occurrences lues et 95 % de parties avec au moins une apparition.
-Mesure au 20/09/2026 : de 2,0 à 3,3 (hors {rigolo}, 15, car il nomme la maîtresse),
-couverture 92 à 100 %.
+Le bulletin de fin d'année est compté à part lui aussi : il arrive trop tard pour faire l'effet.
+Objectif : au moins 2 occurrences lues **pendant** l'année et 95 % de parties avec au moins une.
+Mesure au 20/09/2026 : de 2,0 à 3,1 pendant l'année (hors {rigolo}, 16, car il nomme la maîtresse),
+couverture 92 à 100 %. Les couloirs portent une bonne part de la charge : chaque événement
+cite la fiche dans sa question et dans son dénouement.
 Le cri de l'araignée ne sert jamais pour une araignée : il surgit sur l'encre renversée,
 à l'arrivée du directeur, dans le couloir après un échec et sur l'écran de redoublement.
 Le mot rigolo nomme la famille de l'école : Madame Machin et Monsieur Machin, son frère.

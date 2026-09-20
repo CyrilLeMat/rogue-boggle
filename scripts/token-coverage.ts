@@ -28,6 +28,7 @@ const DUPLICATE_PER_DICTEE = 0.8;
 // (sous la pression du chrono, ces répliques-là ne sont pas lues : elles ne comptent pas).
 const counts: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
 const rushed: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
+const endCount: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
 const atLeastOnce: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
 
 // {maitresse} et {directeur} sont bâtis sur le mot rigolo : ils comptent pour lui.
@@ -51,7 +52,7 @@ for (let run = 0; run < RUNS; run++) {
   const fast: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
 
   tally(PROLOGUE, seen);
-  tally(SHOP_INTRO.lines as unknown as string[], seen);
+  tally([...(SHOP_INTRO.lines as unknown as string[]), L.boutiqueSub, SHOP_INTRO.ask], seen);
 
   // les planches de classe : cinq sur l'année, les deux réactions sont lues
   const scenePlan = planScenes(rng, 5);
@@ -62,8 +63,15 @@ for (let run = 0; run < RUNS; run++) {
 
   // les couloirs : le Sage et Kévin sont garantis, plus deux autres
   for (const id of planEvents(rng)) {
-    const text = EV[id] as { intro?: readonly string[]; ask?: (n: number) => string; wrong?: string };
-    tally([...(text.intro ?? []), text.ask?.(6), text.wrong], seen);
+    const text = EV[id] as {
+      intro?: readonly string[]; ask?: (n: number) => string; wrong?: string;
+      wonSub?: string; lostSub?: string;
+    };
+    const win = rng.next() < 0.5;
+    const tail = win
+      ? [(text as { won?: string }).won, text.wonSub]
+      : [(text as { lost?: string }).lost, text.lostSub];
+    tally([...(text.intro ?? []), text.ask?.(6), ...tail], seen);
   }
 
   const saidThoughts: string[] = [];
@@ -104,11 +112,12 @@ for (let run = 0; run < RUNS; run++) {
     }
   }
 
-  // la fin d'année
+  // la fin d'année : comptée à part, car elle arrive trop tard pour faire l'effet
   const victory = rng.next() < 0.4;
-  tally([victory ? L.victoireSub : L.gameoverSub(7), mention(victory ? 14 : 8, victory).note], seen);
-  // le bulletin récapitule toute la fiche, et il se lit toujours
-  for (const key of ['nom', 'surnom', 'cour', 'metier', 'adjectif', 'plat', 'horreur', 'action', 'chanson', 'admire']) seen[key] += 1;
+  const ending: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
+  tally([victory ? L.victoireSub : L.gameoverSub(7), mention(victory ? 14 : 8, victory).note], ending);
+  for (const key of ['nom', 'surnom', 'cour', 'metier', 'adjectif', 'plat', 'horreur', 'action', 'chanson', 'admire']) ending[key] += 1;
+  for (const t of TOKENS) endCount[t] += ending[t];
 
   for (const t of TOKENS) {
     counts[t] += seen[t];
@@ -119,8 +128,9 @@ for (let run = 0; run < RUNS; run++) {
 
 const rows = TOKENS.map((t) => ({
   jeton: t,
-  lues: +(counts[t] / RUNS).toFixed(2),
+  'pendant l\'année': +(counts[t] / RUNS).toFixed(2),
   'au moins 1 fois': `${Math.round((atLeastOnce[t] / RUNS) * 100)} %`,
+  bulletin: +(endCount[t] / RUNS).toFixed(2),
   'en dictée': +(rushed[t] / RUNS).toFixed(2),
-})).sort((a, b) => a.lues - b.lues);
+})).sort((a, b) => a['pendant l\'année'] - b['pendant l\'année']);
 console.table(rows);

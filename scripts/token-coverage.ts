@@ -1,7 +1,7 @@
 // Combien de fois, en moyenne, chaque mot de la fiche ressort-il dans une partie ?
 // Simule le programme d'une année : prologue, dictées, planches, couloirs, boutique, bulletin.
 import { createRng } from '../src/engine/rng';
-import { INTERLUDES, hasInterlude, pickInterlude } from '../src/data/interludes';
+import { INTERLUDES, hasInterlude, memoryAfter, pickInterlude } from '../src/data/interludes';
 import { SCENES, planScenes } from '../src/data/scenes';
 import { planEvents } from '../src/engine/events';
 import {
@@ -119,6 +119,13 @@ for (let run = 0; run < RUNS; run++) {
         const it = INTERLUDES.find((i) => i.id === id)!;
         tally([...it.lines, it.cry, it.fall], seen);
       }
+    }
+    // le souvenir, aux trois dates où le passé remonte : garanti, jamais tiré
+    const memory = memoryAfter(manche, seenInterludes);
+    if (memory) {
+      seenInterludes.push(memory);
+      const it = INTERLUDES.find((i) => i.id === memory)!;
+      tally([...it.lines, it.cry, it.fall], seen);
     }
   }
 

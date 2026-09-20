@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
+import { INTERLUDES, hasInterlude, memoryAfter, pickInterlude } from '../../data/interludes';
 import { ARCHETYPES } from '../../data/archetypes';
 import { buildDictionary } from '../dictionary';
 import { makeCell } from '../gridGenerator';
@@ -40,6 +40,26 @@ describe('planches de transition', () => {
     expect(pickInterlude(1, true, [], rng)).toBe('kevin1');
     expect(pickInterlude(5, true, ['kevin1'], rng)).toBe('kevin2');
     expect(pickInterlude(9, false, ['kevin1', 'kevin2'], rng)).toBe('kevin3');
+  });
+
+  it('font remonter le passé dans l\'ordre, jamais au hasard', () => {
+    expect(memoryAfter(4, [])).toBe('ete');
+    expect(memoryAfter(8, ['ete'])).toBe('mamie');
+    expect(memoryAfter(10, ['ete', 'mamie'])).toBe('pluie');
+    expect(memoryAfter(4, ['ete'])).toBeNull();   // jamais deux fois
+    expect(memoryAfter(3, [])).toBeNull();        // les souvenirs n'ont que leurs trois dates
+    expect(memoryAfter(6, [])).toBeNull();
+  });
+
+  it('gardent les souvenirs hors du tirage des transitions', () => {
+    const rng = createRng('souvenirs');
+    const memories = INTERLUDES.filter((i) => i.era).map((i) => i.id);
+    for (let i = 0; i < 40; i++) {
+      for (const success of [true, false]) {
+        const id = pickInterlude(3, success, [], rng);
+        expect(memories).not.toContain(id);
+      }
+    }
   });
 
   it('ne repassent jamais deux fois au même endroit', () => {

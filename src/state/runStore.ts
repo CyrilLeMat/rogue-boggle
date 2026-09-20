@@ -4,7 +4,7 @@ import { DEFAULT_IDENTITY, DEFAULT_PROFILE, MONOLOGUE, mention, noteSur20, pickA
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
-import { hasInterlude, pickInterlude } from '../data/interludes';
+import { hasInterlude, memoryAfter, pickInterlude } from '../data/interludes';
 import { planScenes, randomLessonId, sceneChoice, sceneRelic } from '../data/scenes';
 import { BOSS_BOUNTY, DUEL_HP, DUEL_SECONDS, ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
@@ -978,6 +978,16 @@ function buildEvent(id: EventId, run: RunState): GameEvent {
 
 // Après le recap et la planche de transition : un couloir une fois sur deux, puis la coopérative.
 function afterRecap(run: RunState) {
+  // Le passé remonte avant le couloir : on sort de la salle, et ça remonte tout seul.
+  const memory = memoryAfter(run.currentManche, run.seenInterludes);
+  if (memory) {
+    useRunStore.setState({
+      phase: 'interlude',
+      currentInterlude: memory,
+      run: { ...run, seenInterludes: [...run.seenInterludes, memory] },
+    });
+    return;
+  }
   if (isEventManche(run.currentManche) && run.eventPlan.length) {
     const [id, ...rest] = run.eventPlan;
     useRunStore.setState({ phase: 'event', event: buildEvent(id, run), run: { ...run, eventPlan: rest } });

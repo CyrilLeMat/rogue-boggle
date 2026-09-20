@@ -8,6 +8,7 @@ export interface Interlude {
   lines: string[];  // le narrateur, qui en sait trop et en fait trop
   cry?: string;     // ce que l'élève déclare, à voix haute ou pas
   fall: string;     // la retombée : la réalité, plate, immédiate
+  era?: string;     // souvenirs seulement : à quelle distance on creuse
 }
 
 export const INTERLUDES: Interlude[] = [
@@ -61,35 +62,40 @@ export const INTERLUDES: Interlude[] = [
     cry: 'Cent fois. Mille s’il le faut. J’écrirai jusqu’à ce que {corps} me lâche.',
     fall: '{Admire} dort à l’étage. Tu n’as rien dit à personne. Le mot est {FAUTE}.',
   },
+  // Les trois souvenirs ne se tirent pas au sort : ils remontent, dans cet ordre,
+  // à des moments fixes de l'année, et chacun creuse plus loin que le précédent.
   {
-    id: 'pluie',
+    id: 'ete',
     mood: 'any',
+    era: 'L’été dernier',
     lines: [
-      'Trois ans plus tôt. Le jardin. La pluie.',
-      'Tu récites les mots en -euil, debout, tremp[é|ée], dans un jardin {adjectif}, pendant que ta mère te regarde derrière la vitre sans bouger.',
+      'Tout le monde était dehors, tout le monde criait, et l’eau de la piscine gonflable était déjà verte.',
+      'Toi, tu as tout arrêté, {cour} compris, pendant deux mois entiers, pour réviser les mots en -euil, assis[|e] à une table de cuisine au silence {adjectif}.',
     ],
-    cry: 'Encore. Depuis le début.',
-    fall: 'Elle t’a appel[é|ée] quatre fois pour le goûter. Tu n’as rien entendu.',
+    cry: 'Le plaisir attendra. Le CM1, lui, n\'attend pas.',
+    fall: 'Personne ne t\'avait rien demandé. {Admire} croyait que tu dessinais.',
   },
   {
     id: 'mamie',
     mood: 'any',
+    era: 'Deux ans plus tôt',
     lines: [
       'La cuisine de ta grand-mère. Les carottes. Le couteau qui ne s’arrête jamais.',
       'Elle ne lève pas les yeux. Le couteau fait un bruit {adjectif3}. Elle dit un mot, tu l’épelles, elle dit le suivant. Depuis deux heures.',
     ],
     cry: 'On ne triche pas avec les mots, petit. Les mots, eux, ne trichent pas avec toi.',
-    fall: 'Elle a eu son certificat d’études en 1954. Elle en parle encore.',
+    fall: 'Elle a eu son certificat d’études en 1954. Elle en parle encore. Tu sais très bien d’où te vient cette manie.',
   },
   {
-    id: 'ete',
+    id: 'pluie',
     mood: 'any',
+    era: 'Trois ans plus tôt',
     lines: [
-      'L\'été dernier. Tout le monde était dehors, tout le monde criait.',
-      'Toi, tu as tout arrêté, {cour} compris, pendant deux mois entiers, pour réviser les mots en -euil, assis[|e] à une table de cuisine au silence {adjectif}.',
+      'Le jardin. La pluie, la vraie, celle qui traverse le pull en deux minutes.',
+      'Tu récites les mots en -euil, debout, tremp[é|ée], pendant que {admire} te regarde derrière la vitre, sans bouger et sans rien dire.',
     ],
-    cry: 'Le plaisir attendra. Le CM1, lui, n\'attend pas.',
-    fall: 'Personne ne t\'avait rien demandé.',
+    cry: 'Encore. Depuis le début.',
+    fall: 'Tu avais cinq ans. Tu ne savais pas encore écrire. Tu récitais quand même.',
   },
   {
     id: 'kevin1',
@@ -131,6 +137,15 @@ export const INTERLUDE_BY_ID = new Map(INTERLUDES.map((i) => [i.id, i]));
 // Il ouvre le bal dès la première dictée : on présente l'adversaire avant de le combattre.
 const KEVIN_ARC: Record<number, string> = { 1: 'kevin1', 5: 'kevin2', 9: 'kevin3' };
 
+// Le passé remonte aux dictées paires, là où il n'y avait rien, et il creuse : l'été dernier,
+// puis deux ans, puis trois — le dernier juste avant la dernière boutique et l'affrontement.
+const MEMORY_ARC: Record<number, string> = { 4: 'ete', 8: 'mamie', 10: 'pluie' };
+
+export function memoryAfter(manche: number, seen: readonly string[]): string | null {
+  const id = MEMORY_ARC[manche];
+  return id && !seen.includes(id) ? id : null;
+}
+
 // Une planche après les dictées impaires, quand il n'y a ni couloir ni scène de classe.
 export function hasInterlude(manche: number): boolean {
   return manche % 2 === 1;
@@ -140,7 +155,8 @@ export function pickInterlude(manche: number, success: boolean, seen: string[], 
   const kevin = KEVIN_ARC[manche];
   if (kevin && !seen.includes(kevin)) return kevin;
   const mood = success ? 'win' : 'loss';
-  const pool = INTERLUDES.filter((i) => !seen.includes(i.id) && !i.id.startsWith('kevin') && (i.mood === mood || i.mood === 'any'));
+  // ni Kévin ni les souvenirs : les deux arcs ont leurs rendez-vous à eux
+  const pool = INTERLUDES.filter((i) => !seen.includes(i.id) && !i.id.startsWith('kevin') && !i.era && (i.mood === mood || i.mood === 'any'));
   if (!pool.length) return null;
   return rng.pick(pool).id;
 }

@@ -14,7 +14,8 @@ export function Interlude() {
   const cry = 0.1 + scene.lines.length * 0.65;
   const fall = cry + (scene.cry ? 0.9 : 0);
   return (
-    <div className="panel pick interlude">
+    <div className={`panel pick interlude ${scene.era ? 'flashback' : ''}`}>
+      {scene.era && <p className="era">{scene.era}</p>}
       <div className="frame scene-frame"><InterludeArt id={scene.id} /></div>
       <div className="intro-text">
         {scene.lines.map((l, i) => (

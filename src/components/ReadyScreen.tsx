@@ -3,7 +3,7 @@ import { sfx } from '../audio/sfx';
 import { mutator } from '../data/registry';
 import { TOTAL_MANCHES } from '../engine/rules';
 import { hasEverTraced, useRunStore } from '../state/runStore';
-import { L, money, say } from '../theme/lexicon';
+import { L, PSYCHE_LEAD, money, say } from '../theme/lexicon';
 import { TraceDemo } from './TraceDemo';
 
 // Le briefing d'avant-dictée porte tout ce qu'on ne veut plus lire pendant :
@@ -16,10 +16,12 @@ export function ReadyOverlay() {
   const draw = useRunStore((s) => s.drawThought);
   const leave = useRunStore((s) => s.backToMenu);
   const [thought, setThought] = useState<string | null>(null);
+  const [lead, setLead] = useState('');
   const [novice] = useState(() => !hasEverTraced());
 
   // Le temps de souffler avant la dictée : une pensée qu'on lit à son rythme, puis le chrono.
   const brace = () => {
+    setLead(PSYCHE_LEAD[Math.floor(Math.random() * PSYCHE_LEAD.length)]);
     setThought(draw());
     sfx.heartbeat();
   };
@@ -27,6 +29,7 @@ export function ReadyOverlay() {
   const mut = manche.mutatorId ? mutator(manche.mutatorId) : null;
   if (thought) return (
     <div className="psyche" onClick={begin}>
+      <p className="psyche-lead">{lead}</p>
       <blockquote>
         <p><span className="q">«</span> {thought} <span className="q">»</span></p>
         <cite>{run.identity.name}, élève de CE2</cite>

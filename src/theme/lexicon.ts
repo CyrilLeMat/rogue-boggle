@@ -114,6 +114,16 @@ export const BLURBS = [
 ];
 
 // Juste avant la dictée, l'élève se parle à lui-même. Il a huit ans et il pense à l'honneur des siens.
+// Le geste avant la pensée : on pose la scène, puis l'élève déclame.
+export const PSYCHE_LEAD = [
+  'Tu ouvres ta trousse, tu prends ton crayon en main, et tu murmures quelques mots avant de te lancer.',
+  'Tu poses les deux pieds bien à plat sous la table, tu fermes les yeux une seconde, et tu te dis :',
+  'Tu relis ton prénom en haut de la feuille, tu respires un grand coup, et tu penses très fort :',
+  'Tu essuies tes mains sur ton pantalon, tu attrapes ton stylo, et tu te répètes une dernière fois :',
+  'La classe se tait d\'un coup. Tu regardes la feuille blanche, et dans ta tête, ça dit :',
+  'Tu décapuchonnes ton stylo. Le bruit résonne dans toute la salle. Personne ne t\'entend penser :',
+];
+
 export const MONOLOGUE = [
   'Si je perds, ce sera une honte pour toute ma famille. Pendant au moins mille ans !',
   'Chaque seconde de ma vie m\'a men[é|ée] vers cet instant. En voici la conclusion.',

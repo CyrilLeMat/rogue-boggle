@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
 import { SCENES } from '../../data/scenes';
-import { EV, L, SHOP_INTRO, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
+import { DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
 
 describe('planches de transition', () => {
@@ -41,11 +41,14 @@ describe('planches de transition', () => {
 describe('accords et prénom', () => {
   it('choisit la forme masculine ou féminine', () => {
     const line = 'Je suis prêt[|e], {nom}.';
-    const profile = { salut: 'Wesh', phrase: 'Tranquille', cour: 'le foot', heros: 'Pikachu', plat: 'les frites', horreur: 'les endives' };
+    const profile = { ...DEFAULT_PROFILE, salut: 'Wesh', phrase: 'Tranquille', cour: 'le foot', heros: 'Pikachu', plat: 'les frites', horreur: 'les endives' };
     expect(say(line, { name: 'Léo', gender: 'm', profile })).toBe('Je suis prêt, Léo.');
     expect(say(line, { name: 'Léa', gender: 'f', profile })).toBe('Je suis prête, Léa.');
     expect(say('Au menu : {horreur}. Puis {plat}, et {cour} avec {heros}.', { name: 'Léa', gender: 'f', profile }))
       .toBe('Au menu : les endives. Puis les frites, et le foot avec Pikachu.');
+    expect(say('{Admire} arrive.', { name: 'Léa', gender: 'f', profile: { ...profile, admire: 'ma tante' } }))
+      .toBe('Ma tante arrive.');
+    expect(say('Rien à remplacer {ici}.', { name: 'Léa', gender: 'f', profile })).toBe('Rien à remplacer {ici}.');
   });
 
   it('ne laisse aucun marqueur dans les textes du jeu', () => {
@@ -54,12 +57,13 @@ describe('accords et prénom', () => {
       ...INTERLUDES.flatMap((i) => [...i.lines, i.cry ?? '', i.fall]),
       ...SCENES.flatMap((s) => [...s.lines, ...s.choices.map((c) => c.detail)]),
       ...SCOLDS, ...PRAISES_BIG, ...PRAISES_SMALL, ...SHOP_INTRO.lines,
+      mention(19, true).note, mention(5, false).note,
       ...EV.sage.intro, ...EV.kevin.intro, ...EV.billes.intro, EV.kevin.ask(6),
       L.victoireSub, L.gameoverSub(4),
     ];
     for (const gender of ['m', 'f'] as const) {
       for (const t of texts) {
-        const out = say(t, { name: 'Alix', gender, profile: { salut: 'Wesh', phrase: 'Tranquille', cour: 'le foot', heros: 'Pikachu', plat: 'les frites', horreur: 'les endives' } });
+        const out = say(t, { name: 'Alix', gender, profile: { ...DEFAULT_PROFILE, salut: 'Wesh', phrase: 'Tranquille', cour: 'le foot', heros: 'Pikachu', plat: 'les frites', horreur: 'les endives' } });
         expect(out).not.toMatch(/[[\]{}|]/);
       }
     }

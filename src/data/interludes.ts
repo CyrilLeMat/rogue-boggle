@@ -18,7 +18,7 @@ export const INTERLUDES: Interlude[] = [
       'Tu ne marches pas. Tu cours.',
       'La porte des toilettes claque derrière toi. Tu trembles de tout ton corps, le poing serré si fort que tes ongles entrent dans ta paume.',
     ],
-    cry: 'Père. Tu seras fi[er|ère] de moi. L’honneur de la famille est entre mes mains.',
+    cry: '{Admire}. Je ne te ferai pas honte. L’honneur de la famille est entre mes mains.',
     fall: 'Ton père est comptable. Il ignore qu’il y avait dictée aujourd’hui.',
   },
   {

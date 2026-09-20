@@ -230,6 +230,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Gâteau au chocolat industriel sur le bureau. Léa a huit ans.',
       'Léa aura huit ans toute l\'année, comme tout le monde, mais aujourd\'hui c\'est officiel.',
+      'Quelqu\'un a mis {chanson} sur le poste de la classe. Personne n\'ose danser.',
       'La dictée est maintenue. Bien sûr que la dictée est maintenue.',
     ],
     choices: [

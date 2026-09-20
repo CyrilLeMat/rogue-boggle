@@ -12,6 +12,10 @@ export interface Profile {
   heros: string;    // ton personnage préféré
   plat: string;
   horreur: string;
+  metier: string;   // ce que tu veux faire plus tard
+  chanson: string;  // ta chanson préférée
+  admire: string;   // la personne que tu admires le plus, telle qu'on la nomme (« ma grand-mère », « Papa »)
+  surnom: string;   // le surnom qu'on te donne
 }
 export interface Identity { name: string; gender: Gender; profile: Profile }
 
@@ -22,6 +26,10 @@ export const DEFAULT_PROFILE: Profile = {
   heros: 'Pikachu',
   plat: 'les pâtes au beurre',
   horreur: 'les endives',
+  metier: 'pompier',
+  chanson: 'Alouette',
+  admire: 'ma grand-mère',
+  surnom: 'Toto',
 };
 export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profile: DEFAULT_PROFILE };
 
@@ -33,22 +41,29 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   heros: ['Pikachu', 'Goku', 'Titeuf', 'Sangoku', 'Astérix', 'Bob l\'éponge'],
   plat: ['les pâtes au beurre', 'les frites', 'le gratin de mamie', 'les nuggets', 'la purée'],
   horreur: ['les endives', 'le poisson pané', 'la soupe froide', 'les épinards', 'le chou-fleur'],
+  metier: ['pompier', 'vétérinaire', 'astronaute', 'youtubeur', 'boulanger', 'président'],
+  chanson: ['Alouette', 'Frère Jacques', 'l\'hymne de l\'école', 'la chanson du générique', 'Petit Papa Noël'],
+  admire: ['ma grand-mère', 'mon grand frère', 'Papa', 'ma grande sœur', 'mon oncle', 'Maman'],
+  surnom: ['Toto', 'Bibou', 'le Chef', 'Crevette', 'Bouboule', 'Mimi'],
 };
 
-// {nom} pour le prénom, {salut} {phrase} {cour} {heros} {plat} {horreur} pour la fiche,
-// [masculin|féminin] pour les accords.
+// {nom} pour le prénom, {salut} {phrase} {cour} {heros} {plat} {horreur} {metier} {chanson}
+// {admire} {surnom} pour la fiche, [masculin|féminin] pour les accords.
+// Un jeton écrit avec une majuscule ({Admire}) sort avec une majuscule : pratique en début de phrase.
+const capitalize = (t: string) => (t ? t[0].toUpperCase() + t.slice(1) : t);
+
 export function say(text: string, id: Identity | null | undefined): string {
   const who = id ?? DEFAULT_IDENTITY;
   const profile = { ...DEFAULT_PROFILE, ...who.profile };
+  const values: Record<string, string> = { ...profile, nom: who.name };
   return text
     .replace(/\[([^\]|]*)\|([^\]]*)\]/g, (_m, masc, fem) => (who.gender === 'f' ? fem : masc))
-    .replace(/\{nom\}/g, who.name)
-    .replace(/\{salut\}/g, profile.salut)
-    .replace(/\{phrase\}/g, profile.phrase)
-    .replace(/\{cour\}/g, profile.cour)
-    .replace(/\{heros\}/g, profile.heros)
-    .replace(/\{plat\}/g, profile.plat)
-    .replace(/\{horreur\}/g, profile.horreur);
+    .replace(/\{([A-Za-z]+)\}/g, (whole, key: string) => {
+      const lower = key.toLowerCase();
+      const value = values[lower];
+      if (value === undefined) return whole;
+      return key[0] === key[0].toUpperCase() ? capitalize(value) : value;
+    });
 }
 
 export const GAME_TITLE = 'Rogue Boggle Warrior';
@@ -73,6 +88,9 @@ export const MONOLOGUE = [
   'Ma mère m\'a dit de faire de mon mieux. Je suis prêt[|e] à donner ma vie pour cette épreuve du destin.',
   'Kévin me regarde. Il veut me voir échouer. Qu\'il regarde. Il verra ce que je vaux.',
   'Comme dit {heros} : le destin frappe à ma porte, et je dois relever le défi.',
+  'Si je tombe ici, je ne serai jamais {metier}. Je serai un souvenir.',
+  '{Admire}. Regarde-moi bien. Je ne te ferai pas honte.',
+  'Dans ma tête, {chanson} tourne en boucle depuis ce matin. Ça m\'aide. Je crois.',
   'Quand j\'aurai fini, je me lèverai et je dirai simplement : {phrase}.',
   'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est ven[u|ue]s là pour briller !',
 ];
@@ -97,7 +115,7 @@ export const L = {
   ratee: 'Copie refusée.',
   vieEnMoins: 'Un bon point arraché du tableau.',
   victoire: 'Passage en CM1.',
-  victoireSub: 'Le système n\'a rien vu venir. Tu sors dans la cour, tu cries « {salut} » à personne en particulier, et ce soir il y a {plat}.',
+  victoireSub: 'Le CM1. Puis le CM2. Puis {metier}. Tu sors dans la cour, tu cries « {salut} » à personne en particulier, et ce soir il y a {plat}.',
   gameover: 'Redoublement.',
   gameoverSub: (n: number) => `La dictée ${n} a eu raison de toi. Tes parents sont convoqués, et ce soir, au dîner, il y a {horreur}.`,
   continuer: 'Copie suivante',
@@ -152,6 +170,9 @@ export const SCOLDS = [
   'Même le radiateur a honte.',
   'Tu écris comme on jette des cailloux, {nom}.',
   'Ton cerveau pense à {cour}. Pas aux consonnes doubles.',
+  'Tu fredonnais {chanson} pendant la dictée. Je l\'ai entendu. Tout le monde l\'a entendu.',
+  'Ici, personne ne t\'appelle {surnom}. Ici, tu as un nom et une copie.',
+  'Et tu voulais être {metier}. Avec ça.',
   'On n\'entre pas dans ma classe en criant « {salut} ».',
   'Le dictionnaire vient de claquer tout seul.',
   'Sors. Non, reste. Non, sors.',
@@ -186,6 +207,7 @@ export const PRAISES_BIG = [
   'Même l\'inspecteur aurait applaudi.',
   'Je n\'ai rien à redire. C\'est rare. Savoure.',
   'Ce soir, tu mérites ça : {plat}.',
+  'Voilà une copie de futur {metier}.',
 ];
 
 export const PRAISES_SMALL = [
@@ -247,6 +269,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Tu penseras à {cour} toute ta vie, et ta vie sera courte.',
     'J\'ai prévenu la maîtresse de CE2 de l\'an prochain. Elle a demandé une mutation.',
     'Ce soir, pas de {plat}. Ce soir, on révise.',
+    '{metier}, disais-tu ? Nous en reparlerons à la fin de l\'année.',
   ],
   presque: [
     'Si près. J\'ai failli arrondir, puis j\'ai repensé à ton attitude de mardi.',
@@ -261,6 +284,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Tu trouveras ta voie. Elle sera manuelle, mais tu la trouveras.',
     'J\'ai montré ta copie en salle des maîtres. Personne n\'a ri. Le silence était pire.',
     'Tu as passé l\'année à {cour}. Voilà le résultat, {nom}.',
+    'Je préviendrai {admire}. Quelqu\'un doit savoir.',
     'Kévin a fait mieux. Kévin n\'a pas de stylo.',
     'Je range cette copie dans le tiroir du bas. Celui qui ferme à clé.',
   ],
@@ -270,6 +294,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'J\'aimerais que tu sois [mon fils|ma fille], {nom}. Ne le répète pas à ta mère.',
     'Je n\'avais pas vu ça depuis 1987. Cet élève-là a mal fini, mais quel talent.',
     'Ce soir je cuisine {plat} pour toute ma famille, et je leur raconterai ta copie.',
+    'Tu seras {metier}, et tu seras le meilleur. Je l\'écris ici, noir sur rouge.',
     'J\'ai pleuré dans la réserve. Ne dis rien à personne, {nom}.',
     'Même {heros} peut aller se rhabiller.',
   ],
@@ -333,8 +358,8 @@ export function noteSur20(score: number, threshold: number): number {
 }
 
 export function mention(moyenne: number, victory: boolean): { label: string; note: string } {
-  if (!victory) return { label: 'Redoublement', note: 'L\'année est à refaire. Ce n\'est pas une punition, c\'est une seconde chance.' };
-  if (moyenne >= 18) return { label: 'Félicitations du conseil', note: 'Une année d\'anthologie. Le tableau d\'honneur ne suffira pas.' };
+  if (!victory) return { label: 'Redoublement', note: 'L\'année est à refaire. Le conseil a noté ton projet de devenir {metier}. Le conseil n\'a rien dit de plus.' };
+  if (moyenne >= 18) return { label: 'Félicitations du conseil', note: 'Une année d\'anthologie. Le tableau d\'honneur ne suffira pas, et {metier} te va très bien.' };
   if (moyenne >= 15) return { label: 'Mention très bien', note: 'Travail remarquable et constant. Passage en CM1 sans discussion.' };
   if (moyenne >= 12) return { label: 'Mention bien', note: 'Bonne année scolaire. Quelques étourderies sans gravité.' };
   if (moyenne >= 10) return { label: 'Mention assez bien', note: 'Des hauts, des bas, mais le compte y est.' };
@@ -437,7 +462,7 @@ export const EV = {
       'Depuis la rentrée il copie sur toi, et depuis la rentrée ça ne lui suffit plus.',
       'Il plaque la feuille contre le mur et pose un mot dessus, bien fort, pour que le couloir entende.',
     ],
-    ask: (n: number) => `— Ce mot fait ${n} lettres. Tu le trouves, ou tout le monde saura que tu n\'es rien sans ta maîtresse.`,
+    ask: (n: number) => `— Alors, {surnom} ? Ce mot fait ${n} lettres. Tu le trouves, ou tout le couloir saura que tu n\'es rien sans ta maîtresse.`,
     hint: 'Il soupire et tapote la feuille du doigt, là où le mot commence.',
     wrong: 'Il ricane. Deux CM1 se sont arrêtés pour regarder.',
     won: 'Kévin recule d\'un pas. Il ne ricane plus du tout.',

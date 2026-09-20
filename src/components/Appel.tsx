@@ -6,14 +6,24 @@ import { DEFAULT_PROFILE, PROFILE_IDEAS, type Gender, type Profile } from '../th
 const MAX_NAME = 14;
 const MAX_ANSWER = 24;
 
-const QUESTIONS: { key: keyof Profile; label: string }[] = [
-  { key: 'salut', label: 'Comment je dis bonjour à mes amis' },
-  { key: 'phrase', label: 'Ma phrase fétiche' },
-  { key: 'cour', label: 'Ce que je fais le plus dans la cour' },
-  { key: 'heros', label: 'Mon personnage préféré' },
-  { key: 'plat', label: 'Mon plat préféré' },
-  { key: 'horreur', label: 'Le plat que je déteste' },
+const QUESTIONS: { key: keyof Profile; label: string }[][] = [
+  [
+    { key: 'salut', label: 'Comment je dis bonjour à mes amis' },
+    { key: 'phrase', label: 'Ma phrase fétiche' },
+    { key: 'surnom', label: 'Le surnom qu\'on me donne' },
+    { key: 'cour', label: 'Ce que je fais le plus dans la cour' },
+    { key: 'heros', label: 'Mon personnage préféré' },
+  ],
+  [
+    { key: 'metier', label: 'Ce que je veux faire plus tard' },
+    { key: 'admire', label: 'La personne que j\'admire le plus' },
+    { key: 'chanson', label: 'Ma chanson préférée' },
+    { key: 'plat', label: 'Mon plat préféré' },
+    { key: 'horreur', label: 'Le plat que je déteste' },
+  ],
 ];
+
+const ALL_QUESTIONS = QUESTIONS.flat();
 
 const pick = (list: string[]) => list[Math.floor(Math.random() * list.length)];
 
@@ -30,24 +40,29 @@ export function Appel() {
   const ready = clean.length > 0 && gender !== null;
 
   const surprise = () => setProfile(
-    Object.fromEntries(QUESTIONS.map((q) => [q.key, pick(PROFILE_IDEAS[q.key])])) as unknown as Profile,
+    Object.fromEntries(ALL_QUESTIONS.map((q) => [q.key, pick(PROFILE_IDEAS[q.key])])) as unknown as Profile,
   );
 
   const submit = () => {
     if (!ready) return;
     const filled = Object.fromEntries(
-      QUESTIONS.map((q) => [q.key, profile[q.key].trim() || DEFAULT_PROFILE[q.key]]),
+      ALL_QUESTIONS.map((q) => [q.key, profile[q.key].trim() || DEFAULT_PROFILE[q.key]]),
     ) as unknown as Profile;
     setIdentity({ name: clean, gender: gender!, profile: filled }, levelId);
   };
 
-  if (page === 1) {
+  if (page > 0) {
+    const last = page === QUESTIONS.length;
     return (
       <div className="panel appel">
         <h2>Fiche de renseignements</h2>
-        <p className="appel-sub">Elle garde ça dans un classeur. Elle s'en sert plus tard.</p>
-        <form className="appel-form" onSubmit={(e) => { e.preventDefault(); submit(); }}>
-          {QUESTIONS.map((q) => (
+        <p className="appel-sub">
+          {page === 1
+            ? 'Elle garde ça dans un classeur. Elle s\'en sert plus tard.'
+            : 'Deuxième feuillet. Elle a tout son temps, et toi aussi.'}
+        </p>
+        <form className="appel-form" onSubmit={(e) => { e.preventDefault(); if (last) submit(); else setPage(page + 1); }}>
+          {QUESTIONS[page - 1].map((q) => (
             <label className="appel-field" key={q.key}>
               <span>{q.label}</span>
               <input
@@ -57,10 +72,13 @@ export function Appel() {
               />
             </label>
           ))}
-          <button className="ready-cta" type="submit">Présent{gender === 'f' ? 'e' : ''} !</button>
+          <button className="ready-cta" type="submit">
+            {last ? `Présent${gender === 'f' ? 'e' : ''} !` : 'Feuillet suivant →'}
+          </button>
           <div className="appel-foot">
-            <button type="button" className="secondary small" onClick={() => setPage(0)}>← Retour</button>
+            <button type="button" className="secondary small" onClick={() => setPage(page - 1)}>← Retour</button>
             <button type="button" className="secondary small" onClick={surprise}>Surprends-moi</button>
+            {!last && <button type="button" className="secondary small" onClick={submit}>Passer le reste</button>}
           </div>
         </form>
       </div>

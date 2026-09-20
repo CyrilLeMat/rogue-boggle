@@ -679,12 +679,13 @@ Quatre niveaux déclarés au même écran (`src/data/levels.ts`), multiplicateur
 8 ans ×1,5 et ×0,55 · 12 ans ×1,25 et ×0,75 · adulte ×1 et ×1 · professionnel ×0,85 et ×1,45.
 Mémorisé sous `rb-level`.
 
-Deuxième page, la fiche de renseignements, six questions (24 caractères, bouton « Surprends-moi »,
-valeurs par défaut si on passe) : bonjour aux amis, phrase fétiche, activité dans la cour,
-personnage préféré, plat préféré, plat détesté.
+Fiche de renseignements en deux feuillets de cinq questions (24 caractères, « Surprends-moi »
+remplit tout, « Passer le reste » saute la fin, valeurs par défaut sinon) :
+bonjour aux amis, phrase fétiche, surnom, activité dans la cour, personnage préféré,
+métier plus tard, personne admirée, chanson préférée, plat préféré, plat détesté.
 
 Dans les textes : `{nom}` insère le prénom, `{hobby}` `{plat}` `{horreur}` la fiche,
-`[masculin|féminin]` choisit la forme.
+`[masculin|féminin]` choisit la forme. Un jeton capitalisé (`{Admire}`) sort avec une majuscule.
 Points d'usage : le prologue (case I), la planche « La cantine », la photo de classe,
 la transition « L'été dernier », deux monologues, sept répliques de la maîtresse,
 la coopérative (gommettes à l'effigie du héros), le Sage du CM1, les écrans de fin

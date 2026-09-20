@@ -624,13 +624,17 @@ button.scene-card:hover { background: #fffaf2; border-color: var(--accent); tran
 
 .board { display: grid; grid-template-columns: minmax(0, 480px) 1fr; gap: 28px; align-items: start; }
 .grid-wrap { display: flex; flex-direction: column; gap: 10px; }
-.current-word { display: flex; align-items: baseline; justify-content: center; gap: 12px; flex-wrap: wrap; min-height: 2.6rem; text-align: center; font-size: 1.8rem; font-weight: 800; letter-spacing: 0.12em; color: var(--muted); transition: color 0.1s; }
+/* La barre du mot en cours est au-dessus de la grille : si elle grandit, la grille descend
+   sous le doigt en plein tracé. Hauteur figée, jetons coupés à droite plutôt qu'à la ligne. */
+.current-word { display: flex; align-items: baseline; justify-content: center; gap: 12px; flex-wrap: nowrap; overflow: hidden; height: 2.6rem; text-align: center; font-size: 1.8rem; font-weight: 800; letter-spacing: 0.12em; color: var(--muted); transition: color 0.1s; }
+.cw-word { flex: none; white-space: nowrap; }
+.cw-score { min-width: 0; overflow: hidden; }
 .current-word.ok { color: var(--accent-deep); }
 .current-word.dup { color: var(--muted); }
 .current-word.unknown .cw-word { color: var(--text); }
 .cw-score { display: inline-flex; align-items: baseline; gap: 8px; letter-spacing: 0; }
 .cw-total { color: var(--gold); font-size: 1.5rem; animation: pop 0.2s ease-out; }
-.cw-parts { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.cw-parts { display: inline-flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; }
 .cw-part { font-size: 0.72rem; font-weight: 700; background: #fff; border-radius: 999px; padding: 2px 8px; color: var(--text); box-shadow: var(--shadow-soft); white-space: nowrap; }
 .cw-part small { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.6rem; }
 .cw-part.escargot, .cw-part.série, .cw-part.spécial { background: #fdeae6; color: var(--coral); }

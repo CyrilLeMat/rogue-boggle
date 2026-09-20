@@ -32,7 +32,7 @@ export interface Profile {
 export interface Identity { name: string; gender: Gender; profile: Profile }
 
 export const DEFAULT_PROFILE: Profile = {
-  salut: 'Salut la compagnie',
+  salut: 'Yo les cocos',
   phrase: 'Six seeeveeeeeeen',
   cour: 'des parties de foot',
   heros: 'Pikachu',

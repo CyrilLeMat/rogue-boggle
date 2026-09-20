@@ -97,9 +97,9 @@ export const L = {
   ratee: 'Copie refusée.',
   vieEnMoins: 'Un bon point arraché du tableau.',
   victoire: 'Passage en CM1.',
-  victoireSub: 'Le système n\'a rien vu venir. Les félicitations du conseil de classe, tu les as arrachées.',
+  victoireSub: 'Le système n\'a rien vu venir. Tu sors dans la cour, tu cries « {salut} » à personne en particulier, et ce soir il y a {plat}.',
   gameover: 'Redoublement.',
-  gameoverSub: (n: number) => `La dictée ${n} a eu raison de toi. Le système a gagné, cette fois. Tes parents sont convoqués.`,
+  gameoverSub: (n: number) => `La dictée ${n} a eu raison de toi. Tes parents sont convoqués, et ce soir, au dîner, il y a {horreur}.`,
   continuer: 'Copie suivante',
   lancer: 'Silence. On commence.',
   terminer: 'Rendre la copie',
@@ -168,6 +168,7 @@ export const PRAISES_HUGE = [
   'Je photocopie ça pour la salle des profs.',
   'Vingt-six ans de carrière, {nom}. Vingt-six.',
   'J\'ai failli en avaler ma craie.',
+  'Même {heros} n\'aurait pas trouvé ça.',
   'Ta copie part au rectorat dès ce soir.',
   'J\'appelle ta mère. En bien, pour une fois.',
   'Le radiateur lui-même s\'est arrêté de claquer.',
@@ -211,6 +212,7 @@ export const SUSPICIONS = [
   'Je vais vérifier, tiens.',
   'Personne dans cette classe ne connaît ce mot. Personne.',
   'C\'est ton grand frère qui t\'a soufflé ?',
+  'C\'est {heros} qui t\'a soufflé, peut-être ?',
   'Répète-le pour voir. Sans regarder.',
   'Je note ce mot. Et j\'écris {nom} juste à côté.',
 ];
@@ -219,6 +221,7 @@ export const DUPLICATES = [
   'Encore lui ? Vous vous êtes attachés ?',
   'Deux fois le même mot. Deux fois.',
   'Ce mot et toi, c\'est une longue histoire.',
+  'Tu radotes comme {heros} dans son dessin animé.',
   'Tu tournes en rond, {nom}.',
 ];
 
@@ -329,6 +332,7 @@ export const SHOP_INTRO = {
     'Au fond du couloir, une porte que tu n\'avais jamais remarquée. Elle est entrouverte.',
     'Derrière : un comptoir, des étagères jusqu\'au plafond, et Mathieu.',
     'Mathieu tient la caisse depuis le CP. Personne ne sait pourquoi. Personne ne demande.',
+    'Sur l\'étagère du haut, des gommettes {heros}. Il jure qu\'elles portent chance. Il jure beaucoup.',
     '« Tu as des billes ? »',
   ],
   ask: 'Ici tout s\'achète : les fournitures, les gommettes, et même les punitions, si tu es de ce genre-là.',
@@ -388,7 +392,8 @@ export const EV = {
     intro: [
       'Dans le couloir, adossé au radiateur, un CM1.',
       'Deux redoublements, dit la légende. Il a connu trois maîtresses. Il a vu des choses.',
-      'Il te barre la route et te tend une feuille griffonnée :',
+      'Il te barre la route, te toise, et lâche : « De mon temps, on ne disait pas {salut}. »',
+      'Puis il te tend une feuille griffonnée :',
     ],
     ask: (n: number) => `— Un mot de ${n} lettres dort dans cette feuille, petit. Les lettres sont là, en clair. Retrouve le chemin.`,
     hint: 'Le sage soupire et pointe la case de départ.',

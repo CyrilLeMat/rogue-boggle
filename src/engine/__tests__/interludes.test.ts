@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
 import { SCENES } from '../../data/scenes';
-import { DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, say } from '../../theme/lexicon';
+import { EV, L, SHOP_INTRO, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
 
 describe('planches de transition', () => {
@@ -53,7 +53,8 @@ describe('accords et prénom', () => {
       ...MONOLOGUE, ...SUSPICIONS, ...PRAISES_HUGE, ...TOO_SHORT, ...DUPLICATES,
       ...INTERLUDES.flatMap((i) => [...i.lines, i.cry ?? '', i.fall]),
       ...SCENES.flatMap((s) => [...s.lines, ...s.choices.map((c) => c.detail)]),
-      ...SCOLDS, ...PRAISES_BIG, ...PRAISES_SMALL,
+      ...SCOLDS, ...PRAISES_BIG, ...PRAISES_SMALL, ...SHOP_INTRO.lines, ...EV.sage.intro,
+      L.victoireSub, L.gameoverSub(4),
     ];
     for (const gender of ['m', 'f'] as const) {
       for (const t of texts) {

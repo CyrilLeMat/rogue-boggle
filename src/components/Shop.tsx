@@ -4,6 +4,7 @@ import { MAX_SAME_CHARM } from '../engine/rules';
 import { shopRerollPrice, type ShopItem } from '../engine/shop';
 import { useRunStore } from '../state/runStore';
 import { L, SHOP_INTRO, money } from '../theme/lexicon';
+import { useSay } from '../theme/useSay';
 import { RelicCard } from './RelicCard';
 import { ShopArt } from './ShopArt';
 
@@ -37,6 +38,7 @@ export function Shop() {
   const reroll = useRunStore((s) => s.rerollShop);
   const rerolls = useRunStore((s) => s.shopRerolls);
   const enter = useRunStore((s) => s.enterShop);
+  const say = useSay();
   if (!run) return null;
 
   // La toute première visite de l'année a droit à sa scène.
@@ -46,7 +48,7 @@ export function Shop() {
         <div className="frame event-hero"><ShopArt /></div>
         <h2>{SHOP_INTRO.title}</h2>
         <div className="intro-text">
-          {SHOP_INTRO.lines.map((l) => <p key={l}>{l}</p>)}
+          {SHOP_INTRO.lines.map((l) => <p key={l}>{say(l)}</p>)}
         </div>
         <p className="sage-ask">{SHOP_INTRO.ask}</p>
         <button className="ready-cta" onClick={enter}>{SHOP_INTRO.cta}</button>

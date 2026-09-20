@@ -6,6 +6,7 @@ import { wordFromPath } from '../engine/sage';
 import type { Pos } from '../engine/types';
 import { dictionary } from '../data/dictionary';
 import { relics } from '../data/registry';
+import { useSay } from '../theme/useSay';
 import { useRunStore } from '../state/runStore';
 import { EV, SCOLDS, money, scold } from '../theme/lexicon';
 import { EventArt } from './EventArt';
@@ -162,6 +163,7 @@ export function EventScreen() {
 
   if (!ev) return null;
   const text = EV[ev.id];
+  const say = useSay();
   const canGiveUp = playing && ev.kind !== 'choice' && !(ev.kind === 'harvest' && ev.stake === null);
 
   // La scène d'abord, en grand. Le défi ne commence qu'au clic.
@@ -171,7 +173,7 @@ export function EventScreen() {
         <div className="frame event-hero"><EventArt id={ev.id} /></div>
         <h2>{text.title}</h2>
         <div className="intro-text">
-          {text.intro.map((l) => <p key={l}>{l}</p>)}
+          {text.intro.map((l) => <p key={l}>{say(l)}</p>)}
         </div>
         <p className="sage-ask">
           {ev.kind === 'hunt' ? (ev.id === 'sage' ? EV.sage.ask(ev.word.length) : EV.inspecteur.ask()) : ''}

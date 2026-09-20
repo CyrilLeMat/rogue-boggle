@@ -146,7 +146,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Le photographe s\'appelle Gérard. Gérard exerce depuis trente et un ans.',
       'Gérard a photographié ta mère dans cette salle, au même endroit, avec le même appareil.',
-      'Gérard ne sourit plus depuis 1998. On vous range par taille.',
+      'Gérard ne sourit plus depuis 1998. Il demande un ouistiti. Tu réponds : « {phrase} ». Gérard ne relève pas.',
     ],
     choices: [
       {

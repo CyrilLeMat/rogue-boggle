@@ -685,8 +685,9 @@ personnage préféré, plat préféré, plat détesté.
 
 Dans les textes : `{nom}` insère le prénom, `{hobby}` `{plat}` `{horreur}` la fiche,
 `[masculin|féminin]` choisit la forme.
-Points d'usage : la planche « La cantine », la transition « L'été dernier »,
-deux monologues (le personnage cité, la phrase fétiche), quatre répliques de la maîtresse
+Points d'usage : le prologue (case I), la planche « La cantine », la photo de classe,
+la transition « L'été dernier », deux monologues, sept répliques de la maîtresse,
+la coopérative (gommettes à l'effigie du héros), le Sage du CM1, les écrans de fin
 et la ligne « Passe-temps déclaré » du bulletin.
 
 **Attention** : `npx tsc --noEmit` ne vérifie rien (tsconfig racine avec `files: []` et des références).

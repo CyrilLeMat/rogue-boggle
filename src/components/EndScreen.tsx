@@ -20,7 +20,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
   return (
     <div className="panel end">
       <h1 className="title">{victory ? L.victoire : L.gameover}</h1>
-      <p className="muted">{victory ? L.victoireSub : L.gameoverSub(run.currentManche)}</p>
+      <p className="muted">{say(victory ? L.victoireSub : L.gameoverSub(run.currentManche), run.identity)}</p>
       <p className="big">{run.score} pts</p>
       {run.endBonus > 0 && <p className="ok">dont +{run.endBonus} pts de bonus de fin d'année</p>}
       <p className="muted">

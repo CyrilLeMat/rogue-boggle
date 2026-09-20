@@ -31,9 +31,12 @@ const PANELS = [
     title: 'III. La révolte',
     text: [
       'Tes genoux tremblent ? Qu\'ils tremblent. La sueur coule ? Qu\'elle coule.',
-      'Tu montes sur la table. Et à la face du Bescherelle, de la maîtresse et de toute la République, tu hurles :',
+      'Tu montes sur la table. Tu frappes ton poing contre ton cœur, une fois, très fort. Puis tu lances ce poing vers le plafond et tu hurles :',
     ],
-    cry: '« Dictée, tu ne m\'auras pas ! »',
+    cry: 'JE SUIS PRÊT[|E] À AFFRONTER MON DESTIN !!!',
+    after: [
+      'Personne ne bouge. Le radiateur claque une fois. La maîtresse décapuchonne son stylo rouge, très lentement.',
+    ],
     art: <Revolte />,
   },
 ];

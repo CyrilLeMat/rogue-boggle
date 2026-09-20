@@ -655,7 +655,8 @@ Structure : le narrateur pose la scène, l'élève déclame, une dernière ligne
 - après une réussite : toilettes, miroir, préau
 - après un échec : couloir, chambre
 - flashbacks : pluie, mamie
-- arc de Kévin, toujours dans l'ordre, aux dictées 3, 7 et 9 : kevin1, kevin2, kevin3
+- arc de Kévin, toujours dans l'ordre, aux dictées 1, 5 et 9 : présentation de l'adversaire
+  dès la première dictée, puis le stylo offert, puis l'entraînement nocturne
 
 ### Dialogue intérieur
 `MONOLOGUE` dans le lexique : après « Silence. On commence. », 2,8 s de pensée déclamée
@@ -678,13 +679,15 @@ Quatre niveaux déclarés au même écran (`src/data/levels.ts`), multiplicateur
 8 ans ×1,5 et ×0,55 · 12 ans ×1,25 et ×0,75 · adulte ×1 et ×1 · professionnel ×0,85 et ×1,45.
 Mémorisé sous `rb-level`.
 
-Deuxième page, la fiche de renseignements : activité préférée, plat préféré, plat détesté
-(22 caractères, bouton « Surprends-moi », valeurs par défaut si on passe).
+Deuxième page, la fiche de renseignements, six questions (24 caractères, bouton « Surprends-moi »,
+valeurs par défaut si on passe) : bonjour aux amis, phrase fétiche, activité dans la cour,
+personnage préféré, plat préféré, plat détesté.
 
 Dans les textes : `{nom}` insère le prénom, `{hobby}` `{plat}` `{horreur}` la fiche,
 `[masculin|féminin]` choisit la forme.
 Points d'usage : la planche « La cantine », la transition « L'été dernier »,
-trois répliques de la maîtresse et la ligne « Passe-temps déclaré » du bulletin.
+deux monologues (le personnage cité, la phrase fétiche), quatre répliques de la maîtresse
+et la ligne « Passe-temps déclaré » du bulletin.
 
 **Attention** : `npx tsc --noEmit` ne vérifie rien (tsconfig racine avec `files: []` et des références).
 Toujours valider avec `npm run build`.

@@ -86,7 +86,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'L\'été dernier. Tout le monde était dehors, tout le monde criait.',
-      'Toi, tu as renoncé à {hobby} pendant deux mois entiers pour réviser les mots en -euil, assis[|e] à la table de la cuisine.',
+      'Toi, tu as renoncé à {cour} pendant deux mois entiers pour réviser les mots en -euil, assis[|e] à la table de la cuisine.',
     ],
     cry: 'Le plaisir attendra. Le CM1, lui, n\'attend pas.',
     fall: 'Personne ne t\'avait rien demandé.',
@@ -95,10 +95,12 @@ export const INTERLUDES: Interlude[] = [
     id: 'kevin1',
     mood: 'any',
     lines: [
-      'Dans la cour, il est là. Immobile. Les mains dans les poches.',
-      'Kévin ne dit rien. Kévin te regarde. Un papier de goûter traverse lentement l’espace entre vous deux.',
+      'Tu ne le connaissais pas ce matin. Ce soir, tu ne verras plus que lui.',
+      'Kévin. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords. Il copie sur tout le monde et tout le monde le laisse faire.',
+      'Dans la cour, il ne bouge pas. Les mains dans les poches, il te regarde. Un papier de goûter traverse lentement l’espace entre vous deux.',
     ],
-    fall: 'Il n’a rien dit. C’était pire.',
+    cry: 'On va bien s’entendre, toi et moi.',
+    fall: 'Il s’assoit deux rangs derrière toi. Il a choisi sa place. Il t’a choisi[|e].',
   },
   {
     id: 'kevin2',
@@ -125,7 +127,8 @@ export const INTERLUDES: Interlude[] = [
 export const INTERLUDE_BY_ID = new Map(INTERLUDES.map((i) => [i.id, i]));
 
 // L'arc de Kévin se déroule toujours dans l'ordre, aux mêmes dictées : c'est une histoire, pas un tirage.
-const KEVIN_ARC: Record<number, string> = { 3: 'kevin1', 7: 'kevin2', 9: 'kevin3' };
+// Il ouvre le bal dès la première dictée : on présente l'adversaire avant de le combattre.
+const KEVIN_ARC: Record<number, string> = { 1: 'kevin1', 5: 'kevin2', 9: 'kevin3' };
 
 // Une planche après les dictées impaires, quand il n'y a ni couloir ni scène de classe.
 export function hasInterlude(manche: number): boolean {

@@ -4,10 +4,13 @@ import { useRunStore } from '../state/runStore';
 import { DEFAULT_PROFILE, PROFILE_IDEAS, type Gender, type Profile } from '../theme/lexicon';
 
 const MAX_NAME = 14;
-const MAX_ANSWER = 22;
+const MAX_ANSWER = 24;
 
 const QUESTIONS: { key: keyof Profile; label: string }[] = [
-  { key: 'hobby', label: 'Ce que je préfère faire' },
+  { key: 'salut', label: 'Comment je dis bonjour à mes amis' },
+  { key: 'phrase', label: 'Ma phrase fétiche' },
+  { key: 'cour', label: 'Ce que je fais le plus dans la cour' },
+  { key: 'heros', label: 'Mon personnage préféré' },
   { key: 'plat', label: 'Mon plat préféré' },
   { key: 'horreur', label: 'Le plat que je déteste' },
 ];
@@ -26,11 +29,9 @@ export function Appel() {
   const clean = name.trim();
   const ready = clean.length > 0 && gender !== null;
 
-  const surprise = () => setProfile({
-    hobby: pick(PROFILE_IDEAS.hobby),
-    plat: pick(PROFILE_IDEAS.plat),
-    horreur: pick(PROFILE_IDEAS.horreur),
-  });
+  const surprise = () => setProfile(
+    Object.fromEntries(QUESTIONS.map((q) => [q.key, pick(PROFILE_IDEAS[q.key])])) as unknown as Profile,
+  );
 
   const submit = () => {
     if (!ready) return;

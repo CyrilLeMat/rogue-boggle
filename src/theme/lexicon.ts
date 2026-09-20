@@ -5,27 +5,48 @@
 // L'élève a un prénom et un genre : tous les textes s'accordent.
 // Dans les chaînes, {nom} est remplacé par le prénom et [masculin|féminin] par la bonne forme.
 export type Gender = 'm' | 'f';
-export interface Profile { hobby: string; plat: string; horreur: string }
+export interface Profile {
+  salut: string;    // comment tu dis bonjour
+  phrase: string;   // ta phrase fétiche
+  cour: string;     // ce que tu fais le plus dans la cour
+  heros: string;    // ton personnage préféré
+  plat: string;
+  horreur: string;
+}
 export interface Identity { name: string; gender: Gender; profile: Profile }
 
-export const DEFAULT_PROFILE: Profile = { hobby: 'le trampoline', plat: 'les pâtes au beurre', horreur: 'les endives' };
+export const DEFAULT_PROFILE: Profile = {
+  salut: 'Salut la compagnie',
+  phrase: 'C\'est pas faux',
+  cour: 'des parties de foot',
+  heros: 'Pikachu',
+  plat: 'les pâtes au beurre',
+  horreur: 'les endives',
+};
 export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profile: DEFAULT_PROFILE };
 
 // Réponses de secours pour le bouton « Surprends-moi » de la fiche de renseignements.
 export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
-  hobby: ['le trampoline', 'les Pokémon', 'le vélo', 'creuser des trous', 'la piscine', 'les élastiques'],
+  salut: ['Salut la compagnie', 'Wesh', 'Bonjour à tous', 'Yo', 'Coucou les amis'],
+  phrase: ['C\'est pas faux', 'Tranquille', 'Même pas mal', 'Ah ouais quand même', 'Ça passe crème'],
+  cour: ['des parties de foot', 'des courses poursuites', 'rien du tout', 'des échanges de cartes', 'le mur des billes'],
+  heros: ['Pikachu', 'Goku', 'Titeuf', 'Sangoku', 'Astérix', 'Bob l\'éponge'],
   plat: ['les pâtes au beurre', 'les frites', 'le gratin de mamie', 'les nuggets', 'la purée'],
   horreur: ['les endives', 'le poisson pané', 'la soupe froide', 'les épinards', 'le chou-fleur'],
 };
 
-// {nom} pour le prénom, {hobby} {plat} {horreur} pour la fiche, [masculin|féminin] pour les accords.
+// {nom} pour le prénom, {salut} {phrase} {cour} {heros} {plat} {horreur} pour la fiche,
+// [masculin|féminin] pour les accords.
 export function say(text: string, id: Identity | null | undefined): string {
   const who = id ?? DEFAULT_IDENTITY;
   const profile = { ...DEFAULT_PROFILE, ...who.profile };
   return text
     .replace(/\[([^\]|]*)\|([^\]]*)\]/g, (_m, masc, fem) => (who.gender === 'f' ? fem : masc))
     .replace(/\{nom\}/g, who.name)
-    .replace(/\{hobby\}/g, profile.hobby)
+    .replace(/\{salut\}/g, profile.salut)
+    .replace(/\{phrase\}/g, profile.phrase)
+    .replace(/\{cour\}/g, profile.cour)
+    .replace(/\{heros\}/g, profile.heros)
     .replace(/\{plat\}/g, profile.plat)
     .replace(/\{horreur\}/g, profile.horreur);
 }
@@ -51,6 +72,8 @@ export const MONOLOGUE = [
   'Le CM1 ne pardonne pas. Le CM1 n\'attend personne. Le CM1 est la lumière.',
   'Ma mère m\'a dit de faire de mon mieux. Je suis prêt[|e] à donner ma vie pour cette épreuve du destin.',
   'Kévin me regarde. Il veut me voir échouer. Qu\'il regarde. Il verra ce que je vaux.',
+  'Comme dit {heros} : le destin frappe à ma porte, et je dois relever le défi.',
+  'Quand j\'aurai fini, je me lèverai et je dirai simplement : {phrase}.',
   'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est ven[u|ue]s là pour briller !',
 ];
 
@@ -128,7 +151,8 @@ export const SCOLDS = [
   'J\'ai fait sept ans d\'études pour lire ça.',
   'Même le radiateur a honte.',
   'Tu écris comme on jette des cailloux, {nom}.',
-  'Ton cerveau pense à {hobby}. Pas aux consonnes doubles.',
+  'Ton cerveau pense à {cour}. Pas aux consonnes doubles.',
+  'On n\'entre pas dans ma classe en criant « {salut} ».',
   'Le dictionnaire vient de claquer tout seul.',
   'Sors. Non, reste. Non, sors.',
   'J\'ai rêvé de cette faute cette nuit. Je le jure.',

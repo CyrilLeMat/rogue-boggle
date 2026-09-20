@@ -109,7 +109,7 @@ export const GAME_TITLE = 'Rogue Boggle Warrior';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
 // Les critiques de la presse spécialisée, affichées sous le pitch.
 export const BLURBS = [
-  { text: 'Un jeu à couper le souffle.', source: 'Le Bulletin de l\'École Communale' },
+  { text: 'Un jeu à couper le souffle.', source: 'Cyril Le Mat' },
   { text: 'Le Elden Ring du Boggle.', source: 'Lili, CE2' },
 ];
 

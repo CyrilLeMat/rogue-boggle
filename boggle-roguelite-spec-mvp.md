@@ -663,7 +663,8 @@ sur fond sombre, deux battements de cœur, puis le chrono part. Un clic passe la
 
 ### Humeurs musicales (`src/audio/music.ts`)
 `setMusicMood()` : classe (défaut), combat (une leçon est active ou 20 s restantes),
-choc (couloir), triste (planche de transition). Tempo, gamme, batterie et timbre changent avec l'humeur.
+choc (couloir), triste (planche de transition).
+Le prologue suit ses trois cases : récré en classe, annonce en choc, révolte en combat. Tempo, gamme, batterie et timbre changent avec l'humeur.
 
 ### Galeries de contrôle
 `?planches` pour les scènes de choix, `?transitions` pour les planches de transition.

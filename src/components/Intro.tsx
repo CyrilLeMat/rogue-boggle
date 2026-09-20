@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { setMusicMood } from '../audio/music';
 import { useRunStore } from '../state/runStore';
 
 // Prologue en trois cases de bande dessinée. Le ton du jeu tient là-dedans :
@@ -127,9 +128,13 @@ function Revolte() {
   );
 }
 
+// La récré est encore insouciante, l'annonce serre la gorge, la révolte part au combat.
+const PANEL_MOODS = ['classe', 'choc', 'combat'] as const;
+
 export function Intro() {
   const accept = useRunStore((s) => s.acceptChallenge);
   const [i, setI] = useState(0);
+  useEffect(() => { setMusicMood(PANEL_MOODS[i]); }, [i]);
   const panel = PANELS[i];
   const last = i === PANELS.length - 1;
   const next = () => (last ? accept() : setI(i + 1));

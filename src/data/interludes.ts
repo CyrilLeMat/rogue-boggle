@@ -118,10 +118,10 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Le soir. La classe est éteinte. Tu passes devant la fenêtre et tu t’arrêtes net.',
-      'Kévin est là, seul devant le tableau, à recopier les mots dans un silence {adjectif}, {objet} posé à ses pieds. Depuis combien de temps, personne ne le saura.',
+      'Kévin est là, seul devant le tableau, à recopier les mots dans un silence {adjectif}. À ses pieds, il y a {objet}. Tu sais très bien à qui c’était, {nom}.',
     ],
-    cry: 'Tu as changé. Moi aussi.',
-    fall: 'Le lendemain, il s’assoit à côté de toi. Il ne te regarde pas.',
+    cry: 'Ce que tu m’as pris, je viendrai le reprendre.',
+    fall: 'Le lendemain, il s’assoit en face de toi. Pas à côté. En face.',
   },
 ];
 

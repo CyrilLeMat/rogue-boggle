@@ -37,10 +37,15 @@ function setup(relicIds: string[], g = grid(['P O R', 'X T E', 'V I S'])) {
 }
 
 describe('relics data', () => {
-  it('has 35 unique ids and valid requires', () => {
-    expect(RELICS.length).toBe(35);
-    expect(new Set(RELICS.map((r) => r.id)).size).toBe(35);
+  it('has 36 unique ids and valid requires', () => {
+    expect(RELICS.length).toBe(36);
+    expect(new Set(RELICS.map((r) => r.id)).size).toBe(36);
     for (const r of RELICS) if (r.requires) expect(RELIC_BY_ID.has(r.requires)).toBe(true);
+  });
+
+  // La rancune ne s'achète pas : elle se gagne aux toilettes, et la coopérative ne doit jamais la voir.
+  it('garde La rancune hors de la boutique', () => {
+    expect(RELIC_BY_ID.get('rancune')?.requires).toBe('rancune');
   });
 });
 

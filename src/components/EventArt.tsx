@@ -140,6 +140,58 @@ const ARTS: Record<EventId, () => ReactElement> = {
       <text x="152" y="44" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="17" fill="#9a93a8" className="sage-murmur">« … »</text>
     </>
   ),
+  // Les toilettes du fond : carrelage, porte calée du pied, et un cartable par terre
+  racket: () => (
+    <>
+      <rect width="200" height="150" fill="#dfe6e4" />
+      <g stroke="#cbd6d3" strokeWidth="2">
+        <path d="M0 22 h200 M0 52 h200 M0 82 h200 M0 112 h200 M34 0 v118 M78 0 v118 M122 0 v118 M166 0 v118" />
+      </g>
+      <rect y="118" width="200" height="32" fill="#b9b0a4" />
+      <path d="M0 118 h200" stroke="#3f3a55" strokeWidth="2" />
+      {/* lavabo à gauche, robinet qui goutte */}
+      <g>
+        <path d="M6 76 h40 v10 q0 10 -20 10 q-20 0 -20 -10z" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d="M26 76 v-10 h10" fill="none" stroke="#9aa6ad" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="26" cy="90" r="2" fill="#bfe0ef" className="drip" />
+      </g>
+      {/* la porte, calée par le pied de Kévin */}
+      <g>
+        <rect x="150" y="14" width="46" height="104" rx="2" fill="#c3cfd4" stroke="#3f3a55" strokeWidth="3" />
+        <circle cx="158" cy="70" r="3.5" fill="#8a5a2b" stroke="#3f3a55" strokeWidth="2" />
+      </g>
+      {/* Kévin, en travers du passage, main tendue */}
+      <g>
+        <circle cx="140" cy="46" r="16" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M124 40 q8 -14 16 -8 q10 -8 16 6" fill="#6f4a33" stroke="#3f3a55" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d="M131 44 l7 3 M149 44 l-7 3" {...ink} strokeWidth="2" />
+        <path d="M132 56 q8 5 16 -1" {...ink} strokeWidth="2" />
+        <path d="M140 62 v30 M140 70 l-30 6 M140 70 l12 12 M140 92 l-9 26 M140 92 l10 26" {...ink} />
+        {/* la paume ouverte, tournée vers toi */}
+        <g className="racket-hand">
+          <path d="M110 76 q-8 -2 -10 4 q-2 7 6 8 q8 1 10 -5z" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" strokeLinejoin="round" />
+        </g>
+      </g>
+      {/* toi, dos au carrelage, le cartable serré */}
+      <g>
+        <circle cx="62" cy="58" r="13" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M56 56 l4 -3 M68 53 l4 3" {...ink} strokeWidth="2" />
+        <circle cx="57" cy="59" r="2.4" fill="#fff" stroke="#3f3a55" strokeWidth="1.3" />
+        <circle cx="67" cy="59" r="2.4" fill="#fff" stroke="#3f3a55" strokeWidth="1.3" />
+        <circle cx="57" cy="59" r="1.1" fill="#3f3a55" /><circle cx="67" cy="59" r="1.1" fill="#3f3a55" />
+        <path d="M57 69 q5 3 10 0" {...ink} strokeWidth="1.8" />
+        <path d="M62 71 v22 M62 93 l-7 25 M62 93 l7 25" {...ink} />
+        {/* les deux bras autour du cartable */}
+        <path d="M62 78 l-12 10 M62 78 l12 10" {...ink} />
+        <g className="satchel">
+          <rect x="46" y="86" width="32" height="24" rx="4" fill="#c67f5a" stroke="#3f3a55" strokeWidth="2.5" />
+          <path d="M46 94 h32" stroke="#3f3a55" strokeWidth="2" />
+          <rect x="58" y="92" width="8" height="7" rx="2" fill="#e6a94c" stroke="#3f3a55" strokeWidth="1.8" />
+        </g>
+      </g>
+      <text x="100" y="140" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="15" fill="#6c6475" className="sage-murmur">« juste voir… »</text>
+    </>
+  ),
 };
 
 export function EventArt({ id }: { id: EventId }) {

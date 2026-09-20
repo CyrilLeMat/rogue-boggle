@@ -7,6 +7,27 @@ import { resolvePath } from '../manche';
 import { SCENES } from '../../data/scenes';
 import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
+import { createRacket, planEvents } from '../events';
+
+describe('couloirs de l\'année', () => {
+  it('montent jusqu\'au racket : Kévin défie, puis Kévin prend', () => {
+    for (let i = 0; i < 30; i++) {
+      const plan = planEvents(createRng('an' + i));
+      expect(plan.length).toBe(4);
+      expect(plan[2]).toBe('kevin');
+      expect(plan[3]).toBe('racket');
+      expect(plan.slice(0, 2)).toContain('sage');
+      expect(new Set(plan).size).toBe(4);
+    }
+  });
+
+  it('laisse le racket sans issue : il prend ce qu\'il a décidé avant', () => {
+    const ev = createRacket(['amorce', 'resonance'], 'resonance', 0);
+    expect(ev.outcome).toBe('playing');
+    expect(ev.demanded).toBe('resonance');
+    expect(ev.seconds).toBe(0); // pas de chrono : ce n'est pas un défi
+  });
+});
 
 describe('planches de transition', () => {
   it('ne se jouent qu\'après les dictées impaires', () => {

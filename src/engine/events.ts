@@ -12,19 +12,19 @@ import type { WordSearch } from './wordFinder';
 export const EVENT_AFTER = [2, 4, 6, 8];
 export const EVENT_GRID_SIZE = 5;
 
-export type EventId = 'sage' | 'inspecteur' | 'kevin' | 'reserve' | 'billes' | 'recitation';
+export type EventId = 'sage' | 'inspecteur' | 'kevin' | 'reserve' | 'billes' | 'recitation' | 'racket';
 
 export function isEventManche(manche: number): boolean {
   return EVENT_AFTER.includes(manche);
 }
 
-// Le programme de l'année, tiré à la rentrée : quatre événements pour quatre créneaux,
-// jamais deux fois le même, et le Sage du CM1 est toujours du voyage (à une place variable).
-// Le Sage et Kévin sont toujours du voyage : l'un porte la sagesse, l'autre la rancune.
+// Le programme de l'année, tiré à la rentrée : quatre créneaux, et une année qui monte.
+// Les deux premiers couloirs sont ordinaires (le Sage et un autre, dans un ordre variable).
+// Les deux derniers appartiennent à Kévin : il te défie, puis il ne te défie plus, il prend.
 export function planEvents(rng: Rng): EventId[] {
   const pool: EventId[] = ['inspecteur', 'reserve', 'billes', 'recitation'];
-  const others = rng.shuffle(pool).slice(0, EVENT_AFTER.length - 2);
-  return rng.shuffle<EventId>(['sage', 'kevin', ...others]);
+  const ordinary = rng.shuffle<EventId>(['sage', rng.pick(pool)]);
+  return [...ordinary, 'kevin', 'racket'];
 }
 
 interface Base {
@@ -70,7 +70,19 @@ export interface ChoiceEvent extends Base {
   offers: string[]; // ids de fournitures
 }
 
-export type GameEvent = HuntEvent | HarvestEvent | ChoiceEvent;
+// Le racket des toilettes : le seul événement qu'on ne peut pas gagner.
+// `demanded` est décidé avant que tu ouvres le cartable — quoi que tu tendes, c'est ça qu'il prend.
+export interface RacketEvent extends Base {
+  kind: 'racket';
+  id: 'racket';
+  offers: string[];        // ton cartable au moment où la porte se referme
+  demanded: string | null; // null : rien à prendre, il se paie en billes
+  offered: string | null;  // ce que tu as tendu, toi
+  refused: boolean;        // tu as serré le cartable contre toi
+  toll: number;            // billes emportées (cartable vide, ou taxe de résistance)
+}
+
+export type GameEvent = HuntEvent | HarvestEvent | ChoiceEvent | RacketEvent;
 
 // --- Contraintes du concours de récitation -------------------------------------------------
 export interface RecitationRule {
@@ -80,39 +92,50 @@ export interface RecitationRule {
   params: (search: WordSearch, dict: Dictionary) => string[];
 }
 
+// Une consigne n'est retenue que si le joueur a de quoi la remplir : on ne compte pas
+// les mots trouvables, on compte les mots *connus et courts* — les seuls qu'on écrit en 45 s.
+export const RECITATION_EASY_LENGTH = 5;
+export const RECITATION_MARGIN = 6; // deux fois la cible : il faut le choix, pas juste le compte
+
+function easyWords(search: WordSearch, dict: Dictionary, maxLength = RECITATION_EASY_LENGTH): string[] {
+  return [...search.words].filter((w) => w.length <= maxLength && dict.common.has(w));
+}
+
 const RULES: RecitationRule[] = [
   {
     id: 'starts',
     label: (p) => `Que des mots qui commencent par ${p}`,
     test: (w, p) => w.startsWith(p),
-    params: (search) => {
+    params: (search, dict) => {
       const count = new Map<string, number>();
-      for (const w of search.words) count.set(w[0], (count.get(w[0]) ?? 0) + 1);
-      return [...count.entries()].filter(([, n]) => n >= 6).map(([l]) => l);
+      for (const w of easyWords(search, dict)) count.set(w[0], (count.get(w[0]) ?? 0) + 1);
+      return [...count.entries()].filter(([, n]) => n >= RECITATION_MARGIN).map(([l]) => l);
     },
   },
   {
     id: 'contains',
     label: (p) => `Que des mots contenant un ${p}`,
     test: (w, p) => w.includes(p),
-    params: (search) => {
+    params: (search, dict) => {
       const count = new Map<string, number>();
-      for (const w of search.words) for (const l of new Set(w)) count.set(l, (count.get(l) ?? 0) + 1);
-      return [...count.entries()].filter(([, n]) => n >= 8).map(([l]) => l);
+      for (const w of easyWords(search, dict)) for (const l of new Set(w)) count.set(l, (count.get(l) ?? 0) + 1);
+      return [...count.entries()].filter(([, n]) => n >= RECITATION_MARGIN).map(([l]) => l);
     },
   },
   {
     id: 'long',
     label: (p) => `Que des mots de ${p} lettres ou plus`,
     test: (w, p) => w.length >= Number(p),
-    params: (search) => (['5', '6'] as string[]).filter((n) => [...search.words].filter((w) => w.length >= Number(n)).length >= 6),
+    // ici « facile » ne peut pas vouloir dire court : on demande des mots connus de la bonne taille
+    params: (search, dict) => (['5', '6'] as string[])
+      .filter((n) => [...search.words].filter((w) => w.length >= Number(n) && dict.common.has(w)).length >= RECITATION_MARGIN),
   },
   {
     id: 'cat',
     label: (p) => (p === 'VER' ? 'Que des verbes' : p === 'NOM' ? 'Que des noms' : 'Que des adjectifs'),
     test: (w, p, cats) => cats(w).has(p as WordCategory),
     params: (search, dict) => (['NOM', 'VER', 'ADJ'] as const)
-      .filter((c) => [...search.words].filter((w) => dict.categoriesOf(w).has(c)).length >= 6),
+      .filter((c) => easyWords(search, dict).filter((w) => dict.categoriesOf(w).has(c)).length >= RECITATION_MARGIN),
   },
 ];
 
@@ -127,6 +150,18 @@ export function pickRule(search: WordSearch, dict: Dictionary, rng: Rng): string
 export function ruleLabel(ruleId: string): string {
   const [id, param] = ruleId.split(':');
   return RULE_BY_ID.get(id)?.label(param) ?? '';
+}
+
+// « On pouvait écrire… » : quelques mots courts et connus que la consigne acceptait.
+export function ruleExamples(ruleId: string | null, search: WordSearch, dict: Dictionary, exclude: readonly string[], max = 5): string[] {
+  // « que des mots de 6 lettres » n'a évidemment aucun exemple court : on remonte la limite
+  const [kind, param] = (ruleId ?? '').split(':');
+  const maxLength = kind === 'long' ? Number(param) + 2 : RECITATION_EASY_LENGTH;
+  return easyWords(search, dict, maxLength)
+    .filter((w) => !exclude.includes(w) && ruleAccepts(ruleId, w, dict))
+    // on montre des mots qui font envie : ni « EUS », ni un mot à rallonge
+    .sort((a, b) => Math.abs(a.length - 5) - Math.abs(b.length - 5) || a.localeCompare(b))
+    .slice(0, max);
 }
 
 export function ruleAccepts(ruleId: string | null, word: string, dict: Dictionary): boolean {
@@ -192,6 +227,15 @@ export function createHarvest(id: 'billes' | 'recitation', dict: Dictionary, rng
     target: id === 'billes' ? BILLES_TARGET : RECITATION_TARGET,
     ruleId, stake: null, stakeOptions: id === 'billes' ? stakeOptions(purse) : [],
     started: false, seconds, timeLeft: seconds, outcome: 'playing', reward: 0, extraLife: false,
+  };
+}
+
+export const RACKET_TOLL = 0.5; // [tuning] cartable vide : il se sert dans les poches
+
+export function createRacket(offers: string[], demanded: string | null, toll: number): RacketEvent {
+  return {
+    kind: 'racket', id: 'racket', offers, demanded, offered: null, refused: false, toll,
+    started: false, seconds: 0, timeLeft: 0, outcome: 'playing', reward: 0, extraLife: false,
   };
 }
 

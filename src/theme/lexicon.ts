@@ -600,6 +600,36 @@ export const EV = {
     giveUp: 'Lui laisser le couloir',
     leave: 'Rentrer en classe',
   },
+  // Le racket : il n'y a rien à gagner, et le jeu ne fait pas semblant du contraire.
+  racket: {
+    title: 'Les toilettes du fond',
+    intro: [
+      'Tu pousses la porte des toilettes du fond de la cour. Ça sent le savon rose et le carrelage froid.',
+      'La porte se rouvre derrière toi. Kévin entre, la cale avec son pied, et te sourit comme on sourit à quelqu\'un qui ne dira rien à personne.',
+      '« Tranquille, {surnom}. Je veux juste voir ton cartable. Juste voir. »',
+    ],
+    ask: () => 'Il reste onze minutes de récré. Le couloir est vide. {Admire} est à huit kilomètres d\'ici.',
+    hint: 'Il tend la main, paume ouverte, et ne la baisse pas.',
+    wrong: '',
+    // Le choix, et ce qu'il en reste
+    open: '— Ouvre. Tu choisis, hein. Je suis sympa, moi.',
+    give: 'Lui donner',
+    empty: 'Il retourne ton cartable. Il tombe une gomme, deux billes et un mouchoir. Il soupire, [déçu|déçue] pour toi.',
+    emptyCta: 'Vider tes poches',
+    refuse: 'Serrer le cartable contre toi',
+    swap: 'Il regarde ce que tu lui tends. Il ne le prend même pas.',
+    swapSub: '« Non. Ça. » Sa main est déjà dans ton cartable. Il savait avant toi ce qu\'il y avait dedans.',
+    stood: 'Tu serres les bretelles à deux mains. Tu tiens quatre secondes entières.',
+    stoodSub: 'Quatre secondes, {nom}. Devant Kévin. Personne ne le saura jamais, et pourtant c\'est arrivé.',
+    took: (what: string) => `« ${what} ». Il le range dans SON cartable, comme si ça lui appartenait depuis la rentrée.`,
+    won: '', wonSub: '',
+    lost: 'Tu n\'as rien fait de mal.',
+    lostSub: 'C\'est pourtant toi qui ressors avec {corps} qui tremble et les yeux qui piquent. Il te tient la porte, en plus.',
+    grudge: 'Tu retiens son nom. Tu retiens l\'heure. Il reste trois dictées avant qu\'il s\'assoie en face de toi.',
+    start: 'Poser le cartable par terre',
+    giveUp: '',
+    leave: 'Sortir sans rien dire',
+  },
   inspecteur: {
     title: 'L\'inspecteur d\'académie',
     intro: [

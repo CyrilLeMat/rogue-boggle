@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { sfx } from '../audio/sfx';
 import { posKey } from '../engine/adjacency';
-import { ruleAccepts, ruleLabel, type ChoiceEvent, type HarvestEvent, type HuntEvent } from '../engine/events';
+import { ruleAccepts, ruleExamples, ruleLabel, type ChoiceEvent, type HarvestEvent, type HuntEvent, type RacketEvent } from '../engine/events';
 import { wordFromPath } from '../engine/sage';
 import type { Pos } from '../engine/types';
 import { dictionary } from '../data/dictionary';
-import { relics } from '../data/registry';
+import { relic, relics } from '../data/registry';
 import { useSay } from '../theme/useSay';
 import { useRunStore } from '../state/runStore';
 import { EV, SCOLDS, money, scold } from '../theme/lexicon';
@@ -119,8 +119,16 @@ function Harvest({ ev }: { ev: HarvestEvent }) {
       </div>
       {ev.found.length > 0 && <p className="muted small-hint">{ev.found.join(' · ')}</p>}
       {rejected && playing && <p className="ko small-hint">« {rejected} » ne respecte pas la consigne.</p>}
+      {/* une fois fini, la maîtresse montre ce qu'il y avait à prendre : on repart en sachant quoi chercher */}
+      {!playing && <Examples ev={ev} />}
     </>
   );
+}
+
+function Examples({ ev }: { ev: HarvestEvent }) {
+  const words = ruleExamples(ev.ruleId, ev.search, dictionary, ev.found);
+  if (!words.length) return null;
+  return <p className="examples">On pouvait écrire : {words.join(' · ')}.</p>;
 }
 
 // La réserve : une fourniture gratuite.
@@ -135,6 +143,63 @@ function Choice({ ev }: { ev: ChoiceEvent }) {
           <button className="buy" onClick={() => choose(r.id)}>{EV.reserve.take}</button>
         </div>
       ))}
+    </div>
+  );
+}
+
+// Le racket : on te laisse choisir, puis on te montre que le choix n'existait pas.
+function Racket({ ev }: { ev: RacketEvent }) {
+  const offer = useRunStore((s) => s.racketOffer);
+  const refuse = useRunStore((s) => s.racketRefuse);
+  const say = useSay();
+  const t = EV.racket;
+
+  if (ev.outcome === 'playing') {
+    return (
+      <div className="racket">
+        <p className="sage-ask">{say(ev.demanded ? t.open : t.empty)}</p>
+        {ev.demanded ? (
+          <div className="cards">
+            {relics(ev.offers).map((r) => (
+              <div key={r.id} className="shop-slot">
+                <RelicCard relic={r} />
+                <button className="buy" onClick={() => offer(r.id)}>{t.give}</button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // cartable vide : il n'y a plus qu'à retourner ses poches, l'id tendu n'a pas d'importance
+          <button className="buy" onClick={() => offer('')}>{t.emptyCta}</button>
+        )}
+        <button className="secondary racket-refuse" onClick={refuse}>{t.refuse}</button>
+      </div>
+    );
+  }
+
+  const stolen = ev.demanded ? relic(ev.demanded) : null;
+  const lines = [
+    ev.refused ? t.stood : t.swap,
+    ev.refused ? t.stoodSub : t.swapSub,
+  ];
+  return (
+    <div className="racket-outcome">
+      {lines.map((l, i) => (
+        <p key={l} className={i ? 'sage-ask' : ''} style={{ animationDelay: `${(0.1 + i * 0.6).toFixed(2)}s` }}>{say(l)}</p>
+      ))}
+      {stolen && (
+        <div className="stolen" style={{ animationDelay: '1.3s' }}>
+          <RelicCard relic={stolen} />
+          <p className="ko">{say(t.took(say(stolen.name)))}</p>
+        </div>
+      )}
+      <div className="racket-bill" style={{ animationDelay: '1.9s' }}>
+        {ev.refused && ev.toll === 0 && <p className="ko">Il te pousse contre le carrelage. Un bon point de moins.</p>}
+        {ev.toll > 0 && <p className="ko">Il compte tes billes devant toi. {money(ev.toll)} en moins.</p>}
+        {ev.refused && <p className="ok">Tu repars avec La rancune : +3 pts sur chaque mot, jusqu'à la fin de l'année.</p>}
+      </div>
+      <p style={{ animationDelay: '2.4s' }}>{say(t.lost)}</p>
+      <p className="sage-ask" style={{ animationDelay: '2.7s' }}>{say(t.lostSub)}</p>
+      <p className="racket-grudge" style={{ animationDelay: '3.3s' }}>{say(t.grudge)}</p>
     </div>
   );
 }
@@ -164,10 +229,11 @@ export function EventScreen() {
     if (ev?.outcome === 'lost') sfx.fail();
   }, [ev?.outcome]);
 
+  const say = useSay();
+
   if (!ev) return null;
   const text = EV[ev.id];
-  const say = useSay();
-  const canGiveUp = playing && ev.kind !== 'choice' && !(ev.kind === 'harvest' && ev.stake === null);
+  const canGiveUp = playing && ev.kind !== 'choice' && ev.kind !== 'racket' && !(ev.kind === 'harvest' && ev.stake === null);
 
   // La scène d'abord, en grand. Le défi ne commence qu'au clic.
   if (!ev.started) {
@@ -182,6 +248,7 @@ export function EventScreen() {
           {ev.kind === 'hunt' ? say(EV[ev.id].ask(ev.word.length)) : ''}
           {ev.kind === 'choice' ? say(EV.reserve.ask()) : ''}
           {ev.kind === 'harvest' ? say(ev.id === 'billes' ? EV.billes.ask() : ruleLabel(ev.ruleId ?? '')) : ''}
+          {ev.kind === 'racket' ? say(EV.racket.ask()) : ''}
         </p>
         <button className="ready-cta" onClick={start}>{say(text.start)}</button>
       </div>
@@ -202,8 +269,9 @@ export function EventScreen() {
       {ev.kind === 'hunt' && <Hunt ev={ev} />}
       {ev.kind === 'harvest' && <Harvest ev={ev} />}
       {ev.kind === 'choice' && <Choice ev={ev} />}
+      {ev.kind === 'racket' && <Racket ev={ev} />}
 
-      {ev.outcome !== 'playing' && (
+      {ev.outcome !== 'playing' && ev.kind !== 'racket' && (
         <div className={`sage-outcome ${ev.outcome === 'won' ? 'ok' : 'ko'}`}>
           {ev.kind === 'hunt' && <p className="big">{ev.word}</p>}
           <p>{say(ev.outcome === 'won' ? text.won : text.lost)}</p>

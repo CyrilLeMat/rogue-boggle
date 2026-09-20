@@ -55,6 +55,13 @@ export const RELICS: Relic[] = [
     onWordFound: (w) => ({ flat: countVowels(w) }),
   },
   {
+    // Ne s'achète nulle part : elle se gagne aux toilettes, en tenant quatre secondes.
+    // `requires` pointe sur elle-même, donc la coopérative ne peut jamais la proposer.
+    id: 'rancune', name: 'La rancune', rarity: 'rare', price: 95, requires: 'rancune',
+    description: '+3 pts sur chaque mot, jusqu\'à la fin de l\'année',
+    onWordFound: () => ({ flat: 3 }),
+  },
+  {
     id: 'rarete', name: 'Encre violette', rarity: 'common', price: 20,
     description: '+5 pts si le mot contient K, W, X, Y, Z, J ou QU',
     onWordFound: (w) => (RARE_LETTERS.test(w) ? { flat: 5 } : undefined),

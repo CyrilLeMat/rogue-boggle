@@ -15,9 +15,9 @@ import { CRITTER_MOVE_SECONDS, CRITTER_MULTIPLIER, moveCritter, spawnCritters, t
 import { pickQuest, updateQuest } from '../engine/quests';
 import { SAGE_HINT_RATIO, isCorrect, wordFromPath } from '../engine/sage';
 import {
-  INSPECTOR_PENALTY, INSPECTOR_REWARD, KEVIN_PENALTY, KEVIN_REWARD, RECITATION_PER_WORD, SAGE_CONSOLATION,
-  createChoice, createHarvest, createHunt, isEventManche, planEvents, ruleAccepts, sageReward,
-  type EventId, type GameEvent,
+  INSPECTOR_PENALTY, INSPECTOR_REWARD, KEVIN_PENALTY, KEVIN_REWARD, RACKET_TOLL, RECITATION_PER_WORD, SAGE_CONSOLATION,
+  createChoice, createHarvest, createHunt, createRacket, isEventManche, planEvents, ruleAccepts, sageReward,
+  type EventId, type GameEvent, type RacketEvent,
 } from '../engine/events';
 import { adjustThreshold, difficultyOf } from '../engine/difficulty';
 import { FRENCH_STANDARD_WEIGHTS, generateGrid, sampleLetter } from '../engine/gridGenerator';
@@ -102,6 +102,7 @@ export interface RunState extends RunView {
   consumables: OwnedConsumable[];
   pendingCurseIds: string[];
   tookEnemyMutator: boolean;
+  stolenRelicId: string | null; // ce que Kévin a pris aux toilettes, et qu'il garde jusqu'au duel
 }
 
 interface Store {
@@ -139,6 +140,8 @@ interface Store {
   eventSubmit(path: Pos[]): void;
   eventStake(amount: number): void;
   eventChoose(relicId: string): void;
+  racketOffer(relicId: string): void; // tu tends quelque chose ; il prend autre chose
+  racketRefuse(): void;
   eventGiveUp(): void;
   leaveEvent(): void;
   enterShop(): void;
@@ -195,7 +198,7 @@ export const useRunStore = create<Store>((set, get) => ({
         identity: loadIdentity(), levelId: loadLevel(), seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
         consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
-        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [], saidThoughts: [], saidAppreciations: [],
+        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [], saidThoughts: [], saidAppreciations: [], stolenRelicId: null,
       },
       lastResult: null,
       startChoices,
@@ -367,6 +370,7 @@ export const useRunStore = create<Store>((set, get) => ({
       if (draft.enemies.some((e) => e.hp > 0)) {
         let bounty = 0;
         let killedNow = 0;
+        let kevinDown = false;
         draft.enemies = draft.enemies.map((e) => {
           if (e.hp <= 0) return e;
           const hit = enemyTouched(path, e);
@@ -376,6 +380,7 @@ export const useRunStore = create<Store>((set, get) => ({
           const hp = Math.max(0, e.hp - dmg);
           notes.push(hp > 0 ? `${ENEMY_NAMES[e.typeId]} −${dmg}` : `${ENEMY_NAMES[e.typeId]} calmé`);
           if (hp === 0) {
+            if (e.typeId === 'kevin') kevinDown = true;
             let b = e.typeId === 'kevin' ? BOSS_BOUNTY : ENEMY_BOUNTY;
             for (const h of hooks) if (h.onEnemyKilled) b = h.onEnemyKilled(e, b, ctx);
             bounty += b;
@@ -386,7 +391,16 @@ export const useRunStore = create<Store>((set, get) => ({
         if (killedNow > 0) {
           draft.killsThisManche += killedNow;
           notes.push(`prime +${bounty} billes`);
-          set({ run: { ...run, euros: run.euros + bounty, killCount: run.killCount + killedNow } });
+          // Le duel rend ce que les toilettes avaient pris : il lâche ton objet en tombant.
+          const back = kevinDown ? run.stolenRelicId : null;
+          if (back) notes.push(`il lâche ${resolveRelics([back])[0].name} !`);
+          set({
+            run: {
+              ...run, euros: run.euros + bounty, killCount: run.killCount + killedNow,
+              relicIds: back ? [...run.relicIds, back] : run.relicIds,
+              stolenRelicId: back ? null : run.stolenRelicId,
+            },
+          });
         }
       }
       if (draft.quest && !draft.quest.done) {
@@ -607,6 +621,20 @@ export const useRunStore = create<Store>((set, get) => ({
       event: { ...event, outcome: 'won' },
       run: { ...run, relicIds: [...run.relicIds, relicId], lives: run.lives + extraLives(resolveRelics([relicId])) },
     });
+  },
+
+  // Le racket : quoi que tu tendes, il repart avec ce qu'il avait décidé en entrant.
+  racketOffer(relicId) {
+    const { event } = get();
+    if (event?.kind !== 'racket' || event.outcome !== 'playing') return;
+    if (event.demanded && !event.offers.includes(relicId)) return;
+    resolveRacket({ ...event, offered: relicId }, false);
+  },
+
+  racketRefuse() {
+    const { event } = get();
+    if (event?.kind !== 'racket' || event.outcome !== 'playing') return;
+    resolveRacket({ ...event, refused: true }, true);
   },
 
   eventGiveUp() {
@@ -863,11 +891,47 @@ function payoutEvent(e: GameEvent) {
   });
 }
 
+// Le seul événement où le joueur n'a pas de levier : on lui laisse la forme du choix, pas le résultat.
+// Tenir tête coûte un bon point (jamais le dernier) et allume La rancune.
+function resolveRacket(ev: RacketEvent, refused: boolean) {
+  const { run } = useRunStore.getState();
+  if (!run) return;
+  let relicIds = run.relicIds;
+  if (ev.demanded) {
+    const at = relicIds.indexOf(ev.demanded);
+    if (at >= 0) relicIds = [...relicIds.slice(0, at), ...relicIds.slice(at + 1)];
+  }
+  let lives = run.lives;
+  let toll = ev.demanded ? 0 : ev.toll;
+  if (refused) {
+    if (lives > 1) lives -= 1;
+    else toll += Math.round(run.euros * RACKET_TOLL); // au dernier bon point, il se paie autrement
+    relicIds = [...relicIds, 'rancune'];
+  }
+  useRunStore.setState({
+    event: { ...ev, refused, outcome: 'lost', toll },
+    run: {
+      ...run, relicIds, lives,
+      euros: Math.max(0, run.euros - toll),
+      stolenRelicId: ev.demanded ?? run.stolenRelicId,
+    },
+  });
+}
+
 function buildEvent(id: EventId, run: RunState): GameEvent {
   if (id === 'sage') return createHunt('sage', sageWords(), run.rng);
   if (id === 'inspecteur') return createHunt('inspecteur', inspectorWords(), run.rng);
   if (id === 'kevin') return createHunt('kevin', inspectorWords(), run.rng);
   if (id === 'reserve') return createChoice(drawFreeRelics(shopInput(run), run.rng, 3));
+  if (id === 'racket') {
+    // il ne prend pas au hasard : il prend ce que tu as de mieux, et jamais ta personnalité
+    const loot = [...new Set(run.relicIds)].filter((r) => !resolveRelics([r])[0].archetype);
+    const best = loot.reduce<{ id: string; price: number } | null>((top, r) => {
+      const price = resolveRelics([r])[0].price ?? 0;
+      return !top || price > top.price ? { id: r, price } : top;
+    }, null);
+    return createRacket(loot, best?.id ?? null, best ? 0 : Math.round(run.euros * RACKET_TOLL));
+  }
   return createHarvest(id, dictionary, run.rng, run.euros);
 }
 

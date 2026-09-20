@@ -511,6 +511,30 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .sage-outcome .big { margin: 0 0 6px; letter-spacing: 0.12em; }
 .sage-outcome .euros { color: var(--gold); font-weight: 800; font-size: 1.2rem; }
 
+/* Le racket : le choix a l'air d'un vrai choix, la suite montre que non. */
+.racket { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.racket .cards { justify-content: center; }
+.racket-refuse { align-self: center; }
+.racket-outcome { margin: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; max-width: 560px; }
+.racket-outcome > * { opacity: 0; animation: reveal 0.6s ease-out both; }
+.racket-outcome p { margin: 2px 0; }
+/* l'objet part de travers, comme arraché */
+.stolen { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 8px 0; }
+.stolen .relic-card { transform: rotate(-4deg); filter: grayscale(0.5); opacity: 0.75; }
+.racket-bill:empty { display: none; }
+.racket-bill { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.racket-grudge { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; color: var(--coral); margin-top: 8px !important; }
+/* le décor : la main tendue insiste, le robinet goutte, le cartable serre */
+.racket-hand { animation: insiste 2.4s ease-in-out infinite; transform-origin: 110px 80px; }
+@keyframes insiste { 0%, 70%, 100% { transform: none; } 80% { transform: translateX(-5px); } 90% { transform: translateX(-2px); } }
+.satchel { animation: serre 3.2s ease-in-out infinite; transform-origin: 62px 98px; }
+@keyframes serre { 0%, 100% { transform: none; } 50% { transform: scale(0.96); } }
+.drip { animation: goutte 2.8s linear infinite; }
+@keyframes goutte { 0%, 60% { opacity: 0; transform: none; } 65% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
+
+/* ce qu'on aurait pu écrire : la consolation pédagogique, en fin de concours */
+.examples { font-family: 'Patrick Hand', cursive; font-size: 1.1rem; color: var(--muted); margin: 6px 0 0; }
+
 .timer { position: relative; height: 26px; background: #f1e9df; border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
 .timer-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #a9d6bd); transition: width 0.1s linear; border-radius: 999px; }
 .timer.urgent .timer-bar { background: linear-gradient(90deg, var(--coral), #f7b7ad); }

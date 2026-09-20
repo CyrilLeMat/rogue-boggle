@@ -179,7 +179,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
   box-shadow: 0 10px 24px rgba(120, 90, 60, 0.12);
 }
 .menu-hero .classroom { display: block; width: 100%; height: clamp(300px, 52vh, 460px); aspect-ratio: auto; }
-.menu-body { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 18px 16px 24px; width: 100%; max-width: 620px; }
+.menu-body { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 38px 16px 40px; width: 100%; max-width: 620px; }
 
 /* les citations, punaisées comme une coupure de journal */
 .clippings { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 18px; }
@@ -208,7 +208,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 
 .linkish { background: none; box-shadow: none; color: var(--muted); font-size: 0.82rem; font-weight: 700; padding: 4px 8px; text-decoration: underline; text-underline-offset: 3px; }
 .linkish:hover { background: none; color: var(--accent-deep); transform: none; }
-.menu-links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.menu-links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: -6px; }
 .rules-note {
   background: #fffdf9; border: 2px dashed #ded6ee; border-radius: 16px 20px 18px 22px; padding: 10px 14px;
   max-width: 460px; font-size: 0.88rem; color: var(--text); text-align: left; animation: reveal 0.3s ease-out both;
@@ -244,7 +244,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .classroom .chalk-dust circle:nth-child(2) { animation-delay: 1.3s; }
 .classroom .chalk-dust circle:nth-child(3) { animation-delay: 2.6s; }
 @keyframes dust { 0% { opacity: 0.8; transform: translateY(0); } 100% { opacity: 0; transform: translateY(14px); } }
-.menu-body .tagline { font-family: 'Patrick Hand', cursive; font-size: 1.35rem; margin: 0; max-width: 520px; }
+.menu-body .tagline { font-family: 'Patrick Hand', cursive; font-size: 1.45rem; line-height: 1.35; margin: 0; max-width: 480px; }
 .blurbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; margin-top: -2px; }
 .blurb {
   font-family: 'Patrick Hand', cursive; font-size: 1.25rem; color: var(--accent-deep);
@@ -787,7 +787,7 @@ button.small { padding: 6px 14px; font-size: 0.8rem; }
 
 @media (max-width: 700px) {
   .menu-hero .classroom { height: clamp(180px, 32vh, 260px); }
-  .menu-body { gap: 10px; padding: 14px 12px 18px; }
+  .menu-body { gap: 16px; padding: 24px 14px 28px; }
   .menu-body .tagline { font-size: 1.15rem; }
   .clipping { font-size: 1.05rem; max-width: 100%; }
   .last-year { width: 98px; padding: 8px; bottom: 8px; right: 8px; }

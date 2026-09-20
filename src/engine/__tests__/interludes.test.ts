@@ -5,7 +5,7 @@ import { buildDictionary } from '../dictionary';
 import { makeCell } from '../gridGenerator';
 import { resolvePath } from '../manche';
 import { SCENES } from '../../data/scenes';
-import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say, spellNumber } from '../../theme/lexicon';
+import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, VOW, pickAppreciation, say, spellNumber } from '../../theme/lexicon';
 import { createRng } from '../rng';
 import { createRacket, planEvents } from '../events';
 import { epilogue } from '../../theme/epilogue';
@@ -83,6 +83,7 @@ describe('accords et prénom', () => {
       ...INTERLUDES.flatMap((i) => [...i.lines, i.cry ?? '', i.fall]),
       ...SCENES.flatMap((s) => [...s.lines, ...s.choices.map((c) => c.detail)]),
       ...SCOLDS, ...PRAISES_BIG, ...PRAISES_SMALL, ...SHOP_INTRO.lines,
+      VOW.lead, VOW.text, VOW.afterLoss, VOW.lastOne,
       mention(19, true).note, mention(5, false).note,
       ...EV.sage.intro, ...EV.kevin.intro, ...EV.billes.intro, EV.kevin.ask(6), EV.inspecteur.wrong,
       L.victoireSub, L.gameoverSub(4),

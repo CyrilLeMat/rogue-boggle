@@ -2,6 +2,8 @@
 // Même règle que les planches de transition — on monte très haut, et la dernière ligne
 // remet tout le monde à sa place. Les jetons de la fiche passent par say() comme ailleurs.
 
+import { VOW } from './lexicon';
+
 export interface EpilogueInput {
   victory: boolean;
   moyenne: number;         // sur 20
@@ -69,8 +71,8 @@ function kevin(i: EpilogueInput): EpilogueBeat {
 function hero(i: EpilogueInput): EpilogueBeat {
   return {
     text: i.victory
-      ? '{Admire} lit le bulletin deux fois, du début à la fin, sans rien dire. Puis le plie en quatre, le met dans sa poche, et l\'y laisse jusqu\'à Noël.'
-      : '{Admire} dit que ce n\'est pas grave. {Admire} dit toujours que ce n\'est pas grave. Tu vois bien que si.',
+      ? `Tu avais juré ${VOW.short}. {Admire} le lit deux fois, du début à la fin, sans rien dire. Puis le plie en quatre, le met dans sa poche, et l'y laisse jusqu'à Noël.`
+      : `Tu avais juré ${VOW.short}. {Admire} dit que ce n'est pas grave. {Admire} dit toujours que ce n'est pas grave. Tu vois bien que si.`,
   };
 }
 

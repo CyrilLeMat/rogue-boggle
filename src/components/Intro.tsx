@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { setMusicMood } from '../audio/music';
+import { VOW } from '../theme/lexicon';
 import { useRunStore } from '../state/runStore';
 import { useSay } from '../theme/useSay';
 
@@ -38,7 +39,9 @@ const PANELS = [
     cry: 'JE SUIS PRÊT[|E] À AFFRONTER MON DESTIN !!!',
     after: [
       'Personne ne bouge. Le radiateur claque une fois. La maîtresse décapuchonne son stylo rouge, très lentement.',
+      VOW.lead,
     ],
+    vow: VOW.text,
     art: <Revolte />,
   },
 ];
@@ -174,6 +177,11 @@ export function Intro() {
         {'after' in panel && panel.after?.map((l, k) => (
           <p key={`after-${k}`} style={{ animationDelay: `${0.9 + (panel.text.length + k) * 0.7}s` }}>{say(l)}</p>
         ))}
+        {'vow' in panel && panel.vow && (
+          <p className="intro-vow" style={{ animationDelay: `${1.6 + (panel.text.length + (panel.after?.length ?? 0)) * 0.7}s` }}>
+            « {say(panel.vow)} »
+          </p>
+        )}
       </div>
       <div className="dots">{PANELS.map((_, k) => <span key={k} className={k === i ? 'on' : ''} />)}</div>
       <button className="intro-cta" onClick={(e) => { e.stopPropagation(); next(); }}>{last ? 'Monter sur la table' : 'Suite →'}</button>

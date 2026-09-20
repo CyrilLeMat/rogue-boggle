@@ -536,6 +536,8 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .drip { animation: goutte 2.8s linear infinite; }
 @keyframes goutte { 0%, 60% { opacity: 0; transform: none; } 65% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
 
+.intro-vow { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); margin-top: 4px !important; }
+
 /* l'épilogue : on raconte l'année avant de la compter, une ligne à la fois */
 .epilogue { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 580px; margin: 10px auto 18px; text-align: center; }
 .epilogue p { margin: 0; opacity: 0; animation: reveal 0.7s ease-out both; line-height: 1.45; }

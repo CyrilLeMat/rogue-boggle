@@ -3,7 +3,7 @@ import { sfx } from '../audio/sfx';
 import { mutator } from '../data/registry';
 import { TOTAL_MANCHES } from '../engine/rules';
 import { hasEverTraced, useRunStore } from '../state/runStore';
-import { DUEL, L, PSYCHE_LEAD, money, say } from '../theme/lexicon';
+import { DUEL, L, PSYCHE_LEAD, VOW, money, say } from '../theme/lexicon';
 import { TraceDemo } from './TraceDemo';
 
 // Le briefing d'avant-dictée porte tout ce qu'on ne veut plus lire pendant :
@@ -28,6 +28,14 @@ export function ReadyOverlay() {
       sfx.heartbeat();
       return;
     }
+    // les deux moments où l'on ne pense plus à rien d'autre qu'au serment du premier jour
+    const recall = run?.currentManche === TOTAL_MANCHES ? VOW.lastOne : run?.lostLifeLastManche ? VOW.afterLoss : null;
+    if (recall) {
+      setLead(recall);
+      setThought(VOW.text);
+      sfx.heartbeat();
+      return;
+    }
     // pas un mot sur Kévin tant qu'il ne s'est pas présenté
     const leads = PSYCHE_LEAD.filter((l) => run?.seenInterludes.includes('kevin1') || !l.includes('Kévin'));
     setLead(leads[Math.floor(Math.random() * leads.length)]);
@@ -38,9 +46,10 @@ export function ReadyOverlay() {
   const mut = manche.mutatorId ? mutator(manche.mutatorId) : null;
   if (thought) return (
     <div className="psyche" onClick={begin}>
-      <p className="psyche-lead">{lead}</p>
+      {/* la pensée est déjà passée par say() dans le store, la phrase d'accroche non */}
+      <p className="psyche-lead">{say(lead, run.identity)}</p>
       <blockquote>
-        <p><span className="q">«</span> {thought} <span className="q">»</span></p>
+        <p><span className="q">«</span> {say(thought, run.identity)} <span className="q">»</span></p>
         <cite>{run.identity.name}, élève de CE2</cite>
       </blockquote>
       <button className="ready-cta psyche-go" onClick={begin}>{L.lancer}</button>

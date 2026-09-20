@@ -141,6 +141,16 @@ export const PSYCHE_LEAD = [
   'Tu cales ton coude, tu inclines la feuille de trois degrés, comme {admire} te l\'a montré, et tu souffles :',
 ];
 
+// Le serment du premier jour. Il est juré une fois, rappelé quand ça va mal, et soldé au bulletin.
+// Une seule formulation : c'est ce qui fait qu'on le reconnaît quand il revient.
+export const VOW = {
+  lead: 'Et tout bas, pour [toi seul|toi seule], tu ajoutes une phrase que personne dans cette salle n\'entendra jamais :',
+  text: '{Admire}, je te rapporterai un bulletin que tu pourras montrer à tout le monde. Je le jure.',
+  short: 'un bulletin qu\'on peut montrer à tout le monde',
+  afterLoss: 'Tu as perdu un bon point. Tu revois {admire}, et la phrase que tu avais jurée le premier jour :',
+  lastOne: 'Dernière dictée. Toute l\'année tient dans les minutes qui viennent. Tu te répètes ce que tu avais juré :',
+};
+
 export const MONOLOGUE = [
   'Si je perds, ce sera une honte pour toute ma famille. Pendant au moins mille ans !',
   'Chaque seconde de ma vie m\'a men[é|ée] vers cet instant. En voici la conclusion.',

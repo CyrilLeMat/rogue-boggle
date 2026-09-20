@@ -569,6 +569,26 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 
 .intro-vow { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: var(--accent-deep); margin-top: 4px !important; }
 
+/* le coup porté : l'onomatopée saute de sa case, et la case encaisse */
+.cell .impact {
+  position: absolute; left: 50%; top: -6px; transform: translateX(-50%);
+  font-family: 'Patrick Hand', cursive; font-size: 1.5rem; color: var(--coral);
+  -webkit-text-stroke: 1px #3f3a55; text-shadow: 2px 2px 0 #fffdf9;
+  pointer-events: none; white-space: nowrap; z-index: 4;
+  animation: impact 0.65s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+@keyframes impact {
+  0% { opacity: 0; transform: translate(-50%, 10px) scale(0.4) rotate(-12deg); }
+  35% { opacity: 1; transform: translate(-50%, -14px) scale(1.15) rotate(6deg); }
+  100% { opacity: 0; transform: translate(-50%, -34px) scale(1) rotate(2deg); }
+}
+.enemy-tag.hit { animation: encaisse 0.35s ease-out; }
+@keyframes encaisse {
+  0%, 100% { transform: none; }
+  25% { transform: translateX(-4px) rotate(-2deg); }
+  60% { transform: translateX(4px) rotate(2deg); }
+}
+
 /* sa réaction, plein écran : la tête d'abord, les chiffres après */
 .recap.reaction { align-items: center; text-align: center; gap: 4px; }
 .recap.reaction .scene-frame { width: min(420px, 100%); margin-bottom: 8px; }
@@ -589,6 +609,7 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .duel-deal { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; margin: 6px 0; opacity: 0; animation: reveal 0.6s ease-out both; }
 .duel-deal.ok { color: var(--accent-deep); }
 .duel-end .interlude-fall { margin-top: 4px; }
+.duel-choice { opacity: 0; animation: reveal 0.6s ease-out both; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
 /* ce qu'on aurait pu écrire : la consolation pédagogique, en fin de concours */
 .examples { font-family: 'Patrick Hand', cursive; font-size: 1.1rem; color: var(--muted); margin: 6px 0 0; }

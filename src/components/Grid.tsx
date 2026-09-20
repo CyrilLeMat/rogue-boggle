@@ -30,6 +30,7 @@ interface Props {
   critters?: Pos[];                      // les escargots, rendus en overlay pour glisser d'une case à l'autre
   onDoubleTap?: (pos: Pos) => void;      // Reroll de lettre sans passer par le bouton
   enemies?: Enemy[];                     // thème Chasse : cases occupées + barre de PV
+  impact?: { cell: number; label: string; id: number } | null; // le coup qui vient de porter
   onPathChange?: (path: Pos[]) => void;  // pour la prévisualisation du score
   preview?: WordPreview | null;
   flash?: { id: number; path: Pos[]; score: number; bonus?: string; word?: string } | null; // dernier mot validé : lettres qui s'allument, score qui s'envole
@@ -41,7 +42,7 @@ const DOUBLE_TAP_MS = 350;
 
 const samePos = (a: Pos, b: Pos) => a[0] === b[0] && a[1] === b[1];
 
-export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, oracleLength, cursedCell, luckyLetter, amorceCell, inspiredCells, blurRadius, targeting, onPickCell, critters = [], onDoubleTap, enemies = [], onPathChange, preview, flash, lockedCells, plain }: Props) {
+export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, oracleLength, cursedCell, luckyLetter, amorceCell, inspiredCells, blurRadius, targeting, onPickCell, critters = [], onDoubleTap, enemies = [], impact, onPathChange, preview, flash, lockedCells, plain }: Props) {
   const isLocked = (r: number, c: number) => lockedCells?.has(posKey(r, c)) ?? false;
   const enemyAt = (r: number, c: number) => enemies.find((e) => e.hp > 0 && e.cells.some((p) => p[0] === r && p[1] === c));
   const [path, setPathState] = useState<Pos[]>([]);
@@ -261,13 +262,16 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
                 {cell.isToxic && <span className="badge badge-toxic" title="Case toxique : −8 s si utilisée">☠</span>}
                 {oracleCell === key && <span className="badge badge-oracle" title="Oracle : ici commence le mot le plus long">{oracleLength}</span>}
                 {cursedCell === key && <span className="badge badge-cursed" title="Mot maudit : il commence ici">✦</span>}
-                {(() => { const e = enemyAt(r, c); return e && e.cells[0][0] === r && e.cells[0][1] === c ? (
-                  <span className="enemy-tag" title={`${e.hp} / ${e.maxHp} PV`}>
+                {(() => { const e = enemyAt(r, c); const hit = impact?.cell === key; return e && e.cells[0][0] === r && e.cells[0][1] === c ? (
+                  // la clé change à chaque coup : c'est ce qui relance la secousse
+                  <span key={hit ? `hit-${impact!.id}` : 'tag'} className={`enemy-tag ${hit ? 'hit' : ''}`} title={`${e.hp} / ${e.maxHp} PV`}>
                     <span className="enemy-icon">👾</span>
                     <span className="hp"><span style={{ width: `${(e.hp / e.maxHp) * 100}%` }} /></span>
                     <span className="hp-text">{e.hp}</span>
                   </span>
                 ) : null; })()}
+                {/* le mot est le poing : ça claque sur sa case */}
+                {impact && impact.cell === key && <span key={`hit-${impact.id}`} className="impact">{impact.label}</span>}
               </div>
             );
           }),

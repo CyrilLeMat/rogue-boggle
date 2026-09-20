@@ -86,6 +86,7 @@ function Playing() {
           onDoubleTap={hasReroll ? rerollCell : undefined}
           lockedCells={manche.holes.length ? new Set(manche.holes) : undefined}
           enemies={manche.enemies}
+          impact={manche.impact}
           onPathChange={onPathChange}
           preview={preview}
           flash={flash}

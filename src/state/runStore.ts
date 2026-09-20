@@ -6,7 +6,7 @@ import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
 import { hasInterlude, memoryAfter, pickInterlude } from '../data/interludes';
 import { planScenes, randomLessonId, sceneChoice, sceneNamesRival, sceneRelic } from '../data/scenes';
-import { BOSS_BOUNTY, DUEL_HP, DUEL_SECONDS, ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
+import { BOSS_BOUNTY, DUEL_HP, DUEL_SECONDS, KEVIN_MARBLES, ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
 import { ARCHETYPES, STARTING_PURSE } from '../data/archetypes';
@@ -70,6 +70,7 @@ export interface WordPreview {
 
 export type MancheState = MancheView & {
   score: number;
+  impact: { cell: number; label: string; id: number } | null; // le coup qui vient d'être porté
   totalSeconds: number;
   curseIds: string[];
   targeting: 'reroll' | null;
@@ -104,6 +105,7 @@ export interface RunState extends RunView {
   tookEnemyMutator: boolean;
   stolenRelicId: string | null; // ce que Kévin a pris aux toilettes, et qu'il garde jusqu'au duel
   duelDone: boolean;            // l'affrontement a eu lieu : il n'a pas lieu deux fois
+  duelChoice: 'claque' | 'main' | null; // ce que tu as fait de lui une fois à terre
 }
 
 interface Store {
@@ -147,6 +149,7 @@ interface Store {
   racketRefuse(): void;
   eventGiveUp(): void;
   startDuel(): void; // la planche d'annonce lance l'affrontement
+  duelChoose(choice: 'claque' | 'main'): void; // il est à terre : ce que tu en fais
   leaveDuel(): void; // la planche « Kévin à terre » renvoie à la dernière dictée
   leaveEvent(): void;
   enterShop(): void;
@@ -173,7 +176,7 @@ function freshManche(run: RunState): MancheState {
     threshold: threshold(run.currentManche),
     difficulty: { potential: 0, factor: 1, mood: 'normale' },
     found: [], timeLeft: MANCHE_SECONDS, timeLeftBeforeWord: MANCHE_SECONDS, totalSeconds: MANCHE_SECONDS, elapsed: 0,
-    cursedWord: null, cursedStart: null, cursedVisible: false, holes: [], radarCell: null, relicState: {}, bonuses: [], score: 0,
+    cursedWord: null, cursedStart: null, cursedVisible: false, holes: [], radarCell: null, relicState: {}, bonuses: [], score: 0, impact: null,
     streak: { links: 0, lastAt: -Infinity }, quest: null, luckyLetter: null, amorce: null,
     inspiration: null, gridDirty: false, mutatorId: run.nextMutatorId, enemies: [], killsThisManche: 0,
     curseIds: [], targeting: null, rerollChoice: null, critters: [], graceSeconds: 0, gridRerollsLeft: 0,
@@ -205,7 +208,7 @@ export const useRunStore = create<Store>((set, get) => ({
         identity: loadIdentity(), levelId: loadLevel(), seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
         consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
-        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [], saidThoughts: [], saidAppreciations: [], stolenRelicId: null, duelDone: false,
+        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [], saidThoughts: [], saidAppreciations: [], stolenRelicId: null, duelDone: false, duelChoice: null,
       },
       lastResult: null,
       startChoices,
@@ -388,6 +391,8 @@ export const useRunStore = create<Store>((set, get) => ({
           if (dmg <= 0) return e;
           for (const h of hooks) if (h.onDamage) dmg = h.onDamage(result.found.word, e, dmg, ctx);
           const hp = Math.max(0, e.hp - dmg);
+          // le mot est le poing : on le fait voir sur sa case
+          if (hit) draft.impact = { cell: posKey(e.cells[0][0], e.cells[0][1]), label: impactCry(dmg), id: fb.id };
           notes.push(hp > 0 ? `${ENEMY_NAMES[e.typeId]} −${dmg}` : `${ENEMY_NAMES[e.typeId]} calmé`);
           if (hp === 0) {
             if (e.typeId === 'kevin') kevinDown = true;
@@ -676,6 +681,24 @@ export const useRunStore = create<Store>((set, get) => ({
     get().startManche();
   },
 
+  // Il est à terre. La maîtresse arrive toujours au mauvais moment, et elle ne voit que la fin.
+  duelChoose(choice) {
+    const { run, phase } = get();
+    if (!run || phase !== 'duelEnd' || run.duelChoice) return;
+    if (choice === 'claque') {
+      set({
+        run: {
+          ...run, duelChoice: choice,
+          // jamais le dernier bon point : on ne perd pas l'année sur une claque
+          lives: run.lives > 1 ? run.lives - 1 : run.lives,
+          relicIds: [...run.relicIds, 'reputation'],
+        },
+      });
+      return;
+    }
+    set({ run: { ...run, duelChoice: choice, lives: run.lives + 1, euros: run.euros + KEVIN_MARBLES } });
+  },
+
   leaveDuel() {
     if (get().phase !== 'duelEnd') return;
     set({ manche: null });
@@ -861,6 +884,14 @@ export const useRunStore = create<Store>((set, get) => ({
     set({ run: { ...run, relicIds: [...run.relicIds, id] } });
   },
 }));
+
+// Plus le mot est long, plus ça claque. [tuning] les paliers suivent les scores d'un mot moyen.
+function impactCry(damage: number): string {
+  if (damage >= 80) return 'BADABOUM !';
+  if (damage >= 50) return 'BAM !';
+  if (damage >= 25) return 'VLAN !';
+  return 'PAF !';
+}
 
 // L'affrontement se reconnaît à son mutateur : c'est le seul qui porte un adversaire nommé.
 function isDuel(manche: MancheState): boolean {

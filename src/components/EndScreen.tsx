@@ -22,7 +22,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
   // L'épilogue se lit avant les chiffres : on raconte l'année, puis on la compte.
   const beats = epilogue({
     victory, moyenne, lives: run.lives,
-    duelDone: run.duelDone, duelWon,
+    duelDone: run.duelDone, duelWon, duelChoice: run.duelChoice,
     stolen: run.stolenRelicId ? say(relic(run.stolenRelicId).name, run.identity) : null,
     words: allWords.length,
     bestWord: best[0]?.word ?? null,

@@ -6,6 +6,7 @@ import { VOW } from './lexicon';
 
 export interface EpilogueInput {
   victory: boolean;
+  duelChoice: 'claque' | 'main' | null; // ce que tu as fait de lui une fois à terre
   moyenne: number;         // sur 20
   lives: number;
   duelDone: boolean;       // l'affrontement a eu lieu
@@ -68,7 +69,14 @@ function kevin(i: EpilogueInput): EpilogueBeat {
     return { act: 2, text: '{rival}, lui, passe en CM1. Il n\'a pas eu à se forcer : il a copié sur quelqu\'un d\'autre, et ce quelqu\'un d\'autre n\'a rien dit.' };
   }
   if (i.duelWon) {
-    return { act: 2, text: '{rival} n\'a plus jamais copié sur personne. On raconte dans la cour qu\'il s\'est mis à réviser le soir. On raconte n\'importe quoi dans cette cour, mais cette fois-là c\'était vrai.' };
+    // ce qu'il devient dépend surtout des trois secondes où il était par terre
+    if (i.duelChoice === 'claque') {
+      return { act: 2, text: '{Rival} raconte encore cette histoire. Dans sa version, il gagne, il était trois et tu avais un couteau. Personne ne le croit, et tout le monde l\'écoute.' };
+    }
+    if (i.duelChoice === 'main') {
+      return { act: 2, text: '{Rival} passe en CM1. Il t\'écrit une lettre en juillet, avec trois fautes rien que dans ton prénom. Tu l\'as gardée.' };
+    }
+    return { act: 2, text: '{Rival} n\'a plus jamais copié sur personne. On raconte dans la cour qu\'il s\'est mis à réviser le soir. On raconte n\'importe quoi dans cette cour, mais cette fois-là c\'était vrai.' };
   }
   return i.stolen
     ? { act: 2, text: `{rival} passe en CM1 avec « ${i.stolen} » au fond de son cartable. Il s'en sert encore, mal, devant des élèves qui ne savent pas d'où ça vient.` }

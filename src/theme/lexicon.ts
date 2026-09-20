@@ -638,6 +638,27 @@ export const DUEL = {
   hp: '{rival}',
   lead: 'Tu poses ton cartable au milieu du couloir. Il ne bouge pas. Toi non plus. Puis tu te dis, une seule fois :',
   cry: 'Tu m\'as pris quelque chose. Je viens le reprendre.',
+  // Il tombe. Ce qui se passe dans les trois secondes suivantes t'appartient.
+  ko: [
+    'Le mot part de ta main et le traverse. Il n\'a pas le temps de reculer.',
+    '{Rival} décolle du sol de dix centimètres, plane une seconde entière, et retombe assis au milieu de l\'allée.',
+  ],
+  koCry: 'Ça, c\'était pour les toilettes.',
+  ask: 'Il ne se relève pas. Le couloir est vide. Tu as trois secondes devant toi.',
+  slap: 'Lui mettre une claque',
+  hand: 'Lui tendre la main',
+  slapLines: [
+    'Tu ne réfléchis pas. Ta main part toute seule et claque contre sa joue, très fort, dans un couloir parfaitement silencieux.',
+    'Et à cette seconde précise, à cette seconde exactement, {maitresse} ouvre la porte du fond.',
+  ],
+  slapFall: 'Elle n\'a rien vu de l\'année. Elle n\'a vu que ça. Un bon point de moins, et tu t\'en fiches complètement.',
+  slapWin: 'Toute la cour l\'a vu aussi. Tu écriras la dernière dictée la tête haute : +20 % sur chaque mot.',
+  handLines: [
+    'Tu tends la main. Il la regarde comme si c\'était un piège, longtemps, puis il la prend.',
+    'Il se relève en s\'appuyant dessus. Il fait deux têtes de plus que toi, et d\'un coup il pèse très lourd.',
+  ],
+  handFall: '{Maitresse} ouvre la porte du fond à cette seconde précise et vous voit vous serrer la main. Un bon point pour toi.',
+  handWin: 'Et il vide ses poches dans les tiennes. Toutes ses billes. Il ne dit pas pourquoi.',
   won: [
     '{rival} est à genoux au milieu de la feuille. Il tient {corps} à deux mains et ne relève pas la tête.',
     'Il ne ricane plus. Il ne copie plus. Il souffle très fort, et sa voix part dans les aigus.',

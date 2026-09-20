@@ -70,4 +70,5 @@ export const BOSS_BOUNTY = 120;      // [tuning] Kévin paie mieux qu'un cancre
 // ne se déduit plus d'un seuil, elle est posée. [tuning] 150 au niveau adulte, soit trois à quatre
 // mots qui lui passent dessus (l'ancien calcul montait à ~300 : un mur, retour playtest).
 export const DUEL_HP = 150;
+export const KEVIN_MARBLES = 40; // [tuning] tout ce qu'il a dans les poches, s'il s'en sort autrement
 export const DUEL_SECONDS = 75;

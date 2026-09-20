@@ -37,9 +37,9 @@ function setup(relicIds: string[], g = grid(['P O R', 'X T E', 'V I S'])) {
 }
 
 describe('relics data', () => {
-  it('has 36 unique ids and valid requires', () => {
-    expect(RELICS.length).toBe(36);
-    expect(new Set(RELICS.map((r) => r.id)).size).toBe(36);
+  it('has 37 unique ids and valid requires', () => {
+    expect(RELICS.length).toBe(37);
+    expect(new Set(RELICS.map((r) => r.id)).size).toBe(37);
     for (const r of RELICS) if (r.requires) expect(RELIC_BY_ID.has(r.requires)).toBe(true);
   });
 

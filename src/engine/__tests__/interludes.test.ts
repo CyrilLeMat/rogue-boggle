@@ -135,7 +135,7 @@ describe('le redoublant du fond', () => {
 
 describe('épilogue', () => {
   it('raconte une fin différente selon ce qui s\'est passé avec Kévin', () => {
-    const base = { moyenne: 14, lives: 3, words: 120, bestWord: 'CARTABLE', manche: 11 };
+    const base = { moyenne: 14, lives: 3, words: 120, bestWord: 'CARTABLE', manche: 11, duelChoice: null };
     const gagne = epilogue({ ...base, victory: true, duelDone: true, duelWon: true, stolen: null });
     const perdu = epilogue({ ...base, victory: true, duelDone: true, duelWon: false, stolen: 'Stylo en or' });
     const jamais = epilogue({ ...base, victory: false, duelDone: false, duelWon: false, stolen: null, manche: 6 });
@@ -149,7 +149,7 @@ describe('épilogue', () => {
     for (const victory of [true, false]) {
       for (const moyenne of [18, 14, 8]) {
         for (const duelWon of [true, false]) {
-          const beats = epilogue({ victory, moyenne, lives: 2, duelDone: true, duelWon, stolen: 'Buvard', words: 90, bestWord: 'MARELLE', manche: 11 });
+          const beats = epilogue({ victory, moyenne, lives: 2, duelDone: true, duelWon, duelChoice: duelWon ? 'claque' : 'main', stolen: 'Buvard', words: 90, bestWord: 'MARELLE', manche: 11 });
           for (const b of beats) expect(say(b.text, id, { restantes: 'deux' })).not.toMatch(/[[\]{}|]/);
         }
       }

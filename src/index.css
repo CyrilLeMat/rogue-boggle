@@ -569,7 +569,8 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .epilogue p { margin: 0; opacity: 0; animation: reveal 0.7s ease-out both; line-height: 1.45; }
 .epilogue .quote { font-family: 'Patrick Hand', cursive; font-size: 1.35rem; color: var(--coral); }
 .epilogue .fall { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
-.epilogue .ready-cta { margin-top: 6px; }
+.epilogue .ready-cta { margin-top: 6px; opacity: 0; animation: reveal 0.6s ease-out both; }
+.epilogue .era { margin-bottom: 2px; }
 
 /* l'affrontement : la planche de fin reprend le rythme des transitions */
 .duel-deal { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; margin: 6px 0; opacity: 0; animation: reveal 0.6s ease-out both; }

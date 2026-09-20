@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { relic, relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
-import { epilogue } from '../theme/epilogue';
+import { EPILOGUE_ACTS, epilogue } from '../theme/epilogue';
 import { L, SIGNATURE, mention, noteSur20, say } from '../theme/lexicon';
 
 export function EndScreen({ victory }: { victory: boolean }) {
@@ -11,6 +11,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
   const restart = useRunStore((s) => s.startRun);
   const [copied, setCopied] = useState(false);
   const [showBulletin, setShowBulletin] = useState(false);
+  const [act, setAct] = useState(0); // l'épilogue se lit en trois temps, un clic entre chaque
   if (!run) return null;
   const allWords = run.history.flatMap((h) => h.words);
   const best = [...allWords].sort((a, b) => b.score - a.score).slice(0, 5);
@@ -26,6 +27,8 @@ export function EndScreen({ victory }: { victory: boolean }) {
     bestWord: best[0]?.word ?? null,
     manche: run.currentManche,
   });
+  const shown = beats.filter((b) => b.act === act + 1);
+  const ctaDelay = { animationDelay: `${(0.6 + shown.length * 0.9).toFixed(2)}s` };
   const copySeed = async () => {
     try { await navigator.clipboard.writeText(run.seed); setCopied(true); } catch { /* presse-papier indisponible */ }
   };
@@ -33,24 +36,22 @@ export function EndScreen({ victory }: { victory: boolean }) {
     <div className="panel end">
       <h1 className="title">{victory ? L.victoire : L.gameover}</h1>
 
-      <div className="epilogue">
-        {beats.map((b, i) => (
+      <div className="epilogue" key={act}>
+        <p className="era">{EPILOGUE_ACTS[act].title}</p>
+        {shown.map((b, i) => (
           <p
             key={b.text}
             className={b.kind ?? ''}
-            style={{ animationDelay: `${(0.3 + i * 0.9).toFixed(2)}s` }}
+            style={{ animationDelay: `${(0.5 + i * 0.9).toFixed(2)}s` }}
           >
             {b.kind === 'quote' ? <>« {say(b.text, run.identity)} »</> : say(b.text, run.identity)}
           </p>
         ))}
-        {!showBulletin && (
-          <button
-            className="ready-cta"
-            style={{ animationDelay: `${(0.3 + beats.length * 0.9).toFixed(2)}s` }}
-            onClick={() => setShowBulletin(true)}
-          >
-            {L.voirBulletin}
-          </button>
+        {/* le bouton attend la dernière ligne : on ne clique pas avant d'avoir lu */}
+        {act < EPILOGUE_ACTS.length - 1 ? (
+          <button className="ready-cta" style={ctaDelay} onClick={() => setAct(act + 1)}>{EPILOGUE_ACTS[act].cta}</button>
+        ) : !showBulletin && (
+          <button className="ready-cta" style={ctaDelay} onClick={() => setShowBulletin(true)}>{L.voirBulletin}</button>
         )}
       </div>
 

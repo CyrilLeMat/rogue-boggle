@@ -248,28 +248,40 @@ const ARTS: Record<string, () => ReactElement> = {
     </>
   ),
 
-  // Le stylo posé sur ta table : le seul qu'il ait jamais eu
+  // Deux copies identiques, et la faute au milieu
   kevin2: () => (
     <>
-      <rect width="320" height="180" fill="#e9eef7" />
+      <rect width="320" height="180" fill="#eef1f7" />
       <rect y="150" width="320" height="30" fill="#c8c1b2" />
-      <rect x="54" y="112" width="212" height="12" rx="3" fill="#c68a4e" stroke="#3f3a55" strokeWidth="3" />
-      <path d="M76 124 v56 M244 124 v56" stroke="#3f3a55" strokeWidth="3" />
-      <rect x="96" y="96" width="62" height="18" rx="2" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2.5" />
-      <g stroke="#b9b1c9" strokeWidth="1.5"><path d="M102 103 h50 M102 109 h50" /></g>
-      {/* le stylo, posé bien droit, au centre */}
-      <g transform="rotate(-6 196 106)" className="splash">
-        <rect x="174" y="102" width="44" height="8" rx="4" fill="#5d4aa8" stroke="#3f3a55" strokeWidth="2.5" />
-        <path d="M218 106 h10" stroke="#3f3a55" strokeWidth="3" strokeLinecap="round" />
-      </g>
-      <Kid x={62} y={62} arms="down" />
+      {/* les deux copies brandies côte à côte */}
+      {[64, 176].map((x, i) => (
+        <g key={x} transform={`rotate(${i ? 3 : -3} ${x + 40} 84)`}>
+          <rect x={x} y="34" width="80" height="100" rx="3" fill="#fffdf9" stroke="#3f3a55" strokeWidth="3" />
+          <g stroke="#b9b1c9" strokeWidth="1.6">
+            <path d={`M${x + 10} 52 h60 M${x + 10} 64 h60 M${x + 10} 88 h60 M${x + 10} 100 h60 M${x + 10} 112 h44`} />
+          </g>
+          <path d={`M${x + 10} 76 h44`} stroke="#3f3a55" strokeWidth="2" />
+          <circle cx={x + 62} cy="76" r="9" fill="none" stroke="#d9534f" strokeWidth="3" />
+          <path d={`M${x + 58} 72 l8 8 M${x + 66} 72 l-8 8`} stroke="#d9534f" strokeWidth="2.5" strokeLinecap="round" />
+        </g>
+      ))}
+      <text x="160" y="26" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="15" fill="#d9534f">la même faute</text>
+      {/* toi, bouche ouverte, et Kévin qui regarde ses chaussures */}
       <g>
-        <circle cx="252" cy="58" r="13" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
-        <path d="M246 56 h5 M255 56 h5" {...ink} strokeWidth="2" />
-        <path d="M246 66 q6 4 12 0" {...ink} strokeWidth="2" />
-        <path d="M252 71 v26 M252 78 l-18 22 M252 78 l14 14" {...ink} />
+        <circle cx="28" cy="112" r="13" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <circle cx="23" cy="110" r="3" fill="#fff" stroke="#3f3a55" strokeWidth="1.5" />
+        <circle cx="33" cy="110" r="3" fill="#fff" stroke="#3f3a55" strokeWidth="1.5" />
+        <circle cx="23" cy="110" r="1.3" fill="#3f3a55" /><circle cx="33" cy="110" r="1.3" fill="#3f3a55" />
+        <ellipse cx="28" cy="120" rx="4" ry="5" fill="#3f3a55" />
+        <path d="M28 125 v22 M28 132 l-12 10 M28 132 l12 10" {...ink} />
       </g>
-      <text x="188" y="42" fontFamily="'Patrick Hand', cursive" fontSize="16" fill="#d9534f" transform="rotate(-4 188 42)">tiens.</text>
+      <g>
+        <circle cx="292" cy="112" r="13" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M286 112 h5 M295 112 h5" {...ink} strokeWidth="2" />
+        <path d="M286 120 q6 3 12 0" {...ink} strokeWidth="2" />
+        <path d="M292 125 v22 M292 132 l-11 12 M292 132 l11 12" {...ink} />
+      </g>
+      <g className="sweat" stroke="#8fb6d9" strokeWidth="2.5" strokeLinecap="round"><path d="M16 104 v8" /></g>
     </>
   ),
 

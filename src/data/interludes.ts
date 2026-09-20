@@ -106,11 +106,12 @@ export const INTERLUDES: Interlude[] = [
     id: 'kevin2',
     mood: 'any',
     lines: [
-      'Il s’approche de ta table sans un mot et pose quelque chose dessus.',
-      'Un stylo {adjectif}, mâchouillé au bout. Le sien. Le seul qu’il ait jamais eu.',
+      'Vendredi, la maîtresse rend les copies. Elle garde la tienne pour la fin. Elle garde aussi celle de Kévin.',
+      'Les deux sont identiques. Mot pour mot, faute pour faute, jusqu\'à ce « nénuphard » avec un d que tu es [le seul|la seule] au monde à avoir écrit.',
+      'Elle regarde Kévin. Kévin baisse les yeux avec un air {adjectif}, exactement comme quelqu\'un qu\'on aurait copié.',
     ],
-    cry: 'Tiens. Tu en auras besoin.',
-    fall: 'Il n’écrira pas aujourd’hui. Il a déjà décidé.',
+    cry: 'C\'est lui ! C\'est lui qui a copié sur moi !!!',
+    fall: 'Tu as été [puni|punie]. Kévin a eu un bon point pour son courage.',
   },
   {
     id: 'kevin3',

@@ -122,6 +122,12 @@ export const PSYCHE_LEAD = [
   'Tu essuies tes mains sur ton pantalon, tu attrapes ton stylo, et tu te répètes une dernière fois :',
   'La classe se tait d\'un coup. Tu regardes la feuille blanche, et dans ta tête, ça dit :',
   'Tu décapuchonnes ton stylo. Le bruit résonne dans toute la salle. Personne ne t\'entend penser :',
+  'Tu ranges {objet} au fond du cartable, tu remontes tes manches, et tu te murmures :',
+  'Tu vérifies trois fois que ton stylo écrit, sur le coin de la feuille, puis tu te jures :',
+  'Tu jettes un œil à Kévin, qui ne te regarde même pas. Ça t\'énerve. Tu te dis :',
+  'Tu arraches la page précédente, tu lisses la nouvelle du plat de la main, et tu penses :',
+  'Tu croises les doigts sous la table, là où {maitresse} ne peut pas voir, et tu récites :',
+  'Tu cales ton coude, tu inclines la feuille de trois degrés, comme {admire} te l\'a montré, et tu souffles :',
 ];
 
 export const MONOLOGUE = [

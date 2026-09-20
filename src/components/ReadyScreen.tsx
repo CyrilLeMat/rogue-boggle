@@ -21,7 +21,9 @@ export function ReadyOverlay() {
 
   // Le temps de souffler avant la dictée : une pensée qu'on lit à son rythme, puis le chrono.
   const brace = () => {
-    setLead(PSYCHE_LEAD[Math.floor(Math.random() * PSYCHE_LEAD.length)]);
+    // pas un mot sur Kévin tant qu'il ne s'est pas présenté
+    const leads = PSYCHE_LEAD.filter((l) => run.seenInterludes.includes('kevin1') || !l.includes('Kévin'));
+    setLead(leads[Math.floor(Math.random() * leads.length)]);
     setThought(draw());
     sfx.heartbeat();
   };

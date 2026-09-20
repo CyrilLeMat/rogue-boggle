@@ -73,6 +73,13 @@ export const sfx = {
   bonus() {
     [0, 4, 7, 12].forEach((n, i) => tone({ freq: semi(659, n), at: i * 0.06, dur: 0.2, wave: 'triangle', gain: 0.18 }));
   },
+  // deux battements de cœur, juste avant que le chrono parte
+  heartbeat() {
+    [0, 0.42].forEach((at) => {
+      tone({ freq: 96, at, dur: 0.16, wave: 'sine', gain: 0.3, slide: 0.45 });
+      tone({ freq: 72, at: at + 0.14, dur: 0.24, wave: 'sine', gain: 0.24, slide: 0.5 });
+    });
+  },
   // le stylo rouge de la maîtresse : trois traits secs sur la copie
   redPen() {
     [0, 1, 2].forEach((i) => tone({ freq: 340 - i * 40, at: i * 0.07, dur: 0.06, wave: 'square', gain: 0.08, slide: 0.6 }));

@@ -710,8 +710,13 @@ Un test vérifie qu'aucun marqueur ne subsiste dans les monologues, planches et 
   la coopérative, la partie de billes, le remplaçant, le miroir et six appréciations.
 
 ### Couverture des mots de la fiche
-`npx vite-node scripts/token-coverage.ts` simule 4000 années et compte les occurrences de chaque jeton.
-Objectif : au moins 2 en moyenne et 95 % de parties avec au moins une apparition.
-Mesure au 20/09/2026 : tous les jetons entre 2,3 et 5,2 (hors {nom}, 13,5), couverture 93 à 100 %.
+`npx vite-node scripts/token-coverage.ts` simule 4000 années et compte les occurrences de chaque jeton,
+en séparant ce qui se lit au calme (planches, pensées, appréciations, bulletin) de ce qui défile
+pendant la dictée, qui ne compte pas : sous la pression du chrono, ces répliques ne sont pas lues.
+Objectif : au moins 2 occurrences lues et 95 % de parties avec au moins une apparition.
+Mesure au 20/09/2026 : de 2,0 à 3,3 (hors {rigolo}, 15, car il nomme la maîtresse),
+couverture 92 à 100 %.
 Le cri de l'araignée ne sert jamais pour une araignée : il surgit sur l'encre renversée,
 à l'arrivée du directeur, dans le couloir après un échec et sur l'écran de redoublement.
+Le mot rigolo nomme la famille de l'école : Madame Machin et Monsieur Machin, son frère.
+L'année compte 11 dictées.

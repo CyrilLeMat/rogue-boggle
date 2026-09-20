@@ -25,7 +25,7 @@ export const INTERLUDES: Interlude[] = [
     id: 'miroir',
     mood: 'win',
     lines: [
-      'Les lavabos. L’eau froide. Ton reflet te fixe comme un adversaire.',
+      'Les lavabos. L’eau froide. Ton reflet te fixe comme un adversaire, et il a l’air {adjectif}.',
       'Tu t’agrippes à la faïence des deux mains et tu murmures, les dents serrées :',
     ],
     cry: 'Ce n’était qu’une dictée. {heros} ne se serait pas arrêté là, et moi non plus.',
@@ -49,7 +49,7 @@ export const INTERLUDES: Interlude[] = [
       'Le carrelage est froid. Tu fixes tes chaussures. Tu ne clignes pas des yeux. Tout au fond, quelque chose voudrait sortir :',
     ],
     cry: '{Cri}.',
-    fall: 'Tu as eu onze. La moyenne de la classe est de douze.',
+    fall: 'Tu as eu onze. La moyenne de la classe est de douze. Au menu ce soir : {horreur}.',
   },
   {
     id: 'chambre',
@@ -95,7 +95,7 @@ export const INTERLUDES: Interlude[] = [
     id: 'kevin1',
     mood: 'any',
     lines: [
-      'Tu ne le connaissais pas ce matin. Ce soir, tu ne verras plus que lui.',
+      'Tu ne le connaissais pas ce matin. Il t’a lancé un « {salut} » en arrivant, et ce soir tu ne verras plus que lui.',
       'Kévin. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords. Il copie sur tout le monde et tout le monde le laisse faire.',
       'Dans la cour, il traverse le goudron sans se presser, s’arrête à trois pas de toi, sort les mains de ses poches et te désigne du menton.',
     ],

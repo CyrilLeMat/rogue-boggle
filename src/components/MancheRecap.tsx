@@ -82,7 +82,7 @@ export function MancheRecap() {
       <div className="appreciation act">
         <span className="appreciation-label">Appréciation</span>
         <p>{say(result.appreciation)}</p>
-        <span className="signature">{SIGNATURE}</span>
+        <span className="signature">{say(SIGNATURE)}</span>
       </div>
       )}
       {act >= 2 && !result.success && <p className="ko act">{L.vieEnMoins} Il t'en reste {run.lives}.</p>}

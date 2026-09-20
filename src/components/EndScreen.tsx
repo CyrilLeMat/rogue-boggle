@@ -35,6 +35,11 @@ export function EndScreen({ victory }: { victory: boolean }) {
           <span className="bulletin-hobby">
             Passe-temps : {run.identity.profile.cour} · Projet : {run.identity.profile.metier} · Caractère : {run.identity.profile.adjectif}
           </span>
+          <span className="bulletin-file">
+            Fiche : aime {run.identity.profile.plat}, ne supporte pas {run.identity.profile.horreur},
+            voudrait {run.identity.profile.action} toute la journée, fredonne {run.identity.profile.chanson},
+            admire {run.identity.profile.admire}.
+          </span>
           <span className="bulletin-title">Bulletin de fin d'année</span>
           <span className="bulletin-year">Année {run.seed}</span>
         </div>
@@ -62,7 +67,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
           <div className="bulletin-mention">
             <span className="stamp">{verdict.label}</span>
             <p>{say(verdict.note, run.identity)}</p>
-            <span className="signature">{SIGNATURE}</span>
+            <span className="signature">{say(SIGNATURE, run.identity)}</span>
           </div>
         </div>
       </div>

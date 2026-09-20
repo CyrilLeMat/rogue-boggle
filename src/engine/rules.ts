@@ -21,7 +21,7 @@ export const GRACE_SECONDS_AFTER_LOSS = 10;
 export const STREAK_WINDOW = 5;
 export const STREAK_STEP = 0.1;
 export const STREAK_MAX_LINKS = 5;
-export const TOTAL_MANCHES = 10;
+export const TOTAL_MANCHES = 11;
 export const STARTING_LIVES = 3;
 export const MIN_WORD_LENGTH = 3;
 // [tuning] En dessous de ce nombre de mots encore trouvables, la maîtresse donne une feuille neuve.

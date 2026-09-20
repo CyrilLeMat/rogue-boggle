@@ -6,7 +6,7 @@ import { SCENES, planScenes } from '../src/data/scenes';
 import { planEvents } from '../src/engine/events';
 import {
   APPRECIATIONS, DUPLICATES, EV, L, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL,
-  SCOLDS, SHOP_INTRO, SUSPICIONS, TOO_SHORT, mention,
+  SCOLDS, SHOP_INTRO, SIGNATURE, SUSPICIONS, TOO_SHORT, mention,
 } from '../src/theme/lexicon';
 
 const TOKENS = ['nom', 'salut', 'phrase', 'cour', 'heros', 'plat', 'horreur', 'metier', 'chanson', 'admire', 'surnom', 'rigolo', 'adjectif', 'nombre', 'action', 'cri'];
@@ -17,21 +17,27 @@ const PROLOGUE = [
 ];
 
 const RUNS = 4000;
-const DICTEES = 10;
+const DICTEES = 11;
 // Estimations de partie : mots trouvés, tracés refusés, compliments déclenchés. [tuning]
 const INVALID_PER_DICTEE = 3;
 const PRAISES_PER_DICTEE = 2;
 const SUSPICION_PER_DICTEE = 0.6;
 const DUPLICATE_PER_DICTEE = 0.8;
 
+// Deux comptes séparés : ce qui se lit au calme, et ce qui défile pendant la dictée
+// (sous la pression du chrono, ces répliques-là ne sont pas lues : elles ne comptent pas).
 const counts: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
+const rushed: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
 const atLeastOnce: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
+
+// {maitresse} et {directeur} sont bâtis sur le mot rigolo : ils comptent pour lui.
+const ALIAS: Record<string, string> = { maitresse: 'rigolo', directeur: 'rigolo' };
 
 function tally(texts: (string | undefined)[], seen: Record<string, number>) {
   for (const text of texts) {
     if (!text) continue;
     for (const m of text.matchAll(/\{([A-Za-z]+)\}/g)) {
-      const key = m[1].toLowerCase();
+      const key = ALIAS[m[1].toLowerCase()] ?? m[1].toLowerCase();
       if (key in seen) seen[key] += 1;
     }
   }
@@ -42,6 +48,7 @@ const pick = <T,>(list: readonly T[], rng: { int(n: number): number }) => list[r
 for (let run = 0; run < RUNS; run++) {
   const rng = createRng(`coverage-${run}`);
   const seen: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
+  const fast: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
 
   tally(PROLOGUE, seen);
   tally(SHOP_INTRO.lines as unknown as string[], seen);
@@ -69,16 +76,17 @@ for (let run = 0; run < RUNS; run++) {
     saidThoughts.push(thought);
     tally([thought], seen);
 
-    // les réactions pendant la dictée
-    for (let i = 0; i < INVALID_PER_DICTEE; i++) tally([pick(SCOLDS, rng)], seen);
+    // les réactions pendant la dictée : comptées à part, on ne les lit pas vraiment
+    for (let i = 0; i < INVALID_PER_DICTEE; i++) tally([pick(SCOLDS, rng)], fast);
     for (let i = 0; i < PRAISES_PER_DICTEE; i++) {
       const pool = rng.next() < 0.25 ? PRAISES_BIG : rng.next() < 0.1 ? PRAISES_HUGE : PRAISES_SMALL;
-      tally([pick(pool, rng)], seen);
+      tally([pick(pool, rng)], fast);
     }
-    if (rng.next() < SUSPICION_PER_DICTEE) tally([pick(SUSPICIONS, rng)], seen);
-    if (rng.next() < DUPLICATE_PER_DICTEE) tally([pick(DUPLICATES, rng)], seen);
-    if (rng.next() < 0.3) tally([pick(TOO_SHORT, rng)], seen);
+    if (rng.next() < SUSPICION_PER_DICTEE) tally([pick(SUSPICIONS, rng)], fast);
+    if (rng.next() < DUPLICATE_PER_DICTEE) tally([pick(DUPLICATES, rng)], fast);
+    if (rng.next() < 0.3) tally([pick(TOO_SHORT, rng)], fast);
 
+    tally([SIGNATURE], seen); // la signature sous chaque appréciation
     // l'appréciation du bulletin
     const band = rng.next() < 0.72
       ? (['justesse', 'correct', 'bien', 'suspect', 'prodige'] as const)[Math.min(4, Math.floor(-Math.log(rng.next()) * 1.4))]
@@ -99,18 +107,20 @@ for (let run = 0; run < RUNS; run++) {
   // la fin d'année
   const victory = rng.next() < 0.4;
   tally([victory ? L.victoireSub : L.gameoverSub(7), mention(victory ? 14 : 8, victory).note], seen);
-  // le bulletin affiche toujours ces quatre-là
-  for (const key of ['nom', 'surnom', 'cour', 'metier', 'adjectif']) seen[key] += 1;
+  // le bulletin récapitule toute la fiche, et il se lit toujours
+  for (const key of ['nom', 'surnom', 'cour', 'metier', 'adjectif', 'plat', 'horreur', 'action', 'chanson', 'admire']) seen[key] += 1;
 
   for (const t of TOKENS) {
     counts[t] += seen[t];
+    rushed[t] += fast[t];
     if (seen[t] > 0) atLeastOnce[t] += 1;
   }
 }
 
 const rows = TOKENS.map((t) => ({
   jeton: t,
-  moyenne: +(counts[t] / RUNS).toFixed(2),
+  lues: +(counts[t] / RUNS).toFixed(2),
   'au moins 1 fois': `${Math.round((atLeastOnce[t] / RUNS) * 100)} %`,
-})).sort((a, b) => a.moyenne - b.moyenne);
+  'en dictée': +(rushed[t] / RUNS).toFixed(2),
+})).sort((a, b) => a.lues - b.lues);
 console.table(rows);

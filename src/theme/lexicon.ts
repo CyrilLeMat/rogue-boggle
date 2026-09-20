@@ -16,7 +16,7 @@ export interface Profile {
   chanson: string;  // ta chanson préférée
   admire: string;   // la personne que tu admires le plus, telle qu'on la nomme (« ma grand-mère », « Papa »)
   surnom: string;   // le surnom qu'on te donne
-  rigolo: string;   // un mot rigolo
+  rigolo: string;   // un mot rigolo, qui devient le nom de famille de la maîtresse
   adjectif: string; // un adjectif
   nombre: string;   // un nombre, gardé tel quel
   action: string;   // une action, à l'infinitif
@@ -70,7 +70,13 @@ const capitalize = (t: string) => (t ? t[0].toUpperCase() + t.slice(1) : t);
 export function say(text: string, id: Identity | null | undefined): string {
   const who = id ?? DEFAULT_IDENTITY;
   const profile = { ...DEFAULT_PROFILE, ...who.profile };
-  const values: Record<string, string> = { ...profile, nom: who.name };
+    // Le mot rigolo sert de patronyme de famille : la maîtresse et le directeur le portent tous les deux.
+  const family = capitalize(profile.rigolo);
+  const values: Record<string, string> = {
+    ...profile, nom: who.name,
+    maitresse: `Madame ${family}`,
+    directeur: `Monsieur ${family}`,
+  };
   return text
     .replace(/\[([^\]|]*)\|([^\]]*)\]/g, (_m, masc, fem) => (who.gender === 'f' ? fem : masc))
     .replace(/\{([A-Za-z]+)\}/g, (whole, key: string) => {
@@ -113,7 +119,7 @@ export const MONOLOGUE = [
   'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est ven[u|ue]s là pour briller !',
 ];
 
-export const TAGLINE = 'La maîtresse a préparé dix dictées. Sauras-tu accomplir ton destin et passer en CM1 ?';
+export const TAGLINE = 'La maîtresse a préparé onze dictées. Sauras-tu accomplir ton destin et passer en CM1 ?';
 
 export const L = {
   manche: 'Dictée',
@@ -122,7 +128,7 @@ export const L = {
   grille: 'Feuille',
   euros: 'Billes',
   boutique: 'La coopérative',
-  boutiqueSub: 'La maîtresse a le dos tourné. Le marché noir de la coopérative est ouvert.',
+  boutiqueSub: '{maitresse} a le dos tourné. Le marché noir de la coopérative est ouvert.',
   relic: 'Fourniture',
   charme: 'Gommette',
   consommable: 'Trousse',
@@ -135,7 +141,7 @@ export const L = {
   victoire: 'Passage en CM1.',
   victoireSub: 'Le CM1. Puis le CM2. Puis {metier}. Tu sors dans la cour, tu cries « {salut} » à personne en particulier, et ce soir il y a {plat}.',
   gameover: 'Redoublement.',
-  gameoverSub: (n: number) => `Tu as crié « {cri} » en voyant la note. La dictée ${n} a eu raison de toi. Tes parents sont convoqués, et ce soir, au dîner, il y a {horreur}.`,
+  gameoverSub: (n: number) => `Tu as crié « {cri} » en voyant la note de {maitresse}. La dictée ${n} a eu raison de toi. Tes parents sont convoqués, et ce soir, au dîner, il y a {horreur}.`,
   continuer: 'Copie suivante',
   lancer: 'Silence. On commence.',
   terminer: 'Rendre la copie',
@@ -150,8 +156,8 @@ export const L = {
   rejouer: 'Refaire cette année',
   menu: 'Menu',
   relicDepart: 'Qui es-tu, cette année ?',
-  relicDepartSub: 'Toute la classe est là. On ne change pas de peau en cours d\'année : choisis bien.',
-  pretClassique: 'Dictée classique. Rien que toi, la feuille, et une maîtresse qui croit encore aux règles.',
+  relicDepartSub: 'Toute la classe est là, et {maitresse} vous attend. On ne change pas de peau en cours d\'année : choisis bien.',
+  pretClassique: 'Dictée classique. Rien que toi, la feuille, et {maitresse}, qui croit encore aux règles.',
   repit: 'de répit, la maîtresse a eu pitié',
   manqueList: 'Elle attendait aussi',
   meilleurs: 'Tes plus beaux mots',
@@ -300,7 +306,7 @@ export function scold(list: readonly string[], seed: number): string {
 export const APPRECIATIONS: Record<string, string[]> = {
   fatal: [
     '{nom}, je convoque tes parents lundi. Nous parlerons de ton avenir, s\'il y en a un.',
-    'À ce stade je ne corrige plus, je constate.',
+    'À ce stade je ne corrige plus, je constate. Ce soir : {horreur}.',
     'J\'ai gardé ta copie. Pas pour l\'encadrer.',
     'Tu penseras à {cour} toute ta vie, et ta vie sera courte.',
     'J\'ai prévenu la maîtresse de CE2 de l\'an prochain. Elle a demandé une mutation.',
@@ -353,16 +359,16 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Voilà du travail sérieux. Continue et je t\'invite à manger {plat}.',
     'Bien. Tu vois ce qui arrive quand tu penses à autre chose qu\'à {cour} ?',
     'Voilà ce qu\'on raconte à {admire} en rentrant.',
-    'C\'est propre, c\'est juste, c\'est presque agaçant.',
+    'C\'est propre, c\'est juste, et tu fredonnais {chanson} en le faisant. Agaçant.',
   ],
   correct: [
     'Correct, {nom}. Nous savons tous les deux que tu peux mieux faire, et que tu ne le feras pas.',
     'Passable. Ta voisine a fait mieux sans se donner cette peine.',
-    'Acceptable. J\'attendais autre chose de toi, mais j\'attends toujours trop.',
-    'Ça ira. Ça ira, mais ça ne restera pas dans les mémoires.',
+    'Acceptable. {Admire} aurait fait mieux, et tu le sais.',
+    'Ça ira, {nom}. Ça ira, mais tu pensais à {action}, et ça se voit.',
     'Un travail {adjectif}. Je te laisse décider si c\'est bien.',
     'Moyen. Comme la purée de la cantine, et avec autant de saveur.',
-    'Tu as fait le minimum. Le minimum a été fait. Nous sommes quittes.',
+    'Tu as fait le minimum. Ce soir, {plat}, mais sans dessert.',
   ],
   justesse: [
     'Juste, tout juste, {nom}. Un point de moins et je remplissais ton carnet de correspondance.',
@@ -370,7 +376,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
     'Tu as dû dire « {phrase} » en rendant ta copie. Tu avais tort.',
     'Un point de plus et je te félicitais. Un point de moins et j\'appelais chez toi.',
-    'Tu as eu chaud. Moi aussi, figure-toi.',
+    'Tu as eu chaud, et moi aussi. Va {action}, tu l\'as mérité de justesse.',
     'Il s\'en est fallu de {nombre} points. Ou pas loin. Je n\'ai pas recompté.',
   ],
 };
@@ -394,7 +400,7 @@ export function pickAppreciation(ratio: number, success: boolean, lives: number,
   return list[Math.abs(Math.round(seed * 7 + ratio * 100)) % list.length];
 }
 
-export const SIGNATURE = 'La maîtresse';
+export const SIGNATURE = '{maitresse}';
 
 // Bulletin de fin d'année : chaque dictée vaut une note sur 20 (atteindre la note = 10/20).
 export function noteSur20(score: number, threshold: number): number {
@@ -486,7 +492,7 @@ export const EV = {
     intro: [
       'Dans le couloir, adossé au radiateur, un CM1.',
       'Deux redoublements, dit la légende. Il a connu trois maîtresses et vu {nombre} élèves craquer à cet endroit précis.',
-      'Il te barre la route, te toise, et lâche : « De mon temps, on ne disait pas {salut}. »',
+      'Il te barre la route, te toise, et lâche : « De mon temps, on ne disait pas {salut}. De mon temps, on récitait {chanson} debout. »',
       'Puis il te tend une feuille griffonnée :',
     ],
     ask: (n: number) => `— Un mot de ${n} lettres dort dans cette feuille, petit. Les lettres sont là, en clair. Retrouve le chemin.`,

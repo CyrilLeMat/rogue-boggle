@@ -81,7 +81,7 @@ export const SCENES: Scene[] = [
     id: 'place',
     title: 'Le changement de place',
     lines: [
-      'Sans prévenir, la maîtresse annonce un changement de place. La classe retient son souffle : c\'est là que se jouent les destins.',
+      'Sans prévenir, {maitresse} annonce un changement de place. La classe retient son souffle : c\'est là que se jouent les destins.',
       'Deux tables restent libres. L\'une à côté de Kévin, qui n\'a plus de stylo depuis le CP et qui te fixe déjà en souriant.',
       'L\'autre contre la fenêtre du fond, celle qui ne ferme plus depuis 1996 et par laquelle entre un vent polaire.',
     ],
@@ -103,7 +103,7 @@ export const SCENES: Scene[] = [
     title: 'Le remplaçant',
     lines: [
       'Catastrophe, ou miracle, personne n\'arrive à trancher : la maîtresse est absente.',
-      'À sa place, un jeune homme pâle serre un classeur contre sa poitrine comme un bouclier. Il ne connaît ni vos prénoms, ni les règles, ni le règlement.',
+      'À sa place, un jeune homme {adjectif} serre un classeur contre sa poitrine comme un bouclier. Il ne connaît ni vos prénoms, ni les règles, ni le règlement.',
       'Il tremble. Il sourit. Il est perdu. Sur sa trousse, un porte-clés {heros} qui ne trompe personne : il a douze ans d\'écart avec vous et aucune autorité.',
     ],
     choices: [
@@ -123,8 +123,8 @@ export const SCENES: Scene[] = [
     id: 'grosmot',
     title: 'Le gros mot au tableau',
     lines: [
-      'Quelqu\'un a écrit « {rigolo} » au tableau pendant la récré. En lettres capitales.',
-      'La maîtresse a blêmi, puis exigé un coupable. Sans aveu, la classe entière sera punie. Le silence dure une éternité.',
+      'Quelqu\'un a écrit « {rigolo} » au tableau pendant la récré. En lettres capitales. C\'est le nom de la maîtresse.',
+      '{Maitresse} a blêmi, puis exigé un coupable. Sans aveu, la classe entière sera punie. Le silence dure une éternité.',
       'Puis vingt-six têtes se tournent lentement vers toi, parce que tu es le plus près du tableau et que la justice a ses raisons.',
     ],
     choices: [
@@ -166,7 +166,7 @@ export const SCENES: Scene[] = [
     title: 'Des chaussures dans le couloir',
     lines: [
       'Elles ralentissent. Elles s\'arrêtent. La maîtresse blanchit d\'un coup.',
-      'Le directeur n\'entre jamais sans raison, et le directeur n\'a jamais de raison.',
+      '{Directeur} n\'entre jamais sans raison, et {directeur} n\'a jamais de raison. C\'est le frère de la maîtresse. Personne n\'en parle jamais.',
       'La poignée tourne au ralenti, comme dans les films où tout le monde meurt à la fin. Dans ta tête, une seule phrase tourne en boucle : « {cri} ».',
     ],
     choices: [
@@ -177,7 +177,7 @@ export const SCENES: Scene[] = [
       },
       {
         label: 'Glisser lentement sous la table',
-        detail: 'Il ne peut pas te convoquer s\'il ne t\'a pas vu. Tu rates le début de la dictée, mais tu trouves une pièce par terre.',
+        detail: 'Il ne peut pas te convoquer s\'il ne t\'a pas vu[|e]. Tu rates le début de la dictée, mais tu trouves une pièce par terre.',
         effects: { euros: 40, seconds: -20 },
       },
     ],
@@ -228,7 +228,7 @@ export const SCENES: Scene[] = [
     id: 'anniversaire',
     title: 'L\'anniversaire de Léa',
     lines: [
-      'Gâteau au chocolat industriel sur le bureau. Léa a huit ans.',
+      'Gâteau au chocolat industriel sur le bureau, et même {plat} pour ceux qui ont apporté quelque chose. Léa a huit ans.',
       'Léa aura huit ans toute l\'année, comme tout le monde, mais aujourd\'hui c\'est officiel.',
       'Quelqu\'un a mis {chanson} sur le poste de la classe. Personne n\'ose danser.',
       'La dictée est maintenue. Bien sûr que la dictée est maintenue.',

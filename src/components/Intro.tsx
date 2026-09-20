@@ -19,7 +19,7 @@ const PANELS = [
   {
     title: 'II. L\'annonce',
     text: [
-      'La maîtresse se retourna d\'un bloc. La craie hurla sur le tableau. Six lettres, un accent aigu, tranchant comme une lame.',
+      '{Maitresse} se retourna d\'un bloc. La craie hurla sur le tableau. Six lettres, un accent aigu, tranchant comme une lame.',
     ],
     cry: 'DICTÉE !!! Et que ça saute ! Vous allez souffrir, et vos parents aussi !',
     after: [

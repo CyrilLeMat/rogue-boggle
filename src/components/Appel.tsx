@@ -22,7 +22,7 @@ const QUESTIONS: { key: keyof Profile; label: string }[][] = [
     { key: 'horreur', label: 'Le plat que je déteste' },
   ],
   [
-    { key: 'rigolo', label: 'Un mot rigolo' },
+    { key: 'rigolo', label: 'Un mot rigolo (ce sera le nom de la maîtresse)' },
     { key: 'adjectif', label: 'Un adjectif' },
     { key: 'nombre', label: 'Un nombre' },
     { key: 'action', label: 'Une action (sauter, courir…)' },

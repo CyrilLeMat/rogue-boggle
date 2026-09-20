@@ -134,12 +134,12 @@ export const INTERLUDES: Interlude[] = [
 export const INTERLUDE_BY_ID = new Map(INTERLUDES.map((i) => [i.id, i]));
 
 // L'arc de Kévin se déroule toujours dans l'ordre, aux mêmes dictées : c'est une histoire, pas un tirage.
-// Il ouvre le bal dès la première dictée : on présente l'adversaire avant de le combattre.
-const KEVIN_ARC: Record<number, string> = { 1: 'kevin1', 5: 'kevin2', 9: 'kevin3' };
+// Il attend la troisième : la rentrée est déjà bien assez chargée comme ça.
+const KEVIN_ARC: Record<number, string> = { 3: 'kevin1', 5: 'kevin2', 9: 'kevin3' };
 
-// Le passé remonte aux dictées paires, là où il n'y avait rien, et il creuse : l'été dernier,
-// puis deux ans, puis trois — le dernier juste avant la dernière boutique et l'affrontement.
-const MEMORY_ARC: Record<number, string> = { 4: 'ete', 8: 'mamie', 10: 'pluie' };
+// Le passé remonte à trois dates, et il creuse : l'été dernier, puis deux ans, puis trois —
+// le dernier juste avant la dernière boutique et l'affrontement. Jamais collé au racket.
+const MEMORY_ARC: Record<number, string> = { 4: 'ete', 7: 'mamie', 10: 'pluie' };
 
 export function memoryAfter(manche: number, seen: readonly string[]): string | null {
   const id = MEMORY_ARC[manche];
@@ -147,8 +147,9 @@ export function memoryAfter(manche: number, seen: readonly string[]): string | n
 }
 
 // Une planche après les dictées impaires, quand il n'y a ni couloir ni scène de classe.
+// Sauf la première : on sort de la dictée d'ouverture, la coopérative suffit pour ce jour-là.
 export function hasInterlude(manche: number): boolean {
-  return manche % 2 === 1;
+  return manche > 1 && manche % 2 === 1;
 }
 
 export function pickInterlude(manche: number, success: boolean, seen: string[], rng: Rng): string | null {

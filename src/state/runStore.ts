@@ -559,7 +559,8 @@ export const useRunStore = create<Store>((set, get) => ({
       return;
     }
     // Après une dictée impaire, la caméra te suit hors de la classe.
-    if (hasInterlude(run.currentManche)) {
+    // Les jours où un souvenir remonte, il prend le créneau : on ne sert pas deux planches.
+    if (hasInterlude(run.currentManche) && !memoryAfter(run.currentManche, run.seenInterludes)) {
       const id = pickInterlude(run.currentManche, !run.lostLifeLastManche, run.seenInterludes, run.rng);
       if (id) {
         set({ phase: 'interlude', currentInterlude: id, run: { ...run, seenInterludes: [...run.seenInterludes, id] } });

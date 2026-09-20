@@ -31,24 +31,24 @@ describe('couloirs de l\'année', () => {
 });
 
 describe('planches de transition', () => {
-  it('ne se jouent qu\'après les dictées impaires', () => {
-    expect([1, 2, 3, 4].map(hasInterlude)).toEqual([true, false, true, false]);
+  it('ne se jouent qu\'après les dictées impaires, et jamais après la première', () => {
+    expect([1, 2, 3, 4, 5].map(hasInterlude)).toEqual([false, false, true, false, true]);
   });
 
   it('déroulent l\'arc de Kévin dans l\'ordre', () => {
     const rng = createRng('kevin');
-    expect(pickInterlude(1, true, [], rng)).toBe('kevin1');
+    expect(pickInterlude(3, true, [], rng)).toBe('kevin1');
     expect(pickInterlude(5, true, ['kevin1'], rng)).toBe('kevin2');
     expect(pickInterlude(9, false, ['kevin1', 'kevin2'], rng)).toBe('kevin3');
   });
 
   it('font remonter le passé dans l\'ordre, jamais au hasard', () => {
     expect(memoryAfter(4, [])).toBe('ete');
-    expect(memoryAfter(8, ['ete'])).toBe('mamie');
+    expect(memoryAfter(7, ['ete'])).toBe('mamie');
     expect(memoryAfter(10, ['ete', 'mamie'])).toBe('pluie');
     expect(memoryAfter(4, ['ete'])).toBeNull();   // jamais deux fois
     expect(memoryAfter(3, [])).toBeNull();        // les souvenirs n'ont que leurs trois dates
-    expect(memoryAfter(6, [])).toBeNull();
+    expect(memoryAfter(8, [])).toBeNull();  // jamais collé au racket
   });
 
   it('gardent les souvenirs hors du tirage des transitions', () => {

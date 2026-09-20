@@ -4,7 +4,7 @@ import { ARCHETYPES } from '../../data/archetypes';
 import { buildDictionary } from '../dictionary';
 import { makeCell } from '../gridGenerator';
 import { resolvePath } from '../manche';
-import { SCENES } from '../../data/scenes';
+import { SCENES, SCENE_BY_ID, sceneNamesRival } from '../../data/scenes';
 import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, VOW, pickAppreciation, say, spellNumber } from '../../theme/lexicon';
 import { createRng } from '../rng';
 import { createRacket, planEvents } from '../events';
@@ -115,6 +115,21 @@ describe('accords et prénom', () => {
         expect(out).not.toMatch(/[[\]{}|]/);
       }
     }
+  });
+});
+
+describe('le redoublant du fond', () => {
+  it('ne peut pas être nommé par une planche de classe avant de s\'être présenté', () => {
+    const rival = SCENES.filter((s) => sceneNamesRival(s.id)).map((s) => s.id);
+    expect(rival.length).toBeGreaterThan(0);          // sinon la garde ne protège rien
+    for (const id of SCENES.map((s) => s.id)) {
+      const texts = [...SCENE_BY_ID.get(id)!.lines, ...SCENE_BY_ID.get(id)!.choices.flatMap((c) => [c.label, c.detail])];
+      expect(sceneNamesRival(id)).toBe(texts.some((t) => t.includes('{rival}')));
+    }
+  });
+
+  it('se présente toujours après la troisième dictée', () => {
+    for (let i = 0; i < 20; i++) expect(pickInterlude(3, i % 2 === 0, [], createRng('p' + i))).toBe('kevin1');
   });
 });
 

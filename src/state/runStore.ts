@@ -5,7 +5,7 @@ import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consum
 import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
 import { hasInterlude, memoryAfter, pickInterlude } from '../data/interludes';
-import { planScenes, randomLessonId, sceneChoice, sceneRelic } from '../data/scenes';
+import { planScenes, randomLessonId, sceneChoice, sceneNamesRival, sceneRelic } from '../data/scenes';
 import { BOSS_BOUNTY, DUEL_HP, DUEL_SECONDS, ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
@@ -742,7 +742,11 @@ export const useRunStore = create<Store>((set, get) => ({
       return;
     }
     // Une dictée sur deux, il se passe quelque chose en classe et tu dois réagir.
-    const [sceneId, ...restScenes] = run.scenePlan;
+    // Les planches qui nomment le redoublant attendent leur tour : il doit d'abord se présenter.
+    const knowsRival = run.seenInterludes.includes('kevin1');
+    const at = run.scenePlan.findIndex((id) => knowsRival || !sceneNamesRival(id));
+    const sceneId = at >= 0 ? run.scenePlan[at] : run.scenePlan[0];
+    const restScenes = run.scenePlan.filter((_, i) => i !== (at >= 0 ? at : 0));
     if (hasLessonChoice(manche) && sceneId) {
       set({
         run: { ...run, currentManche: manche, nextMutatorId: null, pendingScene: null, scenePlan: restScenes },

@@ -285,6 +285,14 @@ export function planScenes(rng: Rng, slots: number): string[] {
   return rng.shuffle([ALWAYS, ...rest]);
 }
 
+// Certaines planches de classe parlent du redoublant du fond. Elles attendent qu'il se soit
+// présenté : sinon il débarque dans une scène de cantine sans que personne l'ait jamais vu.
+export function sceneNamesRival(sceneId: string): boolean {
+  const scene = SCENE_BY_ID.get(sceneId);
+  if (!scene) return false;
+  return [...scene.lines, ...scene.choices.flatMap((c) => [c.label, c.detail])].some((t) => t.includes('{rival}'));
+}
+
 export function sceneChoice(sceneId: string, choice: number): SceneChoice | null {
   return SCENE_BY_ID.get(sceneId)?.choices[choice] ?? null;
 }

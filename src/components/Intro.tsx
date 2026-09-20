@@ -146,8 +146,9 @@ function Revolte() {
   );
 }
 
-// La récré est encore insouciante, l'annonce serre la gorge, la révolte part au combat.
-const PANEL_MOODS = ['classe', 'choc', 'combat'] as const;
+// Trois couleurs, trois cases : l'âge d'or est déjà un souvenir, l'annonce serre la gorge,
+// la révolte part au combat. La première coupe net avec le groove de la fiche de renseignements.
+const PANEL_MOODS = ['triste', 'choc', 'combat'] as const;
 
 export function Intro() {
   const accept = useRunStore((s) => s.acceptChallenge);

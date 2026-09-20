@@ -58,6 +58,8 @@ export function SoundEffects() {
   }, [timeLeft, phase]);
 
   useEffect(() => {
+    // le prologue a sa propre bande-son, case par case : on ne lui passe pas dessus
+    if (phase === 'intro') return;
     // la couleur du moment : le couloir fait peur, le souvenir fait mal, une leçon se combat
     const combat = phase === 'playing' && (!!mutatorId || timeLeft <= 20);
     setMusicMood(

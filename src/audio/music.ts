@@ -12,8 +12,9 @@ let step = 0;
 let intensity = 0; // 0 = récré tranquille, 1 = la sonnerie approche
 let mood: MoodName = 'classe';
 
-// Par défaut on n'impose pas de musique : beaucoup ouvrent le lien au bureau ou dans le métro.
-try { enabled = localStorage.getItem('rb-music') === '1'; } catch { /* stockage indisponible */ }
+// Musique par défaut : elle démarre au premier geste (aucun navigateur n'autorise avant).
+// Seul un refus explicite la garde éteinte, d'un lien à l'autre.
+try { enabled = localStorage.getItem('rb-music') !== '0'; } catch { /* stockage indisponible */ }
 
 const STEPS = 16; // double-croches sur une mesure à quatre temps
 

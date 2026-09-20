@@ -112,21 +112,27 @@ export function Classroom() {
       </g>
 
       {/* l'avion en papier de quelqu'un du fond */}
-      {/* la maîtresse, debout à gauche du tableau, règle en main */}
+      {/* la maîtresse, debout à gauche du tableau : robe rouge, carré net, règle en main */}
       <g>
-        <path d="M44 196 q-2 -46 16 -46 q18 0 16 46z" fill="#7d6bc4" stroke="#3f3a55" strokeWidth="3" strokeLinejoin="round" />
-        <path d="M60 150 v-14" stroke="#3f3a55" strokeWidth="3" />
-        <path d="M52 160 l-14 20" stroke="#3f3a55" strokeWidth="3" strokeLinecap="round" />
-        <path d="M68 158 l18 -14" stroke="#3f3a55" strokeWidth="3" strokeLinecap="round" className="pointer-arm" />
-        <rect x="84" y="126" width="6" height="26" rx="2" transform="rotate(38 87 139)" fill="#c68a4e" stroke="#3f3a55" strokeWidth="2" />
-        <circle cx="60" cy="122" r="15" fill="#f6d1c2" stroke="#3f3a55" strokeWidth="3" />
-        <path d="M46 116 q14 -16 28 0" fill="#bfb6cc" stroke="#3f3a55" strokeWidth="3" />
-        <circle cx="60" cy="104" r="8" fill="#bfb6cc" stroke="#3f3a55" strokeWidth="2.5" />
+        {/* jambes et chaussures */}
+        <path d="M53 168 v20 M67 168 v20" stroke="#3f3a55" strokeWidth="4" strokeLinecap="round" />
+        <path d="M47 196 h12 q3 -6 -6 -8 z M61 196 h12 q3 -6 -6 -8 z" fill="#3f3a55" />
+        {/* robe */}
+        <path d="M46 172 q0 -38 14 -38 q14 0 14 38z" fill="#d9534f" stroke="#3f3a55" strokeWidth="3" strokeLinejoin="round" />
+        <path d="M50 152 h20" stroke="#b5423e" strokeWidth="2.5" />
+        {/* bras : l'un le long du corps, l'autre tendu vers le tableau */}
+        <path d="M50 144 l-12 24" stroke="#3f3a55" strokeWidth="3" strokeLinecap="round" />
+        <path d="M70 142 l18 -12" stroke="#3f3a55" strokeWidth="3" strokeLinecap="round" className="pointer-arm" />
+        <rect x="86" y="112" width="6" height="26" rx="2" transform="rotate(38 89 125)" fill="#c68a4e" stroke="#3f3a55" strokeWidth="2" />
+        {/* tête, carré brun et lunettes */}
+        <circle cx="60" cy="120" r="15" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="3" />
+        <path d="M44 122 q0 -22 16 -22 q16 0 16 22 q-5 -10 -16 -10 q-11 0 -16 10z" fill="#6f4a33" stroke="#3f3a55" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d="M44 122 v8 M76 122 v8" stroke="#6f4a33" strokeWidth="5" strokeLinecap="round" />
         <g fill="none" stroke="#3f3a55" strokeWidth="2">
-          <circle cx="54" cy="122" r="4.5" /><circle cx="67" cy="122" r="4.5" /><path d="M58.5 122 h4" />
+          <circle cx="54" cy="120" r="4.5" /><circle cx="67" cy="120" r="4.5" /><path d="M58.5 120 h4" />
         </g>
-        <circle cx="54" cy="122" r="1.6" fill="#3f3a55" /><circle cx="67" cy="122" r="1.6" fill="#3f3a55" />
-        <path d="M54 133 h12" stroke="#3f3a55" strokeWidth="2.5" strokeLinecap="round" />
+        <circle cx="54" cy="120" r="1.6" fill="#3f3a55" /><circle cx="67" cy="120" r="1.6" fill="#3f3a55" />
+        <path d="M55 131 h10" stroke="#3f3a55" strokeWidth="2.5" strokeLinecap="round" />
       </g>
 
       {/* les boulettes de papier traversent la salle, une fois dans chaque sens */}

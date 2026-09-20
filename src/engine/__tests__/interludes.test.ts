@@ -5,7 +5,7 @@ import { buildDictionary } from '../dictionary';
 import { makeCell } from '../gridGenerator';
 import { resolvePath } from '../manche';
 import { SCENES } from '../../data/scenes';
-import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
+import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say, spellNumber } from '../../theme/lexicon';
 import { createRng } from '../rng';
 import { createRacket, planEvents } from '../events';
 
@@ -88,7 +88,8 @@ describe('accords et prénom', () => {
     ];
     for (const gender of ['m', 'f'] as const) {
       for (const t of texts) {
-        const out = say(t, { name: 'Alix', gender, profile: { ...DEFAULT_PROFILE, rigolo: 'patate', adjectif: 'mou', nombre: 'sept', action: 'courir', cri: 'AAAH', salut: 'Wesh', phrase: 'Tranquille', cour: 'le foot', heros: 'Pikachu', plat: 'les frites', horreur: 'les endives' } });
+        // mêmes jetons que l'interface : useSay ajoute toujours ce qui dépend de la partie
+        const out = say(t, { name: 'Alix', gender, profile: { ...DEFAULT_PROFILE, rigolo: 'patate', adjectif: 'mou', nombre: 'sept', action: 'courir', cri: 'AAAH', salut: 'Wesh', phrase: 'Tranquille', cour: 'le foot', heros: 'Pikachu', plat: 'les frites', horreur: 'les endives' } }, { restantes: spellNumber(9) });
         expect(out).not.toMatch(/[[\]{}|]/);
       }
     }

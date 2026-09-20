@@ -25,11 +25,11 @@ export const INTERLUDES: Interlude[] = [
     id: 'miroir',
     mood: 'win',
     lines: [
-      'Les lavabos. L’eau froide sur {corps}. Ton reflet te fixe comme un adversaire, et il a l’air {adjectif}.',
+      'Les lavabos. L’eau froide sur {corps}. Ton reflet te fixe comme un adversaire, et il a l’air {adjectif3}.',
       'Tu t’agrippes à la faïence des deux mains et tu murmures, les dents serrées :',
     ],
     cry: 'Ce n’était qu’une dictée. {heros} ne se serait pas arrêté là, et moi non plus.',
-    fall: 'Il en reste neuf. Ensuite, ce sont les vacances de la Toussaint.',
+    fall: 'Il en reste {restantes}. Ensuite, ce sont les vacances de la Toussaint.',
   },
   {
     id: 'preau',
@@ -46,7 +46,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'loss',
     lines: [
       'Le couloir est vide. Tu t’adosses au mur sous les porte-manteaux et tu glisses lentement jusqu’au sol.',
-      'Le carrelage est froid et {adjectif}, et ce froid remonte jusqu’à {corps}. Tu ne clignes pas des yeux. Tout au fond, quelque chose voudrait sortir :',
+      'Le carrelage est froid et {adjectif3}, et ce froid remonte jusqu’à {corps}. Tu ne clignes pas des yeux. Tout au fond, quelque chose voudrait sortir :',
     ],
     cry: '{Cri}.',
     fall: 'Tu as eu onze. La moyenne de la classe est de douze. Au menu ce soir : {horreur}.',
@@ -59,7 +59,7 @@ export const INTERLUDES: Interlude[] = [
       'Tu recopies le mot. Encore. Encore. Ta main tremble, l’encre bave sur un cahier {adjectif}, tu ne t’arrêtes pas.',
     ],
     cry: 'Cent fois. Mille s’il le faut. J’écrirai jusqu’à ce que {corps} me lâche.',
-    fall: '{Admire} dort à l’étage. Tu n’as rien dit à personne. Le mot est ÉCUREUIL.',
+    fall: '{Admire} dort à l’étage. Tu n’as rien dit à personne. Le mot est {FAUTE}.',
   },
   {
     id: 'pluie',
@@ -76,7 +76,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'La cuisine de ta grand-mère. Les carottes. Le couteau qui ne s’arrête jamais.',
-      'Elle ne lève pas les yeux. Le couteau fait un bruit {adjectif}. Elle dit un mot, tu l’épelles, elle dit le suivant. Depuis deux heures.',
+      'Elle ne lève pas les yeux. Le couteau fait un bruit {adjectif3}. Elle dit un mot, tu l’épelles, elle dit le suivant. Depuis deux heures.',
     ],
     cry: 'On ne triche pas avec les mots, petit. Les mots, eux, ne trichent pas avec toi.',
     fall: 'Elle a eu son certificat d’études en 1954. Elle en parle encore.',
@@ -108,7 +108,7 @@ export const INTERLUDES: Interlude[] = [
     lines: [
       'Vendredi, la maîtresse rend les copies. Elle garde la tienne pour la fin. Elle garde aussi celle de Kévin.',
       'Les deux sont identiques. Mot pour mot, faute pour faute, y compris « {faute} », que tu es [le seul|la seule] au monde à écrire comme ça.',
-      'Elle regarde Kévin. Kévin baisse les yeux avec un air {adjectif}, exactement comme quelqu\'un qu\'on aurait copié.',
+      'Elle regarde Kévin. Kévin baisse les yeux avec un air {adjectif3}, exactement comme quelqu\'un qu\'on aurait copié.',
     ],
     cry: 'C\'est lui ! C\'est lui qui a copié sur moi !!!',
     fall: 'Tu as été [puni|punie]. Kévin a eu un bon point pour son courage.',

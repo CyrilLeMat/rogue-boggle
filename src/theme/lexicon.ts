@@ -19,6 +19,7 @@ export interface Profile {
   rigolo: string;   // un mot rigolo, qui devient le nom de famille de la maîtresse
   adjectif: string; // un adjectif
   adjectif2: string;
+  adjectif3: string;
   objet: string;    // un objet, avec son article (« une tapette à souris »)
   animal: string;   // un animal
   corps: string;    // une partie du corps, avec son article (« le genou »)
@@ -44,6 +45,7 @@ export const DEFAULT_PROFILE: Profile = {
   rigolo: 'schtroumpf',
   adjectif: 'gluant',
   adjectif2: 'majestueux',
+  adjectif3: 'poisseux',
   objet: 'une tapette à souris',
   animal: 'un hérisson',
   corps: 'le genou',
@@ -70,6 +72,7 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   rigolo: ['schtroumpf', 'bidule', 'patate', 'zigouigoui', 'plouf', 'gloubiboulga'],
   adjectif: ['gluant', 'majestueux', 'mou', 'terrible', 'collant', 'phénoménal'],
   adjectif2: ['majestueux', 'poisseux', 'redoutable', 'discret', 'tordu', 'brillant'],
+  adjectif3: ['poisseux', 'immense', 'inquiétant', 'ridicule', 'somptueux', 'spongieux'],
   objet: ['une tapette à souris', 'un vieux grille-pain', 'une chaussette', 'un tournevis', 'un ballon crevé', 'une boule à neige'],
   animal: ['un hérisson', 'une otarie', 'un pigeon', 'une vache', 'un lombric', 'un furet'],
   corps: ['le genou', 'le coude', 'l\'oreille gauche', 'le gros orteil', 'la nuque', 'le menton'],
@@ -83,9 +86,15 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
 // {nom} pour le prénom, {salut} {phrase} {cour} {heros} {plat} {horreur} {metier} {chanson}
 // {admire} {surnom} pour la fiche, [masculin|féminin] pour les accords.
 // Un jeton écrit avec une majuscule ({Admire}) sort avec une majuscule : pratique en début de phrase.
+// Écrit tout en majuscules ({FAUTE}), il sort en majuscules : pratique quand l'élève hurle.
 const capitalize = (t: string) => (t ? t[0].toUpperCase() + t.slice(1) : t);
 
-export function say(text: string, id: Identity | null | undefined): string {
+// Compté au féminin : ce qu'on dénombre dans les textes, ce sont des dictées.
+const NUMBERS = ['zéro', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze'];
+export const spellNumber = (n: number) => NUMBERS[n] ?? String(n);
+
+// `extra` porte ce qui dépend de la partie en cours et pas de l'élève ({restantes}).
+export function say(text: string, id: Identity | null | undefined, extra?: Record<string, string>): string {
   const who = id ?? DEFAULT_IDENTITY;
   const profile = { ...DEFAULT_PROFILE, ...who.profile };
     // Le mot rigolo sert de patronyme de famille : la maîtresse et le directeur le portent tous les deux.
@@ -94,6 +103,7 @@ export function say(text: string, id: Identity | null | undefined): string {
     ...profile, nom: who.name,
     maitresse: `Madame ${family}`,
     directeur: `Monsieur ${family}`,
+    ...extra,
   };
   return text
     .replace(/\[([^\]|]*)\|([^\]]*)\]/g, (_m, masc, fem) => (who.gender === 'f' ? fem : masc))
@@ -101,6 +111,7 @@ export function say(text: string, id: Identity | null | undefined): string {
       const lower = key.toLowerCase();
       const value = values[lower];
       if (value === undefined) return whole;
+      if (key.length > 1 && key === key.toUpperCase()) return value.toUpperCase(); // {FAUTE} : on crie
       return key[0] === key[0].toUpperCase() ? capitalize(value) : value;
     });
 }
@@ -135,7 +146,7 @@ export const MONOLOGUE = [
   'Chaque seconde de ma vie m\'a men[é|ée] vers cet instant. En voici la conclusion.',
   'Je suis prêt[|e] à tout pour réussir le CE2. Même à pousser mon petit frère dans les orties.',
   'Les yeux de la maîtresse sont rouges de sang. Elle ne fera aucun cadeau.',
-  'Ils ont tous ri quand j\'ai écrit NÉNUPHAR. Plus personne ne rira.',
+  'Ils ont tous ri quand j\'ai écrit {FAUTE}. Plus personne ne rira.',
   'Mon stylo pèse trois grammes. Aujourd\'hui il en pèse mille, et mes doigts tremblent sous le poids du destin.',
   'Je n\'ai pas dormi. Dormir, c\'est pour les faibles. J\'ai récité. Toute la nuit, j\'ai récité.',
   'Si je tombe ici, personne ne se souviendra de mon nom, {nom}. Même mes parents m\'oublieront.',
@@ -153,7 +164,7 @@ export const MONOLOGUE = [
   'Cette fois, je n\'écrirai pas « {faute} ». Cette fois, je le jure.',
   'Si je rate, ce soir il y aura {horreur} sur la table. Et le silence. Surtout le silence.',
   'Un jour je serai {metier}. Ce jour-là, j\'aurai {cour} tous les jours de ma vie.',
-  'Regarde-moi bien, {admire}. Ce que tu vas voir est {adjectif}.',
+  'Regarde-moi bien, {admire}. Ce que tu vas voir est {adjectif3}.',
   'Je me lèverai, je crierai « {cri} », et la classe comprendra enfin.',
   'Mon cœur cogne jusque dans {corps}. Ce n\'est pas normal. Ce n\'est pas grave.',
   'Le CM1 est à {distance} de cette table. Je peux le sentir d\'ici.',
@@ -258,7 +269,7 @@ export const SCOLDS = [
   'Et tu as encore écrit « {faute} ». Encore.',
   'Tu as crié « {cri} » en découvrant ce mot. Toute la classe l\'a entendu.',
   'Tu préférerais {action}, je sais. Écris d\'abord.',
-  'Ce mot est {adjectif}. Et ce n\'est pas un compliment.',
+  'Ce mot est {adjectif3}. Et ce n\'est pas un compliment.',
   'Tu écris comme {animal} qui aurait appris hier.',
   'Tu tiens ton stylo avec {corps}, ma parole.',
   'Ce mot est {adjectif2}. J\'ai cherché, il n\'y a pas d\'autre mot.',
@@ -426,7 +437,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
   bien: [
     'Bon travail. J\'ai souri, et ça ne m\'était pas arrivé depuis des années.',
     'C\'est bien. Étrangement bien. Tu avais les yeux baissés tout le long.',
-    'Très bonne copie, {adjectif} même. J\'ai vérifié deux fois, par acquit de conscience.',
+    'Très bonne copie, {adjectif3} même. J\'ai vérifié deux fois, par acquit de conscience.',
     'Voilà du travail sérieux. Continue et je t\'invite à manger {plat}.',
     'Bien. Tu vois ce qui arrive quand tu oublies {cour} pendant cinq minutes ?',
     'Voilà ce qu\'on raconte à {admire} en rentrant. Un travail {adjectif2}, vraiment.',
@@ -451,7 +462,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
     'Il te manquait {distance}. Une toute petite distance.',
     'Tu as dû dire « {phrase} » en rendant ta copie. Tu avais tort, et « {faute} » ne s\'écrit toujours pas comme ça.',
-    'Un point de plus et je te félicitais. Là, tu es {adjectif}, et c\'est tout.',
+    'Un point de plus et je te félicitais. Là, tu es {adjectif3}, et c\'est tout.',
     'Tu as eu chaud, et moi aussi. Va {action}, tu l\'as mérité de justesse.',
     'Il s\'en est fallu de {nombre} points. Ou pas loin. Je n\'ai pas recompté.',
   ],
@@ -625,7 +636,7 @@ export const EV = {
     won: '', wonSub: '',
     lost: 'Tu n\'as rien fait de mal.',
     lostSub: 'C\'est pourtant toi qui ressors avec {corps} qui tremble et les yeux qui piquent. Il te tient la porte, en plus.',
-    grudge: 'Tu retiens son nom. Tu retiens l\'heure. Il reste trois dictées avant qu\'il s\'assoie en face de toi.',
+    grudge: 'Tu retiens son nom. Tu retiens l\'heure. Un jour tu seras {metier}, et lui ne sera rien. Il reste trois dictées avant qu\'il s\'assoie en face de toi.',
     start: 'Poser le cartable par terre',
     giveUp: '',
     leave: 'Sortir sans rien dire',
@@ -639,7 +650,7 @@ export const EV = {
     ],
     ask: (_n: number) => 'Trouve-le dans la feuille. Toute la classe te regarde.',
     hint: 'Il tapote la table, agacé, à l\'endroit où commence le mot.',
-    wrong: 'Il note un seul mot dans son carnet : {adjectif}.',
+    wrong: 'Il note un seul mot dans son carnet : {adjectif3}.',
     won: 'Il referme son carnet. Un silence. Puis, presque un sourire.',
     wonSub: '— Voilà une classe bien tenue, {maitresse}. Cet élève ira loin.',
     lost: 'Il note. Il souligne. Il note encore.',

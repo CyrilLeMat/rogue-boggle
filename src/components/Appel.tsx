@@ -25,6 +25,7 @@ const PAGES: { key: keyof Profile; label: string }[][] = [
     { key: 'rigolo', label: 'Un mot rigolo' },
     { key: 'adjectif', label: 'Un adjectif' },
     { key: 'adjectif2', label: 'Un autre adjectif' },
+    { key: 'adjectif3', label: 'Un troisième adjectif' },
     { key: 'objet', label: 'Un objet (une chaussette, un tournevis…)' },
     { key: 'nombre', label: 'Un nombre' },
   ],
@@ -89,7 +90,13 @@ export function Appel() {
     return (
       <div className="panel appel">
         <h2>Fiche de renseignements</h2>
-        <p className="appel-sub">Elle garde ça dans un classeur. Elle s'en sert plus tard. Rien n'est obligatoire.</p>
+        {/* le joueur ne peut pas deviner que ces mots reviendront dans les planches : on le lui dit */}
+        <p className="appel-sub">
+          Tes réponses reviennent dans l'histoire, mot pour mot, toute l'année : la maîtresse, Kévin et le narrateur s'en servent.
+        </p>
+        <p className="appel-sub">
+          Prends le temps de les changer, c'est là que le jeu devient le tien. Le 🎲 en tire une au hasard, et rien n'est obligatoire.
+        </p>
         <form className="appel-form" onSubmit={(e) => { e.preventDefault(); submit(); }}>
           <div className="appel-foot sticky">
             <button type="button" className="secondary small" onClick={() => setPage(0)}>← Retour</button>

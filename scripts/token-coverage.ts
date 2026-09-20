@@ -5,11 +5,11 @@ import { INTERLUDES, hasInterlude, pickInterlude } from '../src/data/interludes'
 import { SCENES, planScenes } from '../src/data/scenes';
 import { planEvents } from '../src/engine/events';
 import {
-  APPRECIATIONS, DUPLICATES, EV, L, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL,
+  APPRECIATIONS, DEFAULT_PROFILE, DUPLICATES, EV, L, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL,
   SCOLDS, SHOP_INTRO, SIGNATURE, SUSPICIONS, TOO_SHORT, mention,
 } from '../src/theme/lexicon';
 
-const TOKENS = ['nom', 'salut', 'phrase', 'cour', 'heros', 'plat', 'horreur', 'metier', 'chanson', 'admire', 'surnom', 'rigolo', 'adjectif', 'adjectif2', 'objet', 'animal', 'corps', 'distance', 'nombre', 'action', 'cri', 'faute'];
+const TOKENS = ['nom', ...Object.keys(DEFAULT_PROFILE)];
 
 // Le prologue, tel qu'il est écrit dans le composant.
 const PROLOGUE = [
@@ -67,6 +67,12 @@ for (let run = 0; run < RUNS; run++) {
 
   // les couloirs : le Sage et Kévin sont garantis, plus deux autres
   for (const id of planEvents(rng)) {
+    // le racket ne se joue pas comme les autres : on lit sa scène entière, il n'y a rien à gagner
+    if (id === 'racket') {
+      const r = EV.racket;
+      tally([...r.intro, r.ask(), r.open, r.swap, r.swapSub, r.lost, r.lostSub, r.grudge], seen);
+      continue;
+    }
     const text = EV[id] as {
       intro?: readonly string[]; ask?: (n: number) => string; wrong?: string;
       wonSub?: string; lostSub?: string;

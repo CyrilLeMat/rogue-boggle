@@ -81,7 +81,7 @@ export const SCENES: Scene[] = [
     id: 'place',
     title: 'Le changement de place',
     lines: [
-      'Sans prévenir, {maitresse} annonce un changement de place. Le silence devient {adjectif} : c\'est là que se jouent les destins.',
+      'Sans prévenir, {maitresse} annonce un changement de place. Le silence devient {adjectif3} : c\'est là que se jouent les destins.',
       'Deux tables restent libres. L\'une à côté de Kévin, qui n\'a plus de stylo depuis le CP et qui te fixe déjà en souriant.',
       'L\'autre contre la fenêtre du fond, celle qui ne ferme plus depuis 1996 et par laquelle entre un vent polaire.',
     ],
@@ -146,7 +146,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Le photographe s\'appelle Gérard. Gérard exerce depuis trente et un ans.',
       'Gérard a photographié ta mère dans cette salle, au même endroit, avec le même appareil.',
-      'Gérard ne sourit plus depuis 1998. Son bonjour est {adjectif}. Il demande un ouistiti, tu réponds « {phrase} », et Gérard ne relève pas.',
+      'Gérard ne sourit plus depuis 1998. Son bonjour est {adjectif3}. Il demande un ouistiti, tu réponds « {phrase} », et Gérard ne relève pas.',
     ],
     choices: [
       {
@@ -188,7 +188,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Il est sur la table de la cuisine, à côté du beurre. Tu le vois d\'ici. Tu le verras toute la journée.',
       'Elle ouvre son tiroir et en sort une feuille volante. Froissée. Jaunie.',
-      'Cette feuille a un grain {adjectif} et elle a connu des choses dont on ne parle pas.',
+      'Cette feuille a un grain {adjectif3} et elle a connu des choses dont on ne parle pas.',
     ],
     choices: [
       {
@@ -228,7 +228,7 @@ export const SCENES: Scene[] = [
     id: 'anniversaire',
     title: 'L\'anniversaire de Léa',
     lines: [
-      'Gâteau au chocolat industriel et {adjectif} sur le bureau, et même {plat} pour ceux qui ont apporté quelque chose. Léa a huit ans.',
+      'Gâteau au chocolat industriel et {adjectif3} sur le bureau, et même {plat} pour ceux qui ont apporté quelque chose. Léa a huit ans.',
       'Léa aura huit ans toute l\'année, comme tout le monde, mais aujourd\'hui c\'est officiel.',
       'Quelqu\'un a mis {chanson} sur le poste de la classe. Personne n\'ose danser.',
       'La dictée est maintenue. Bien sûr que la dictée est maintenue.',

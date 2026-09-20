@@ -21,7 +21,7 @@ const base = (id: string, name: string, description: string, price: number, extr
 const TEMPLATES: Template[] = [
   {
     kind: 'lettre', params: LETTERS,
-    make: (l) => base(`charme-lettre-${l}`, `Gommette ${l}`, `+10 % sur les mots contenant un ${l}`, 8,
+    make: (l) => base(`charme-lettre-${l}`, `Gommette ${l}`, `+10 % sur les mots contenant un ${l}`, 11,
       { onWordFound: (w) => (w.includes(l) ? { percent: 0.1 } : undefined) }),
   },
   {
@@ -31,7 +31,7 @@ const TEMPLATES: Template[] = [
   },
   {
     kind: 'categorie', params: Object.keys(CATEGORIES),
-    make: (c) => base(`charme-categorie-${c}`, `Gommette ${CATEGORIES[c]}`, `+10 % sur ${CATEGORIES[c]}`, 9,
+    make: (c) => base(`charme-categorie-${c}`, `Gommette ${CATEGORIES[c]}`, `+10 % sur ${CATEGORIES[c]}`, 12,
       { onWordFound: (w, ctx) => (ctx.categoriesOf(w).has(c as 'NOM') ? { percent: 0.1 } : undefined) }),
   },
   {
@@ -46,7 +46,7 @@ const TEMPLATES: Template[] = [
   },
   {
     kind: 'plat', params: ['1'],
-    make: () => base('charme-plat-1', 'Gommette +1', '+1 pt sur chaque mot', 9, { onWordFound: () => ({ flat: 1 }) }),
+    make: () => base('charme-plat-1', 'Gommette +1', '+1 pt sur chaque mot', 26, { onWordFound: () => ({ flat: 1 }) }),
   },
   {
     kind: 'chrono', params: ['3'],

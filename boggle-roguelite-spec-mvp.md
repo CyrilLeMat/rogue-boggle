@@ -780,3 +780,20 @@ mots par minute, goût pour les mots courts, connaissance des mots rares.
 
 Limite connue : les fournitures sont mesurées une par une, donc les combinaisons ne sont pas vues.
 Le modèle de joueur n'est pas calé sur de vraies parties : les chiffres sont justes en relatif.
+
+### Équilibrage du 20/09/2026
+Prix des fournitures recalculés depuis la valeur mesurée : `prix = 18 + valeur × 1,35`, borné à [15, 220].
+Les outils sans points (Gomme, Copie double, Tirelire…) gardent un prix de confort fixé à la main.
+Gommette +1 passe de 9 à 26 billes, elle valait 34 points par dictée.
+
+Courbe : `THRESHOLD_GROWTH` de 1,25 à 1,16, et multiplicateurs de niveau élargis.
+
+| Niveau | × note |
+|---|---|
+| 8 ans | 0,50 |
+| 12 ans | 0,70 |
+| adulte | 1,00 |
+| professionnel | 1,45 |
+
+Taux de victoire simulés (profil moyen / bon / expert) : 8 ans 100 / 100 / 100,
+12 ans 60 / 100 / 100, adulte 0 / 94 / 100, professionnel 0 / 10 / 94.

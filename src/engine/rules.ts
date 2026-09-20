@@ -34,7 +34,7 @@ export const MIN_REMAINING_WORDS = 6;
 // expert sans relic (score humain ~plat, seuil exponentiel). ×1.2 : un bon joueur finit sans relic,
 // un joueur moyen a besoin de la boutique.
 export const THRESHOLD_BASE = 60;
-export const THRESHOLD_GROWTH = 1.25; // [tuning] 1.2 était trivial en fin de run avec des multiplicateurs empilés
+export const THRESHOLD_GROWTH = 1.16; // [tuning] 1.2 était trivial en fin de run avec des multiplicateurs empilés
 export const MAX_SAME_CHARM = 3;      // [tuning] exemplaires max d'un même charme
 
 export function threshold(manche: number): number {

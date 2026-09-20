@@ -45,46 +45,46 @@ function placeJoker(grid: Grid, ctx: RunContext): Grid {
 
 export const RELICS: Relic[] = [
   {
-    id: 'lexicographe', name: 'Grand Larousse', rarity: 'common',
+    id: 'lexicographe', name: 'Grand Larousse', rarity: 'common', price: 20,
     description: '+50 % sur les mots de 6+ lettres',
     onWordFound: (w) => (w.length >= 6 ? { percent: 0.5 } : undefined),
   },
   {
-    id: 'voyelliste', name: 'Plume Sergent-Major', rarity: 'common',
+    id: 'voyelliste', name: 'Plume Sergent-Major', rarity: 'common', price: 95,
     description: '+1 pt par voyelle du mot',
     onWordFound: (w) => ({ flat: countVowels(w) }),
   },
   {
-    id: 'rarete', name: 'Encre violette', rarity: 'common',
+    id: 'rarete', name: 'Encre violette', rarity: 'common', price: 20,
     description: '+5 pts si le mot contient K, W, X, Y, Z, J ou QU',
     onWordFound: (w) => (RARE_LETTERS.test(w) ? { flat: 5 } : undefined),
   },
   {
-    id: 'combo', name: 'Récitation', rarity: 'rare', streakWindow: 8, streakMaxLinks: 10,
+    id: 'combo', name: 'Récitation', rarity: 'rare', price: 60, streakWindow: 8, streakMaxLinks: 10,
     description: 'L\'élan tient 8 s au lieu de 5, et monte jusqu\'à ×2 au lieu de ×1,5',
   },
   {
-    id: 'amplificateur', name: 'Stylo plume', rarity: 'rare',
+    id: 'amplificateur', name: 'Stylo plume', rarity: 'rare', price: 80,
     description: '×1,3 sur tous les mots',
     onWordFound: () => ({ percent: 0.3 }),
   },
   {
-    id: 'resonance', name: 'Stylo en or', rarity: 'legendary',
+    id: 'resonance', name: 'Stylo en or', rarity: 'legendary', price: 135,
     description: '×1,6 sur tous les mots',
     onWordFound: () => ({ percent: 0.6 }),
   },
   {
-    id: 'metronome', name: 'Sablier de la maîtresse', rarity: 'common',
+    id: 'metronome', name: 'Sablier de la maîtresse', rarity: 'common', price: 215,
     description: '+2 s de chrono par mot juste',
     onWordAccepted: (_f, ctx) => ctx.timer.add(2),
   },
   {
-    id: 'sablier', name: 'Rab de récré', rarity: 'rare',
+    id: 'sablier', name: 'Rab de récré', rarity: 'rare', price: 60,
     description: 'Un mot juste dans les 5 dernières secondes → le chrono remonte à 10 s',
     onWordAccepted: (_f, ctx) => { if (ctx.manche.timeLeftBeforeWord <= 5) ctx.timer.setMin(10); },
   },
   {
-    id: 'bouclier', name: 'Buvard', rarity: 'common',
+    id: 'bouclier', name: 'Buvard', rarity: 'common', price: 55,
     description: 'Absorbe la première tache d\'encre utilisée par dictée',
     onCellUsed: (cell, ctx) => {
       if (!cell.isToxic || (ctx.manche.relicState.bouclier ?? 0) > 0) return;
@@ -93,7 +93,7 @@ export const RELICS: Relic[] = [
     },
   },
   {
-    id: 'memoire', name: 'Cahier du jour', rarity: 'common',
+    id: 'memoire', name: 'Cahier du jour', rarity: 'common', price: 40,
     description: 'Les cases déjà utilisées restent colorées. Quand (presque) toute la feuille a servi : +100 pts',
     ui: { highlightUsedCells: true },
     onWordAccepted: (_f, ctx) => {
@@ -108,38 +108,38 @@ export const RELICS: Relic[] = [
     },
   },
   {
-    id: 'oracle', name: 'Petit Larousse', rarity: 'common',
+    id: 'oracle', name: 'Petit Larousse', rarity: 'common', price: 45,
     description: 'Donne la longueur du mot le plus long de la feuille et marque sa première lettre',
     ui: { showLongestLength: true },
   },
   {
-    id: 'amorce', name: 'Antisèche', rarity: 'rare',
+    id: 'amorce', name: 'Antisèche', rarity: 'rare', price: 20,
     description: 'En début de dictée, souffle les 3 premières lettres d\'un mot de 8 lettres ou plus présent dans la feuille',
     onMancheStart: (ctx) => pickAmorce(ctx, 3, false),
   },
   {
-    id: 'amorce-sure', name: 'Antisèche complète', rarity: 'legendary', requires: 'amorce',
+    id: 'amorce-sure', name: 'Antisèche complète', rarity: 'legendary', price: 20, requires: 'amorce',
     description: 'L\'antisèche souffle 4 lettres et marque la case de départ',
     onMancheStart: (ctx) => pickAmorce(ctx, 4, true),
   },
   {
-    id: 'reroll-cible', name: 'Gomme de précision', rarity: 'legendary',
+    id: 'reroll-cible', name: 'Gomme de précision', rarity: 'legendary', price: 70,
     description: 'La Gomme propose 3 lettres au choix au lieu d\'une au hasard',
     ui: { targetedReroll: true },
   },
   {
-    id: 'case-joker', name: 'Case blanche', rarity: 'rare',
+    id: 'case-joker', name: 'Case blanche', rarity: 'rare', price: 45,
     description: 'Une case blanche par feuille : elle vaut n\'importe quelle lettre (1 pt), dans les mots de 4 lettres et plus',
     onGridGenerate: placeJoker,
   },
   {
-    id: 'double-joker', name: 'Deux cases blanches', rarity: 'legendary', requires: 'case-joker',
+    id: 'double-joker', name: 'Deux cases blanches', rarity: 'legendary', price: 90, requires: 'case-joker',
     description: 'Une seconde case blanche, et les deux valent aussi dans les mots de 3 lettres',
     onGridGenerate: placeJoker,
     jokerFree: true,
   },
   {
-    id: 'mot-maudit', name: 'Mot mystère', rarity: 'common',
+    id: 'mot-maudit', name: 'Mot mystère', rarity: 'common', price: 40,
     description: 'La maîtresse pense à un mot de la feuille : tu connais sa longueur et sa case de départ. +60 pts si tu le traces',
     onMancheStart: (ctx) => {
       const size = ctx.manche.grid.size;
@@ -152,7 +152,7 @@ export const RELICS: Relic[] = [
     onWordFound: (w, ctx) => (w === ctx.manche.cursedWord ? { flat: CURSED_WORD_BONUS } : undefined),
   },
   {
-    id: 'anagramme', name: 'Jeu d\'anagrammes', rarity: 'rare',
+    id: 'anagramme', name: 'Jeu d\'anagrammes', rarity: 'rare', price: 125,
     description: '+30 pts si le mot est l\'anagramme d\'un mot déjà trouvé',
     onWordFound: (w, ctx) => {
       const key = sortLetters(w);
@@ -160,87 +160,87 @@ export const RELICS: Relic[] = [
     },
   },
   {
-    id: 'palindrome', name: 'Palindrome', rarity: 'legendary',
+    id: 'palindrome', name: 'Palindrome', rarity: 'legendary', price: 40,
     description: '+150 pts sur un palindrome de 4+ lettres',
     onWordFound: (w) => (isPalindrome(w) ? { flat: 150 } : undefined),
   },
   {
-    id: 'alchimiste', name: 'Marchand de billes', rarity: 'rare',
+    id: 'alchimiste', name: 'Marchand de billes', rarity: 'rare', price: 60,
     description: 'En fin d\'année, chaque bille restante vaut 2 pts',
     onRunEnd: (ctx) => ctx.run.euros * 2,
   },
   {
-    id: 'conjugueur', name: 'Bescherelle', rarity: 'common',
+    id: 'conjugueur', name: 'Bescherelle', rarity: 'common', price: 40,
     description: '+40 % sur les verbes',
     onWordFound: (w, ctx) => (ctx.categoriesOf(w).has('VER') ? { percent: 0.4 } : undefined),
   },
   {
-    id: 'qualificatif', name: 'Le Bled', rarity: 'common',
+    id: 'qualificatif', name: 'Le Bled', rarity: 'common', price: 40,
     description: '+40 % sur les adjectifs',
     onWordFound: (w, ctx) => (ctx.categoriesOf(w).has('ADJ') ? { percent: 0.4 } : undefined),
   },
   {
-    id: 'nominaliste', name: 'Petit Robert', rarity: 'common',
+    id: 'nominaliste', name: 'Petit Robert', rarity: 'common', price: 60,
     description: '+30 % sur les noms',
     onWordFound: (w, ctx) => (ctx.categoriesOf(w).has('NOM') ? { percent: 0.3 } : undefined),
   },
   {
-    id: 'adverbes', name: 'Grevisse', rarity: 'rare',
+    id: 'adverbes', name: 'Grevisse', rarity: 'rare', price: 30,
     description: '+100 % sur les adverbes',
     onWordFound: (w, ctx) => (ctx.categoriesOf(w).has('ADV') ? { percent: 1 } : undefined),
   },
   {
-    id: 'porte-bonheur', name: 'Lettre soulignée', rarity: 'rare',
+    id: 'porte-bonheur', name: 'Lettre soulignée', rarity: 'rare', price: 35,
     description: 'Une lettre de la feuille est soulignée à chaque dictée : les mots qui commencent par elle comptent double',
     onMancheStart: pickLuckyLetter,
     onWordFound: (w, ctx) => (ctx.manche.luckyLetter && w.startsWith(ctx.manche.luckyLetter) ? { final: 2 } : undefined),
   },
   {
-    id: 'porte-bonheur-plus', name: 'Lettre encadrée', rarity: 'legendary', requires: 'porte-bonheur',
+    id: 'porte-bonheur-plus', name: 'Lettre encadrée', rarity: 'legendary', price: 55, requires: 'porte-bonheur',
     description: 'La lettre soulignée double aussi tous les mots qui la contiennent',
     onWordFound: (w, ctx) => (ctx.manche.luckyLetter && !w.startsWith(ctx.manche.luckyLetter) && w.includes(ctx.manche.luckyLetter) ? { final: 2 } : undefined),
   },
   {
-    id: 'sourcier', name: 'Copie double', rarity: 'rare', gridRerolls: 2,
+    id: 'sourcier', name: 'Copie double', rarity: 'rare', price: 50, gridRerolls: 2,
     description: 'Avant chaque dictée, tu peux changer de feuille jusqu\'à 2 fois en voyant sa difficulté et sa note à atteindre',
   },
   {
-    id: 'epargne', name: 'Tirelire', rarity: 'common',
+    id: 'epargne', name: 'Tirelire', rarity: 'common', price: 45,
     description: 'À chaque fin de dictée, +5 % des billes que tu as en poche (arrondi au supérieur)',
     onMancheEnd: (ctx, _success, euros) => euros + Math.ceil(ctx.run.euros * 0.05),
   },
   {
-    id: 'brocanteur', name: 'Ami du concierge', rarity: 'common', shopRerolls: 2,
+    id: 'brocanteur', name: 'Ami du concierge', rarity: 'common', price: 45, shopRerolls: 2,
     description: '2 nouveaux arrivages gratuits à chaque passage à la coopérative',
   },
   // --- Relics d'attaque (inertes tant qu'il n'y a pas d'ennemi) ---
   {
-    id: 'bretteur', name: 'Règle en fer', rarity: 'common', enemyRelic: true,
+    id: 'bretteur', name: 'Règle en fer', rarity: 'common', price: 40, enemyRelic: true,
     description: 'Coups ×2 sur les cancres avec les mots de 6+ lettres',
     onDamage: (w, _e, dmg) => (w.length >= 6 ? dmg * 2 : dmg),
   },
   {
-    id: 'eclaboussure', name: 'Boulette de papier', rarity: 'rare', enemyRelic: true,
+    id: 'eclaboussure', name: 'Boulette de papier', rarity: 'rare', price: 45, enemyRelic: true,
     description: 'Un mot qui touche un cancre en éclabousse les voisins (50 % des coups)',
     // géré par le moteur d'ennemis via ctx.hasRelic('eclaboussure')
   },
   {
-    id: 'vampire', name: 'Récré prolongée', rarity: 'common', enemyRelic: true,
+    id: 'vampire', name: 'Récré prolongée', rarity: 'common', price: 55, enemyRelic: true,
     description: 'Faire taire un cancre rend 5 s de chrono',
     onEnemyKilled: (_e, bounty, ctx) => { ctx.timer.add(5); return bounty; },
   },
   {
-    id: 'primes', name: 'Chouchou de la maîtresse', rarity: 'common', enemyRelic: true,
+    id: 'primes', name: 'Chouchou de la maîtresse', rarity: 'common', price: 45, enemyRelic: true,
     description: 'Primes de la maîtresse +50 %',
     onEnemyKilled: (_e, bounty) => Math.round(bounty * 1.5),
   },
   {
-    id: 'harpon', name: 'Lance-boulettes', rarity: 'rare', enemyRelic: true,
+    id: 'harpon', name: 'Lance-boulettes', rarity: 'rare', price: 50, enemyRelic: true,
     description: 'Chaque mot valide inflige 25 % de son score au cancre, même sans le toucher',
     // géré par le moteur d'ennemis via ctx.hasRelic('harpon')
   },
   {
-    id: 'cranes', name: 'Tableau d\'honneur', rarity: 'legendary', enemyRelic: true,
+    id: 'cranes', name: 'Tableau d\'honneur', rarity: 'legendary', price: 45, enemyRelic: true,
     description: '+3 % de score par cancre fait taire depuis la rentrée',
     onWordFound: (_w, ctx) => (ctx.run.killCount > 0 ? { percent: 0.03 * ctx.run.killCount } : undefined),
   },

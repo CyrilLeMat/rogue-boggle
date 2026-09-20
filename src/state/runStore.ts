@@ -279,8 +279,10 @@ export const useRunStore = create<Store>((set, get) => ({
   startManche() {
     const { run } = get();
     if (!run) return;
-    const curseIds = run.pendingCurseIds;
     const mut = run.nextMutatorId ? resolveMutator(run.nextMutatorId) : null;
+    // Une punition achetée juste avant l'affrontement attend la dernière dictée : il est seul,
+    // et ce qu'on a payé ne se perd pas dans un couloir.
+    const curseIds = mut?.boss ? [] : run.pendingCurseIds;
     const sceneFx = run.pendingScene ? sceneChoice(run.pendingScene.sceneId, run.pendingScene.choice)?.effects ?? {} : {};
     const consequences = sceneRelic(sceneFx);
     const hooks = [...activeHooks(run.relicIds, curseIds, run.nextMutatorId), ...(consequences ? [consequences] : [])];
@@ -297,7 +299,7 @@ export const useRunStore = create<Store>((set, get) => ({
     draft.gridRerollsLeft = resolveRelics(run.relicIds).reduce((n, r) => n + (r.gridRerolls ?? 0), 0);
     buildGrid(draft, run, hooks, mut, size);
     const consumables = run.consumables.map((c) => ({ id: c.id, charges: consumable(c.id).usesPerManche }));
-    const nextRun = { ...run, pendingCurseIds: [], consumables, seenEnemies: run.seenEnemies || draft.enemies.length > 0 };
+    const nextRun = { ...run, pendingCurseIds: mut?.boss ? run.pendingCurseIds : [], consumables, seenEnemies: run.seenEnemies || draft.enemies.length > 0 };
     saveRun('ready', nextRun);
     set({ phase: 'ready', manche: draft, feedback: null, run: nextRun });
   },
@@ -916,7 +918,9 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   draft.critters = mut?.snails ? spawnCritters(grid, run.snailRng) : [];
   draft.quest = mut?.quest ? pickQuest(grid, search, run.rng) : null;
   // Le cancre copie : 1 cancre ; punition Classe de cancres : +2 (même hors leçon) ; Cancres têtus : endurance ×1.5
-  const count = (mut?.enemy ? 1 : 0) + (draft.curseIds.includes('infestation') ? 2 : 0);
+  // L'affrontement, c'est lui et personne d'autre : une punition « classe de cancres » achetée
+  // à la dernière boutique le clonait en trois exemplaires, chacun avec ses points de vie.
+  const count = mut?.boss ? 1 : (mut?.enemy ? 1 : 0) + (draft.curseIds.includes('infestation') ? 2 : 0);
   const stubborn = draft.curseIds.includes('peau-dure') ? 1.5 : 1;
   // L'affrontement n'ayant pas de note, l'endurance de Kévin ne s'en déduit plus : elle est posée.
   const hp = mut?.boss

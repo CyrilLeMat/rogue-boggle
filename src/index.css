@@ -721,11 +721,13 @@ button.scene-card:hover { background: #fffaf2; border-color: var(--accent); tran
 .badge-cursed { top: -4%; right: 2%; color: var(--lilac); border: 2px solid var(--lilac); }
 .badge-lucky { bottom: -4%; right: 4%; color: var(--ok); }
 .cell.enemy { background: #e9d6f5 !important; box-shadow: inset 0 0 0 3px var(--lilac); transition: background 0.4s, box-shadow 0.4s; }
-.enemy-tag { position: absolute; top: -10%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; z-index: 4; }
-.enemy-icon { font-size: max(16px, 0.6em); line-height: 1; filter: drop-shadow(0 2px 2px rgba(80, 40, 120, 0.3)); }
-.enemy-tag .hp { width: 44px; height: 6px; background: #fff; border-radius: 999px; overflow: hidden; box-shadow: var(--shadow-soft); }
+/* Il occupe la case, il ne la remplace pas : sa tête en haut à gauche, sa vie en bas,
+   et la lettre reste lisible au milieu — sinon on ne peut plus tracer à travers lui. */
+.enemy-tag { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.enemy-icon { position: absolute; top: -16%; left: -6%; font-size: max(15px, 0.42em); line-height: 1; filter: drop-shadow(0 2px 2px rgba(80, 40, 120, 0.3)); }
+.enemy-tag .hp { position: absolute; left: 18%; right: 18%; bottom: 8%; height: 5px; background: #fff; border-radius: 999px; overflow: hidden; box-shadow: var(--shadow-soft); }
 .enemy-tag .hp > span { display: block; height: 100%; background: linear-gradient(90deg, var(--lilac), #c9a6f0); transition: width 0.2s; }
-.enemy-tag .hp-text { font-size: 10px; font-weight: 800; color: var(--lilac); background: #fff; border-radius: 999px; padding: 1px 6px; }
+.enemy-tag .hp-text { position: absolute; top: -14%; right: -8%; font-size: 10px; font-weight: 800; color: var(--lilac); background: #fff; border-radius: 999px; padding: 0 5px; box-shadow: var(--shadow-soft); }
 .legend-icon.enemy { background: #e9d6f5; }
 
 .legend { margin: 6px 0 12px; display: flex; flex-direction: column; gap: 6px; }

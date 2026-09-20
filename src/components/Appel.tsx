@@ -33,7 +33,7 @@ const QUESTIONS: { key: keyof Profile; label: string }[][] = [
     { key: 'corps', label: 'Une partie du corps (le genou, la nuque…)' },
     { key: 'distance', label: 'Une distance (trois mètres, deux pas…)' },
     { key: 'action', label: 'Une action (sauter, courir…)' },
-    { key: 'cri', label: 'Ce que je crie si une araignée me grimpe sur la jambe' },
+    { key: 'cri', label: 'Ce que je crie quand j\'ai peur' },
   ],
 ];
 

@@ -12,7 +12,7 @@ describe('charms', () => {
       const c = randomCharm(rng);
       expect(isCharmId(c.id)).toBe(true);
       expect(c.price).toBeGreaterThanOrEqual(8);
-      expect(c.price).toBeLessThanOrEqual(12);
+      expect(c.price).toBeLessThanOrEqual(30); // les gommettes vont de 8 à 26 billes selon leur valeur mesurée
       expect(relic(c.id).description).toBe(c.description);
       expect(charmFromId(c.id)?.id).toBe(c.id);
     }
@@ -30,7 +30,7 @@ describe('charms', () => {
       const offer = generateShopOffer({ manche: 1, relicIds: [], consumableIds: [], enemiesEnabled: false, tookEnemyMutator: false }, createRng('s' + i));
       expect(offer.length).toBe(4);
       expect(isCharmId(offer[3].id)).toBe(true);
-      expect(offer[3].price).toBeLessThanOrEqual(12);
+      expect(offer[3].price).toBeLessThanOrEqual(30);
     }
   });
 });

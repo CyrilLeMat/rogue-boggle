@@ -13,6 +13,7 @@ import { FoundWords } from './components/FoundWords';
 import { Grid } from './components/Grid';
 import { GridLegend } from './components/GridLegend';
 import { Interlude } from './components/Interlude';
+import { Appel } from './components/Appel';
 import { Intro } from './components/Intro';
 import { ScenePick } from './components/ScenePick';
 import { ScenesGallery } from './components/ScenesGallery';
@@ -126,6 +127,7 @@ export default function App() {
     <main>
       <SoundEffects />
       {phase === 'menu' && <Menu />}
+      {phase === 'appel' && <Appel />}
       {phase === 'intro' && <Intro />}
       {phase === 'startPick' && <StartPick />}
       {phase === 'scenePick' && <ScenePick />}

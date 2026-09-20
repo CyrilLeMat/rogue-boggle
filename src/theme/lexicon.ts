@@ -2,6 +2,20 @@
 // … racontée comme si le sort du monde en dépendait. Le décalage est le ton du jeu.
 // Tout le vocabulaire visible passe par ici ; les ids et le moteur gardent leurs noms techniques.
 
+// L'élève a un prénom et un genre : tous les textes s'accordent.
+// Dans les chaînes, {nom} est remplacé par le prénom et [masculin|féminin] par la bonne forme.
+export type Gender = 'm' | 'f';
+export interface Identity { name: string; gender: Gender }
+
+export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f' };
+
+export function say(text: string, id: Identity | null | undefined): string {
+  const who = id ?? DEFAULT_IDENTITY;
+  return text
+    .replace(/\[([^\]|]*)\|([^\]]*)\]/g, (_m, masc, fem) => (who.gender === 'f' ? fem : masc))
+    .replace(/\{nom\}/g, who.name);
+}
+
 export const GAME_TITLE = 'Rogue Boggle Warrior';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
 // Les critiques de la presse spécialisée, affichées sous le pitch.
@@ -13,17 +27,17 @@ export const BLURBS = [
 // Juste avant la dictée, l'élève se parle à lui-même. Il a huit ans et il pense à l'honneur des siens.
 export const MONOLOGUE = [
   'Si je perds, ce sera une honte pour toute ma famille. Pendant au moins mille ans !',
-  'Chaque seconde de ma vie m\'a mené vers cet instant. En voici la conclusion.',
-  'Je suis prêt à tout pour réussir le CE2. Même à pousser mon petit frère dans les orties.',
+  'Chaque seconde de ma vie m\'a men[é|ée] vers cet instant. En voici la conclusion.',
+  'Je suis prêt[|e] à tout pour réussir le CE2. Même à pousser mon petit frère dans les orties.',
   'Les yeux de la maîtresse sont rouges de sang. Elle ne fera aucun cadeau.',
   'Ils ont tous ri quand j\'ai écrit NÉNUPHAR. Plus personne ne rira.',
   'Mon stylo pèse trois grammes. Aujourd\'hui il en pèse mille, et mes doigts tremblent sous le poids du destin.',
   'Je n\'ai pas dormi. Dormir, c\'est pour les faibles. J\'ai récité. Toute la nuit, j\'ai récité.',
-  'Si je tombe ici, personne ne se souviendra de mon nom. Même mes parents m\'oublieront.',
+  'Si je tombe ici, personne ne se souviendra de mon nom, {nom}. Même mes parents m\'oublieront.',
   'Le CM1 ne pardonne pas. Le CM1 n\'attend personne. Le CM1 est la lumière.',
-  'Ma mère m\'a dit de faire de mon mieux. Je suis prêt à donner ma vie pour cette épreuve du destin.',
+  'Ma mère m\'a dit de faire de mon mieux. Je suis prêt[|e] à donner ma vie pour cette épreuve du destin.',
   'Kévin me regarde. Il veut me voir échouer. Qu\'il regarde. Il verra ce que je vaux.',
-  'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est venus là pour briller !',
+  'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est ven[u|ue]s là pour briller !',
 ];
 
 export const TAGLINE = 'La maîtresse a préparé dix dictées. Sauras-tu accomplir ton destin et passer en CM1 ?';
@@ -86,20 +100,20 @@ export const L = {
 // Ce que la maîtresse dit quand tu écris n'importe quoi. Tirée au hasard, stable pour un mot donné.
 export const SCOLDS = [
   'N\'importe quoi.',
-  'Qu\'est-ce que tu m\'as encore écrit ?',
+  'Qu\'est-ce que tu m\'as encore écrit, {nom} ?',
   'Tu n\'as rien dans la tête ou quoi ?',
-  'Mais qu\'est-ce qu\'on va faire de toi…',
+  'Mais qu\'est-ce qu\'on va faire de toi, {nom}…',
   'J\'ai vérifié dans trois dictionnaires. Trois.',
   'C\'est du français, ça ?',
   'Je vais faire comme si je n\'avais rien vu.',
   'Ton voisin fait moins de fautes. Et il dort.',
   'Molière s\'est retourné. J\'ai entendu le bruit.',
-  'Non. Non non non.',
+  'Non, {nom}. Non non non.',
   'Tu inventes des mots maintenant ?',
   'Mon stylo rouge n\'a plus d\'encre. À cause de toi.',
   'J\'ai fait sept ans d\'études pour lire ça.',
   'Même le radiateur a honte.',
-  'Tu écris comme on jette des cailloux.',
+  'Tu écris comme on jette des cailloux, {nom}.',
   'Le dictionnaire vient de claquer tout seul.',
   'Sors. Non, reste. Non, sors.',
   'J\'ai rêvé de cette faute cette nuit. Je le jure.',
@@ -110,10 +124,10 @@ export const SCOLDS = [
 export const PRAISES_HUGE = [
   'C\'est tellement bien que j\'en suis tombée de ma chaise.',
   'J\'ai dû m\'asseoir. Sur le sol, il n\'y avait plus de chaise.',
-  'On encadre ta copie dans le couloir. Ce soir.',
+  'On encadre ta copie dans le couloir. Ce soir. Merci, {nom}.',
   'J\'ai les larmes aux yeux. Et ce n\'est pas la craie.',
   'Je photocopie ça pour la salle des profs.',
-  'Vingt-six ans de carrière. Vingt-six.',
+  'Vingt-six ans de carrière, {nom}. Vingt-six.',
   'J\'ai failli en avaler ma craie.',
   'Ta copie part au rectorat dès ce soir.',
   'J\'appelle ta mère. En bien, pour une fois.',
@@ -124,8 +138,8 @@ export const PRAISES_HUGE = [
 ];
 
 export const PRAISES_BIG = [
-  'Voilà. VOILÀ.',
-  'Ça, c\'est un mot.',
+  'Voilà, {nom}. VOILÀ.',
+  'Ça, {nom}, c\'est un mot.',
   'J\'en lâche ma craie.',
   'Toute la classe s\'est retournée. Moi aussi.',
   'On note celui-là au tableau d\'honneur.',
@@ -134,14 +148,14 @@ export const PRAISES_BIG = [
 ];
 
 export const PRAISES_SMALL = [
-  'Bravo.',
-  'Tu vois, quand tu fais des efforts.',
+  'Bravo, {nom}.',
+  'Tu vois, {nom}, quand tu fais des efforts.',
   'C\'est déjà mieux.',
   'Note-le, je vais le relire ce soir.',
   'Ce n\'est pas si compliqué, hein ?',
   'Enfin un mot juste.',
   'Note-le, ça n\'arrivera pas deux fois.',
-  'Tes parents seront contents.',
+  'Tes parents seront contents, {nom}.',
   'Je reprends espoir. Un peu.',
   'Tiens donc.',
 ];
@@ -150,26 +164,26 @@ export const PRAISES_SMALL = [
 export const SUSPICIONS = [
   'Tu connais ce mot, toi ?',
   'Tu triches ou quoi ?',
-  'Où as-tu appris ça ?',
+  'Où as-tu appris ça, {nom} ?',
   'Ce mot n\'est pas de ton âge.',
   'Tu as lu le dictionnaire en cachette ?',
   'Je vais vérifier, tiens.',
   'Personne dans cette classe ne connaît ce mot. Personne.',
   'C\'est ton grand frère qui t\'a soufflé ?',
   'Répète-le pour voir. Sans regarder.',
-  'Je note ce mot. Et je note ton nom à côté.',
+  'Je note ce mot. Et j\'écris {nom} juste à côté.',
 ];
 
 export const DUPLICATES = [
   'Encore lui ? Vous vous êtes attachés ?',
   'Deux fois le même mot. Deux fois.',
   'Ce mot et toi, c\'est une longue histoire.',
-  'Tu tournes en rond, mon pauvre.',
+  'Tu tournes en rond, {nom}.',
 ];
 
 export const TOO_SHORT = [
   'Trois lettres minimum, tu le sais très bien.',
-  'C\'est un peu court, jeune homme.',
+  'C\'est un peu court, jeune [homme|fille].',
   'Deux lettres. Deux. Tu te moques de moi ?',
 ];
 
@@ -183,7 +197,7 @@ export function scold(list: readonly string[], seed: number): string {
 // Le score sert d'index : la même copie donne toujours la même phrase.
 const APPRECIATIONS: Record<string, string[]> = {
   fatal: [
-    'Je convoque tes parents lundi. Nous parlerons de ton avenir, s\'il y en a un.',
+    '{nom}, je convoque tes parents lundi. Nous parlerons de ton avenir, s\'il y en a un.',
     'À ce stade je ne corrige plus, je constate.',
     'J\'ai gardé ta copie. Pas pour l\'encadrer.',
   ],
@@ -201,14 +215,14 @@ const APPRECIATIONS: Record<string, string[]> = {
   prodige: [
     'Je vais encadrer cette copie et l\'accrocher dans mon salon, au-dessus du buffet.',
     'C\'est le plus beau jour de ma vie. J\'ai appelé ma sœur pendant la récréation.',
-    'J\'aimerais que tu sois mon fils. Ne le répète pas à ta mère.',
-    'Je n\'avais pas vu ça depuis 1987. Ce garçon-là a mal fini, mais quel talent.',
+    'J\'aimerais que tu sois [mon fils|ma fille], {nom}. Ne le répète pas à ta mère.',
+    'Je n\'avais pas vu ça depuis 1987. Cet élève-là a mal fini, mais quel talent.',
   ],
   suspect: [
-    'Trop beau. Je ne sais pas encore comment tu as fait, mais je le saurai.',
+    'Trop beau, {nom}. Je ne sais pas encore comment tu as fait, mais je le saurai.',
     'Excellent. Un peu trop, même. Je te surveillerai de très près désormais.',
     'Superbe. J\'ai photographié ta copie, pour mes archives personnelles.',
-    'Personne n\'écrit ça à ton âge. Personne. Nous en reparlerons toi et moi.',
+    'Personne n\'écrit ça à ton âge, {nom}. Personne. Nous en reparlerons toi et moi.',
   ],
   bien: [
     'Bon travail. J\'ai souri, et ça ne m\'était pas arrivé depuis des années.',
@@ -216,12 +230,12 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Très bonne copie. J\'ai vérifié deux fois, par acquit de conscience.',
   ],
   correct: [
-    'Correct. Nous savons tous les deux que tu peux mieux faire, et que tu ne le feras pas.',
+    'Correct, {nom}. Nous savons tous les deux que tu peux mieux faire, et que tu ne le feras pas.',
     'Passable. Ta voisine a fait mieux sans se donner cette peine.',
     'Acceptable. J\'attendais autre chose de toi, mais j\'attends toujours trop.',
   ],
   justesse: [
-    'Juste, tout juste. Le stylo rouge était déjà décapuchonné.',
+    'Juste, tout juste, {nom}. Le stylo rouge était déjà décapuchonné.',
     'Tu passes. Je te préviens tout de suite que cela ne se reproduira pas.',
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
   ],

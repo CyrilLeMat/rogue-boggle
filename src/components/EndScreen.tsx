@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
-import { L, SIGNATURE, appreciation, mention, noteSur20 } from '../theme/lexicon';
+import { L, SIGNATURE, appreciation, mention, noteSur20, say } from '../theme/lexicon';
 
 export function EndScreen({ victory }: { victory: boolean }) {
   const run = useRunStore((s) => s.run);
@@ -31,6 +31,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
       <div className="bulletin">
         <div className="bulletin-head">
           <span className="bulletin-school">École communale · classe de CE2</span>
+          <span className="bulletin-pupil">Élève : {run.identity.name}</span>
           <span className="bulletin-title">Bulletin de fin d'année</span>
           <span className="bulletin-year">Année {run.seed}</span>
         </div>
@@ -44,7 +45,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
                   <td>{h.manche}</td>
                   <td>{h.gridSize}×{h.gridSize}</td>
                   <td className="note-cell">{note}<span className="sur">/20</span></td>
-                  <td className="appr-cell">{appreciation(h.score / Math.max(1, h.threshold), h.success, h.livesAfter, h.score)}</td>
+                  <td className="appr-cell">{say(appreciation(h.score / Math.max(1, h.threshold), h.success, h.livesAfter, h.score), run.identity)}</td>
                 </tr>
               );
             })}

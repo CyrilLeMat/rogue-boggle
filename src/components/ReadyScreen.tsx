@@ -3,7 +3,7 @@ import { sfx } from '../audio/sfx';
 import { mutator } from '../data/registry';
 import { TOTAL_MANCHES } from '../engine/rules';
 import { useRunStore } from '../state/runStore';
-import { L, MONOLOGUE, money } from '../theme/lexicon';
+import { L, MONOLOGUE, money, say } from '../theme/lexicon';
 
 const PSYCHE_MS = 2800; // [tuning]
 
@@ -18,7 +18,7 @@ export function ReadyOverlay() {
 
   // Le temps de souffler avant la dictée : une pensée, deux battements de cœur, puis le chrono.
   const brace = () => {
-    setThought(MONOLOGUE[Math.floor(Math.random() * MONOLOGUE.length)]);
+    setThought(say(MONOLOGUE[Math.floor(Math.random() * MONOLOGUE.length)], run?.identity));
     sfx.heartbeat();
     window.setTimeout(begin, PSYCHE_MS);
   };

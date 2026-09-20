@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_IDENTITY, type Identity } from '../theme/lexicon';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
@@ -31,7 +32,7 @@ import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'interlude' | 'event' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'appel' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'interlude' | 'event' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -77,6 +78,7 @@ export type MancheState = MancheView & {
 };
 
 export interface RunState extends RunView {
+  identity: Identity;
   seed: string;
   rng: Rng;
   snailRng: Rng; // flux séparé : les déplacements dépendent du timing, ils ne doivent pas désynchroniser la run
@@ -111,6 +113,7 @@ interface Store {
   feedback: { kind: SubmitResult['kind']; word?: string; score?: number; bonus?: string; path?: Pos[]; id: number } | null;
 
   startRun(seed?: string): void;
+  setIdentity(identity: Identity): void;
   acceptChallenge(): void; // prologue → fourniture de rentrée
   pickStartRelic(id: string): void;
   pickSceneChoice(choice: number): void;
@@ -179,9 +182,9 @@ export const useRunStore = create<Store>((set, get) => ({
     const rng = createRng(seed);
     const startChoices = ARCHETYPES.map((a) => a.id);
     set({
-      phase: 'intro',
+      phase: 'appel',
       run: {
-        seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
+        identity: loadIdentity(), seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
         consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
         scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [],
@@ -190,6 +193,14 @@ export const useRunStore = create<Store>((set, get) => ({
       startChoices,
       shop: [],
     });
+  },
+
+  // L'appel : le prénom sur la feuille de présence, et la case cochée.
+  setIdentity(identity) {
+    const { run } = get();
+    if (!run) return;
+    saveIdentity(identity);
+    set({ run: { ...run, identity }, phase: 'intro' });
   },
 
   acceptChallenge() {
@@ -862,4 +873,21 @@ function applyReroll([r, c]: Pos, letter: string) {
     manche: { ...manche, grid, search, targeting: null, rerollChoice: null },
     run: { ...run, consumables },
   });
+}
+
+// Le prénom et le genre sont réutilisés d'une année sur l'autre.
+const IDENTITY_KEY = 'rb-identity';
+
+function loadIdentity(): Identity {
+  try {
+    const raw = localStorage.getItem(IDENTITY_KEY);
+    if (!raw) return DEFAULT_IDENTITY;
+    const parsed = JSON.parse(raw) as Partial<Identity>;
+    if (!parsed.name || (parsed.gender !== 'm' && parsed.gender !== 'f')) return DEFAULT_IDENTITY;
+    return { name: parsed.name, gender: parsed.gender };
+  } catch { return DEFAULT_IDENTITY; }
+}
+
+function saveIdentity(identity: Identity) {
+  try { localStorage.setItem(IDENTITY_KEY, JSON.stringify(identity)); } catch { /* stockage indisponible */ }
 }

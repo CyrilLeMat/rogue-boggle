@@ -668,3 +668,12 @@ Le prologue suit ses trois cases : récré en classe, annonce en choc, révolte 
 
 ### Galeries de contrôle
 `?planches` pour les scènes de choix, `?transitions` pour les planches de transition.
+
+## Identité de l'élève (2026-09-20)
+
+Écran « Feuille de présence » entre le menu et le prologue : prénom (14 caractères max) et case à cocher
+élève / élève**e**. Stocké dans `run.identity`, mémorisé dans `localStorage` sous `rb-identity`.
+
+Dans les textes : `{nom}` insère le prénom, `[masculin|féminin]` choisit la forme.
+`say(texte, identity)` fait le rendu, `useSay()` le branche sur la partie en cours.
+Un test vérifie qu'aucun marqueur ne subsiste dans les monologues, planches et transitions.

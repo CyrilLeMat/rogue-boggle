@@ -40,7 +40,7 @@ export const SCENES: Scene[] = [
     title: 'Le stylo de Sophie',
     lines: [
       'Catastrophe : le stylo de Sophie, ta voisine, tombe par terre.',
-      'Il explose au contact du sol. Il y a de l\'encre partout. Tu es terrifié par cette coulée violette qui avance vers toi et qui pourrait t\'engloutir.',
+      'Il explose au contact du sol. Il y a de l\'encre partout. Tu es terrifi[é|ée] par cette coulée violette qui avance vers toi et qui pourrait t\'engloutir.',
       'Mais tu vois aussi la détresse de Sophie, qui tombe à genoux, en larmes, et hurle au ciel : « Noooon, c\'était mon seul crayon !! »',
     ],
     choices: [
@@ -104,7 +104,7 @@ export const SCENES: Scene[] = [
     lines: [
       'Catastrophe, ou miracle, personne n\'arrive à trancher : la maîtresse est absente.',
       'À sa place, un jeune homme pâle serre un classeur contre sa poitrine comme un bouclier. Il ne connaît ni vos prénoms, ni les règles, ni le règlement.',
-      'Il tremble. Il sourit. Il est perdu. Toute la classe se tourne vers toi, parce que c\'est toi qui es assis devant.',
+      'Il tremble. Il sourit. Il est perdu. Toute la classe se tourne vers toi, parce que c\'est toi qui es assis[|e] devant.',
     ],
     choices: [
       {
@@ -172,7 +172,7 @@ export const SCENES: Scene[] = [
     choices: [
       {
         label: 'Te redresser, mains à plat',
-        detail: 'Le manuel de survie scolaire, page un. Elle te sera reconnaissante, mais tu écriras tendu comme un arc.',
+        detail: 'Le manuel de survie scolaire, page un. Elle te sera reconnaissante, mais tu écriras tend[u|ue] comme un arc.',
         effects: { thresholdMult: 0.85, seconds: -10 },
       },
       {
@@ -214,12 +214,12 @@ export const SCENES: Scene[] = [
     choices: [
       {
         label: 'Prendre une part',
-        detail: 'Deux, si personne ne compte. Tu écriras avec les doigts collants, mais tu écriras heureux.',
+        detail: 'Deux, si personne ne compte. Tu écriras avec les doigts collants, mais tu écriras heur[eux|euse].',
         effects: { euros: 30, seconds: -15 },
       },
       {
         label: 'Refuser poliment',
-        detail: 'Léa s\'en souviendra. Léa se souvient de tout. Mais tu restes net, concentré, redoutable.',
+        detail: 'Léa s\'en souviendra. Léa se souvient de tout. Mais tu restes n[et|ette], concentr[é|ée], redoutable.',
         effects: { streakStep: 0.2 },
       },
     ],

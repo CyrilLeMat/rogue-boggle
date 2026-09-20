@@ -4,6 +4,7 @@ import type { Pos } from '../engine/types';
 import { findPathForWord } from '../engine/wordFinder';
 import { useRunStore } from '../state/runStore';
 import { L, SIGNATURE, appreciation, money } from '../theme/lexicon';
+import { useSay } from '../theme/useSay';
 import { MiniGrid } from './MiniGrid';
 
 // Le bulletin se lit en trois temps : la note, puis l'appréciation, puis le détail.
@@ -47,6 +48,7 @@ export function MancheRecap() {
   const result = useRunStore((s) => s.lastResult);
   const run = useRunStore((s) => s.run);
   const next = useRunStore((s) => s.continueAfterRecap);
+  const say = useSay();
   const [act, revealAll] = useActs(result);
   const scoreShown = useCountUp(result?.score ?? 0, 900, !!result, true);
   const bonusShown = useCountUp(result?.eurosBonus ?? 0, 1400, !!result && act >= 3);
@@ -79,7 +81,7 @@ export function MancheRecap() {
       {act >= 2 && (
       <div className="appreciation act">
         <span className="appreciation-label">Appréciation</span>
-        <p>{appreciation(result.score / Math.max(1, result.threshold), result.success, run.lives, result.score)}</p>
+        <p>{say(appreciation(result.score / Math.max(1, result.threshold), result.success, run.lives, result.score))}</p>
         <span className="signature">{SIGNATURE}</span>
       </div>
       )}

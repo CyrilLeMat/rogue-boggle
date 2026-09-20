@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
+import { SCENES } from '../../data/scenes';
+import { MONOLOGUE, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
 
 describe('planches de transition', () => {
@@ -32,6 +34,28 @@ describe('planches de transition', () => {
     for (let i = 0; i < 20; i++) {
       expect(losses.has(pickInterlude(1, true, [], rng)!)).toBe(false);
       expect(wins.has(pickInterlude(1, false, [], rng)!)).toBe(false);
+    }
+  });
+});
+
+describe('accords et prénom', () => {
+  it('choisit la forme masculine ou féminine', () => {
+    const line = 'Je suis prêt[|e], {nom}.';
+    expect(say(line, { name: 'Léo', gender: 'm' })).toBe('Je suis prêt, Léo.');
+    expect(say(line, { name: 'Léa', gender: 'f' })).toBe('Je suis prête, Léa.');
+  });
+
+  it('ne laisse aucun marqueur dans les textes du jeu', () => {
+    const texts = [
+      ...MONOLOGUE,
+      ...INTERLUDES.flatMap((i) => [...i.lines, i.cry ?? '', i.fall]),
+      ...SCENES.flatMap((s) => [...s.lines, ...s.choices.map((c) => c.detail)]),
+    ];
+    for (const gender of ['m', 'f'] as const) {
+      for (const t of texts) {
+        const out = say(t, { name: 'Alix', gender });
+        expect(out).not.toMatch(/[[\]{}|]/);
+      }
     }
   });
 });

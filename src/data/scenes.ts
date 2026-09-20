@@ -276,8 +276,13 @@ export function sceneTags(e: SceneEffects): SceneTag[] {
 }
 
 // Cinq créneaux dans l'année (dictées paires), neuf planches : jamais deux fois la même.
+// Le bocal est toujours du voyage : c'est la seule planche qui propose les escargots, et une
+// année sans eux perd son meilleur casse-tête. Le reste du programme est tiré au sort.
+const ALWAYS = 'bocal';
+
 export function planScenes(rng: Rng, slots: number): string[] {
-  return rng.shuffle(SCENES).slice(0, slots).map((s) => s.id);
+  const rest = rng.shuffle(SCENES.filter((s) => s.id !== ALWAYS)).slice(0, Math.max(0, slots - 1)).map((s) => s.id);
+  return rng.shuffle([ALWAYS, ...rest]);
 }
 
 export function sceneChoice(sceneId: string, choice: number): SceneChoice | null {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { relic, relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
 import { EPILOGUE_ACTS, epilogue } from '../theme/epilogue';
+import { EpilogueArt } from './EpilogueArt';
 import { L, SIGNATURE, mention, noteSur20, say } from '../theme/lexicon';
 
 export function EndScreen({ victory }: { victory: boolean }) {
@@ -37,6 +38,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
       <h1 className="title">{victory ? L.victoire : L.gameover}</h1>
 
       <div className="epilogue" key={act}>
+        <div className="frame scene-frame"><EpilogueArt act={act} gender={run.identity.gender} /></div>
         <p className="era">{EPILOGUE_ACTS[act].title}</p>
         {shown.map((b, i) => (
           <p
@@ -117,7 +119,8 @@ export function EndScreen({ victory }: { victory: boolean }) {
       )}
 
       <h3>{L.motsMarquants}</h3>
-      <ul>{best.map((w) => <li key={w.word + w.at}>{w.word} <span className="pts">{w.score}</span></li>)}</ul>
+      {/* le même mot peut revenir d'une dictée à l'autre, à la même seconde : l'index suffit */}
+      <ul>{best.map((w, i) => <li key={`${w.word}-${i}`}>{w.word} <span className="pts">{w.score}</span></li>)}</ul>
 
       </>}
 

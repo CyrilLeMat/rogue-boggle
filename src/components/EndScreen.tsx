@@ -1,26 +1,60 @@
 import { useState } from 'react';
-import { relics } from '../data/registry';
+import { relic, relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
+import { epilogue } from '../theme/epilogue';
 import { L, SIGNATURE, mention, noteSur20, say } from '../theme/lexicon';
 
 export function EndScreen({ victory }: { victory: boolean }) {
   const run = useRunStore((s) => s.run);
+  const duelWon = useRunStore((s) => s.duelWon);
   const back = useRunStore((s) => s.backToMenu);
   const restart = useRunStore((s) => s.startRun);
   const [copied, setCopied] = useState(false);
+  const [showBulletin, setShowBulletin] = useState(false);
   if (!run) return null;
   const allWords = run.history.flatMap((h) => h.words);
   const best = [...allWords].sort((a, b) => b.score - a.score).slice(0, 5);
   const notes = run.history.map((h) => noteSur20(h.score, h.threshold));
   const moyenne = notes.length ? notes.reduce((a, b) => a + b, 0) / notes.length : 0;
   const verdict = mention(moyenne, victory);
+  // L'épilogue se lit avant les chiffres : on raconte l'année, puis on la compte.
+  const beats = epilogue({
+    victory, moyenne, lives: run.lives,
+    duelDone: run.duelDone, duelWon,
+    stolen: run.stolenRelicId ? say(relic(run.stolenRelicId).name, run.identity) : null,
+    words: allWords.length,
+    bestWord: best[0]?.word ?? null,
+    manche: run.currentManche,
+  });
   const copySeed = async () => {
     try { await navigator.clipboard.writeText(run.seed); setCopied(true); } catch { /* presse-papier indisponible */ }
   };
   return (
     <div className="panel end">
       <h1 className="title">{victory ? L.victoire : L.gameover}</h1>
-      <p className="muted">{say(victory ? L.victoireSub : L.gameoverSub(run.currentManche), run.identity)}</p>
+
+      <div className="epilogue">
+        {beats.map((b, i) => (
+          <p
+            key={b.text}
+            className={b.kind ?? ''}
+            style={{ animationDelay: `${(0.3 + i * 0.9).toFixed(2)}s` }}
+          >
+            {b.kind === 'quote' ? <>« {say(b.text, run.identity)} »</> : say(b.text, run.identity)}
+          </p>
+        ))}
+        {!showBulletin && (
+          <button
+            className="ready-cta"
+            style={{ animationDelay: `${(0.3 + beats.length * 0.9).toFixed(2)}s` }}
+            onClick={() => setShowBulletin(true)}
+          >
+            {L.voirBulletin}
+          </button>
+        )}
+      </div>
+
+      {showBulletin && <>
       <p className="big">{run.score} pts</p>
       {run.endBonus > 0 && <p className="ok">dont +{run.endBonus} pts de bonus de fin d'année</p>}
       <p className="muted">
@@ -83,6 +117,8 @@ export function EndScreen({ victory }: { victory: boolean }) {
 
       <h3>{L.motsMarquants}</h3>
       <ul>{best.map((w) => <li key={w.word + w.at}>{w.word} <span className="pts">{w.score}</span></li>)}</ul>
+
+      </>}
 
       <p className="muted seed-line">{L.seed} <code>{run.seed}</code> <button className="secondary small" onClick={copySeed}>{copied ? 'copiée' : 'copier'}</button></p>
       <div className="row">

@@ -536,6 +536,13 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .drip { animation: goutte 2.8s linear infinite; }
 @keyframes goutte { 0%, 60% { opacity: 0; transform: none; } 65% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
 
+/* l'épilogue : on raconte l'année avant de la compter, une ligne à la fois */
+.epilogue { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 580px; margin: 10px auto 18px; text-align: center; }
+.epilogue p { margin: 0; opacity: 0; animation: reveal 0.7s ease-out both; line-height: 1.45; }
+.epilogue .quote { font-family: 'Patrick Hand', cursive; font-size: 1.35rem; color: var(--coral); }
+.epilogue .fall { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
+.epilogue .ready-cta { margin-top: 6px; }
+
 /* l'affrontement : la planche de fin reprend le rythme des transitions */
 .duel-deal { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; margin: 6px 0; opacity: 0; animation: reveal 0.6s ease-out both; }
 .duel-deal.ok { color: var(--accent-deep); }

@@ -209,6 +209,7 @@ export const L = {
   reussie: 'Copie acceptée.',
   ratee: 'Copie refusée.',
   vieEnMoins: 'Un bon point arraché du tableau.',
+  voirBulletin: 'Ouvrir le bulletin',
   victoire: 'Passage en CM1.',
   victoireSub: 'Le CM1. Puis le CM2. Puis {metier}. Tu sors dans la cour, tu cries « {salut} » à personne en particulier, et ce soir il y a {plat}.',
   gameover: 'Redoublement.',

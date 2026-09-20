@@ -8,6 +8,7 @@ import { SCENES } from '../../data/scenes';
 import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say, spellNumber } from '../../theme/lexicon';
 import { createRng } from '../rng';
 import { createRacket, planEvents } from '../events';
+import { epilogue } from '../../theme/epilogue';
 
 describe('couloirs de l\'année', () => {
   it('montent jusqu\'au racket : Kévin défie, puis Kévin prend', () => {
@@ -91,6 +92,30 @@ describe('accords et prénom', () => {
         // mêmes jetons que l'interface : useSay ajoute toujours ce qui dépend de la partie
         const out = say(t, { name: 'Alix', gender, profile: { ...DEFAULT_PROFILE, rigolo: 'patate', adjectif: 'mou', nombre: 'sept', action: 'courir', cri: 'AAAH', salut: 'Wesh', phrase: 'Tranquille', cour: 'le foot', heros: 'Pikachu', plat: 'les frites', horreur: 'les endives' } }, { restantes: spellNumber(9) });
         expect(out).not.toMatch(/[[\]{}|]/);
+      }
+    }
+  });
+});
+
+describe('épilogue', () => {
+  it('raconte une fin différente selon ce qui s\'est passé avec Kévin', () => {
+    const base = { moyenne: 14, lives: 3, words: 120, bestWord: 'CARTABLE', manche: 11 };
+    const gagne = epilogue({ ...base, victory: true, duelDone: true, duelWon: true, stolen: null });
+    const perdu = epilogue({ ...base, victory: true, duelDone: true, duelWon: false, stolen: 'Stylo en or' });
+    const jamais = epilogue({ ...base, victory: false, duelDone: false, duelWon: false, stolen: null, manche: 6 });
+    expect(gagne.map((b) => b.text)).not.toEqual(perdu.map((b) => b.text));
+    expect(perdu.some((b) => b.text.includes('Stylo en or'))).toBe(true);
+    expect(jamais.some((b) => b.text.includes('copié sur quelqu\'un d\'autre'))).toBe(true);
+  });
+
+  it('ne laisse aucun marqueur, quelle que soit la fin', () => {
+    const id = { name: 'Alix', gender: 'm' as const, profile: DEFAULT_PROFILE };
+    for (const victory of [true, false]) {
+      for (const moyenne of [18, 14, 8]) {
+        for (const duelWon of [true, false]) {
+          const beats = epilogue({ victory, moyenne, lives: 2, duelDone: true, duelWon, stolen: 'Buvard', words: 90, bestWord: 'MARELLE', manche: 11 });
+          for (const b of beats) expect(say(b.text, id, { restantes: 'deux' })).not.toMatch(/[[\]{}|]/);
+        }
       }
     }
   });

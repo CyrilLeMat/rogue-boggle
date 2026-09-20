@@ -17,6 +17,7 @@ export function StartPick() {
           <button key={a.id} className="archetype-card" onClick={() => pick(a.id)}>
             <div className="frame"><ArchetypeArt id={a.id} /></div>
             <span className="archetype-name">{say(a.name)}</span>
+            {a.recommended && <span className="badge-advice">conseillé pour une première année</span>}
             <span className="archetype-flavor">{say(a.flavor ?? '')}</span>
             <span className="archetype-effect">{say(a.description)}</span>
           </button>

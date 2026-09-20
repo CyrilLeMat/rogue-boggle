@@ -757,3 +757,11 @@ le reste est posé dessous sur le papier.
 - Sauvegarde de l'année en cours (`rb-run`) aux respirations : début de dictée, couloir, coopérative.
   Reprendre relance la dictée en cours depuis son début. `Rng.state()` permet de rejouer la graine
   au bon endroit. La sauvegarde est effacée en fin d'année et à chaque nouvelle partie.
+
+### Confort des testeurs
+- Le chrono de dictée et celui des couloirs se figent quand la page passe en arrière-plan.
+- « Quitter l'année » sur le briefing : retour au menu, la partie reste sauvegardée.
+- La musique est coupée à la première visite ; l'accueil propose « ♫ mettre la musique ».
+- Le nouveau porte une pastille « conseillé pour une première année ».
+- Le bulletin de fin d'année renvoie vers les tickets GitHub pour les retours.
+- En paysage sous 480 px de haut, un écran demande de tourner le téléphone.

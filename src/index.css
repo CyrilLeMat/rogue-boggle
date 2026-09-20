@@ -217,6 +217,24 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .last-year strong small { font-size: 0.8rem; color: var(--muted); }
 .last-mention { font-size: 0.7rem; color: var(--text); font-weight: 700; line-height: 1.15; }
 
+.music-hint { font-size: 0.88rem; }
+.badge-advice {
+  display: inline-block; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+  color: #3d7c5b; background: #eef8f2; border: 1.5px solid #a9d8bf; border-radius: 999px; padding: 2px 8px; margin-bottom: 2px;
+}
+.feedback-link { display: inline-block; margin: 8px 0 0; font-size: 0.8rem; color: var(--muted); font-weight: 700; }
+.feedback-link:hover { color: var(--accent-deep); }
+/* téléphone couché : la grille ne tient pas, on demande de tourner */
+.rotate-me { display: none; }
+@media (orientation: landscape) and (max-height: 480px) {
+  .rotate-me {
+    position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; background: var(--bg); text-align: center; padding: 24px;
+  }
+  .rotate-me p { font-family: 'Patrick Hand', cursive; font-size: 1.4rem; color: var(--accent-deep); max-width: 320px; margin: 0; }
+  .rotate-me svg { width: 64px; height: 64px; animation: tilt 2.2s ease-in-out infinite; }
+}
+@keyframes tilt { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } }
 .linkish { background: none; box-shadow: none; color: var(--muted); font-size: 0.82rem; font-weight: 700; padding: 4px 8px; text-decoration: underline; text-underline-offset: 3px; }
 .linkish:hover { background: none; color: var(--accent-deep); transform: none; }
 .menu-links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: -6px; }

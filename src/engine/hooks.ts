@@ -89,7 +89,8 @@ export interface Relic {
   jokerFree?: boolean;   // les cases blanches marchent même sur les mots de 3 lettres
   streakStep?: number;   // gain de multiplicateur par maillon d'élan
   // Personnalités d'élève (src/data/archetypes.ts)
-  archetype?: boolean;   // jamais vendu à la coopérative
+  archetype?: boolean;
+  recommended?: boolean; // conseillé pour une première année   // jamais vendu à la coopérative
   flavor?: string;       // la phrase de caractère
   extraLives?: number;   // bons points supplémentaires à la rentrée
   thresholdMult?: number; // la maîtresse en attend plus (ou moins) de toi

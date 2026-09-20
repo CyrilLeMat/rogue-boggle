@@ -14,6 +14,7 @@ export function ReadyOverlay() {
   const begin = useRunStore((s) => s.beginPlay);
   const reroll = useRunStore((s) => s.rerollGrid);
   const draw = useRunStore((s) => s.drawThought);
+  const leave = useRunStore((s) => s.backToMenu);
   const [thought, setThought] = useState<string | null>(null);
   const [novice] = useState(() => !hasEverTraced());
 
@@ -54,6 +55,7 @@ export function ReadyOverlay() {
         {manche.gridRerollsLeft > 0 && (
           <button className="secondary small" onClick={reroll}>Autre feuille ({manche.gridRerollsLeft})</button>
         )}
+        <button className="linkish" onClick={leave}>quitter l'année</button>
       </div>
     </div>
   );

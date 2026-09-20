@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isMusicEnabled, setMusicEnabled, startMusic } from '../audio/music';
 import { loadLastYear, loadSavedRun, useRunStore } from '../state/runStore';
 import { BLURBS, GAME_SUBTITLE, GAME_TITLE, HOME, TAGLINE } from '../theme/lexicon';
 import { Classroom } from './Classroom';
@@ -12,6 +13,7 @@ export function Menu() {
   const [showRules, setShowRules] = useState(false);
   const [last] = useState(loadLastYear);
   const [saved] = useState(loadSavedRun);
+  const [music, setMusic] = useState(isMusicEnabled);
   const resume = useRunStore((s) => s.resumeRun);
   return (
     <div className="menu-screen">
@@ -46,6 +48,15 @@ export function Menu() {
             </>
           )
           : <button className="menu-cta" onClick={() => start(seed || undefined)}>Entrer en classe</button>}
+
+        {!music && (
+          <button
+            className="linkish music-hint"
+            onClick={() => { setMusicEnabled(true); startMusic(); setMusic(true); }}
+          >
+            ♫ mettre la musique
+          </button>
+        )}
 
         <div className="menu-links">
           <button className="linkish" onClick={() => setShowRules(!showRules)}>{HOME.rules}</button>

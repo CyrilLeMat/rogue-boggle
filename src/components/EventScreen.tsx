@@ -152,6 +152,7 @@ export function EventScreen() {
     let last = performance.now();
     const id = setInterval(() => {
       const now = performance.now();
+      if (document.hidden) { last = now; return; } // le couloir attend, lui aussi
       tick((now - last) / 1000);
       last = now;
     }, 100);

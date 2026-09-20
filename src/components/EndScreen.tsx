@@ -59,6 +59,9 @@ export function EndScreen({ victory }: { victory: boolean }) {
             })}
           </tbody>
         </table>
+        <a className="feedback-link" href="https://github.com/CyrilLeMat/rogue-boggle/issues/new" target="_blank" rel="noreferrer">
+          dire ce que tu en as pensé
+        </a>
         <div className="bulletin-foot">
           <div>
             <span className="bulletin-label">Moyenne générale</span>

@@ -7,7 +7,7 @@ import { findPathForWord } from '../engine/wordFinder';
 // Chaque archétype a un effet franc et une contrepartie, sauf le Cancre repenti (neutre, pour débuter).
 export const ARCHETYPES: Relic[] = [
   {
-    id: 'nouveau', name: '[Le nouveau|La nouvelle]', rarity: 'rare', archetype: true,
+    id: 'nouveau', name: '[Le nouveau|La nouvelle]', rarity: 'rare', archetype: true, recommended: true,
     flavor: 'Tu viens d\'arriver dans l\'école. Personne ne sait ce que tu vaux. Toi non plus, d\'ailleurs.',
     description: 'Rien de particulier. Juste toi, la feuille, et 20 billes de bienvenue',
     // profil neutre : le bon endroit pour découvrir le jeu

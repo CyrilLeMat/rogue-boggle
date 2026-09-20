@@ -106,6 +106,14 @@ export default function App() {
   if (debug.has('transitions')) return <main><InterludesGallery /></main>;
   return (
     <main>
+      {/* en paysage sur téléphone, la grille ne tient pas : on demande gentiment de tourner */}
+      <div className="rotate-me">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <rect x="14" y="4" width="20" height="40" rx="4" fill="#fffdf9" stroke="#3f3a55" strokeWidth="3" />
+          <circle cx="24" cy="38" r="2.4" fill="#3f3a55" />
+        </svg>
+        <p>Tourne ton téléphone : la feuille ne tient pas en travers.</p>
+      </div>
       <SoundEffects />
       {phase === 'menu' && <Menu />}
       {phase === 'appel' && <Appel />}

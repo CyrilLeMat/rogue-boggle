@@ -12,7 +12,8 @@ let step = 0;
 let intensity = 0; // 0 = récré tranquille, 1 = la sonnerie approche
 let mood: MoodName = 'classe';
 
-try { enabled = localStorage.getItem('rb-music') !== '0'; } catch { /* stockage indisponible */ }
+// Par défaut on n'impose pas de musique : beaucoup ouvrent le lien au bureau ou dans le métro.
+try { enabled = localStorage.getItem('rb-music') === '1'; } catch { /* stockage indisponible */ }
 
 const STEPS = 16; // double-croches sur une mesure à quatre temps
 

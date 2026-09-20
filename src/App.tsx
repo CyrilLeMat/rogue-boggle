@@ -26,7 +26,7 @@ import { SoundEffects } from './components/SoundEffects';
 import { StartPick } from './components/StartPick';
 import { Timer } from './components/Timer';
 import { useRunStore } from './state/runStore';
-import { GAME_SUBTITLE, GAME_TITLE, TAGLINE } from './theme/lexicon';
+import { BLURB, BLURB_SOURCE, GAME_SUBTITLE, GAME_TITLE, TAGLINE } from './theme/lexicon';
 
 function Menu() {
   const start = useRunStore((s) => s.startRun);
@@ -35,6 +35,7 @@ function Menu() {
     <div className="panel menu">
       <h1 className="sr-only">{GAME_TITLE} — {GAME_SUBTITLE}</h1>
       <div className="frame menu-frame"><Classroom /></div>
+      <p className="blurb">« {BLURB} »<small>{BLURB_SOURCE}</small></p>
       <p className="tagline">{TAGLINE}</p>
       <button className="menu-cta" onClick={() => start(seed || undefined)}>Entrer en classe</button>
       <input placeholder="année (seed, optionnel)" value={seed} onChange={(e) => setSeed(e.target.value)} />

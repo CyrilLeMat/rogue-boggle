@@ -4,6 +4,8 @@
 
 export const GAME_TITLE = 'Rogue Boggle Warrior';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
+export const BLURB = 'Un jeu à couper le souffle.';
+export const BLURB_SOURCE = 'Le Bulletin de l\'École Communale, édition du mardi';
 export const TAGLINE = 'Dix dictées te séparent du CM1. La maîtresse en a préparé onze, au cas où.';
 
 export const L = {

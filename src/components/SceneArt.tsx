@@ -1,28 +1,8 @@
 import type { ReactElement } from 'react';
+import { Desk, Kid, ink } from './art/primitives';
 
 // Une planche par situation. Même trait que le prologue : aplats pastel, contour encre,
 // personnages en fil de fer, et toujours un détail qui dit la catastrophe.
-const ink = { stroke: '#3f3a55', strokeWidth: 2.5, fill: 'none', strokeLinecap: 'round' } as const;
-const SKIN = '#ffe1cf';
-
-const Desk = ({ x, y = 128, w = 60 }: { x: number; y?: number; w?: number }) => (
-  <g stroke="#3f3a55" strokeWidth="2.5">
-    <rect x={x} y={y} width={w} height="8" rx="2" fill="#c68a4e" />
-    <path d={`M${x + 6} ${y + 8} v${180 - y - 8} M${x + w - 6} ${y + 8} v${180 - y - 8}`} />
-  </g>
-);
-
-const Kid = ({ x, y, skin = SKIN, arms = 'down' }: { x: number; y: number; skin?: string; arms?: 'down' | 'up' | 'side' }) => (
-  <g>
-    <circle cx={x} cy={y} r="11" fill={skin} stroke="#3f3a55" strokeWidth="2.5" />
-    <path d={`M${x} ${y + 11} v22`} {...ink} />
-    {arms === 'up' && <path d={`M${x} ${y + 17} l-13 -12 M${x} ${y + 17} l13 -12`} {...ink} />}
-    {arms === 'down' && <path d={`M${x} ${y + 17} l-12 10 M${x} ${y + 17} l12 10`} {...ink} />}
-    {arms === 'side' && <path d={`M${x} ${y + 17} h-14 M${x} ${y + 17} h14`} {...ink} />}
-    <g fill="#3f3a55"><circle cx={x - 4} cy={y - 1} r="1.8" /><circle cx={x + 4} cy={y - 1} r="1.8" /></g>
-  </g>
-);
-
 const ARTS: Record<string, () => ReactElement> = {
   // L'encre déferle, Sophie s'effondre, tu recules
   sophie: () => (

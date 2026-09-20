@@ -1,6 +1,6 @@
 import { mutator } from '../data/registry';
 import { useRunStore } from '../state/runStore';
-import { L, money } from '../theme/lexicon';
+import { L, NARRATOR, money } from '../theme/lexicon';
 
 // Entre la boutique et la manche : la grille est visible mais floutée, le chrono attend un toucher.
 export function ReadyOverlay() {
@@ -12,6 +12,7 @@ export function ReadyOverlay() {
   const mut = manche.mutatorId ? mutator(manche.mutatorId) : null;
   return (
     <div className="ready-overlay">
+      <p className="narrator">{NARRATOR[(run.currentManche - 1) % NARRATOR.length]}</p>
       <span className="ready-title">{L.manche} {run.currentManche} · {manche.grid.size}×{manche.grid.size}</span>
       {mut ? <span className="ready-line mutator">{L.theme} — {mut.name} : {mut.description}</span> : <span className="ready-line">{L.pretClassique}</span>}
       <span className="ready-line">{L.seuil} : {manche.threshold} · feuille {manche.difficulty.mood} · {Math.round(manche.totalSeconds)} s</span>

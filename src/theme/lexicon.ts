@@ -6,6 +6,20 @@ export const GAME_TITLE = 'Rogue Boggle Warrior';
 export const GAME_SUBTITLE = 'Ultimate Dictée de CE2 Edition';
 export const BLURB = 'Un jeu à couper le souffle.';
 export const BLURB_SOURCE = 'Le Bulletin de l\'École Communale, édition du mardi';
+// Le narrateur sait tout, et il le dit avec une gravité que la situation ne mérite pas.
+export const NARRATOR = [
+  'Il ne le sait pas encore. Dans quatre-vingt-dix secondes, tout aura changé.',
+  'Personne dans cette salle ne mesure ce qui se joue. Lui non plus, d\'ailleurs.',
+  'C\'est ici que la journée bascule. Il est dix heures dix.',
+  'On se souviendra de cette dictée. Enfin, quelqu\'un s\'en souviendra.',
+  'Le silence se fait. Vingt-six destins tiennent sur une feuille à carreaux.',
+  'À cet instant précis, il pense à sa grand-mère. Il ne sait pas pourquoi.',
+  'Le stylo touche le papier. Plus rien ne pourra l\'arrêter, sauf la sonnerie.',
+  'Ce qui va suivre a été écrit il y a longtemps. Par la maîtresse, hier soir.',
+  'Il inspire. Il sait ce que ça coûte. Il y va quand même.',
+  'Dernière ligne droite. Le CM1 le regarde depuis l\'autre bout du couloir.',
+];
+
 export const TAGLINE = 'Dix dictées te séparent du CM1. La maîtresse en a préparé onze, au cas où.';
 
 export const L = {

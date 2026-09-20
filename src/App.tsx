@@ -12,9 +12,11 @@ import { RelicBar } from './components/RelicBar';
 import { FoundWords } from './components/FoundWords';
 import { Grid } from './components/Grid';
 import { GridLegend } from './components/GridLegend';
+import { Interlude } from './components/Interlude';
 import { Intro } from './components/Intro';
 import { ScenePick } from './components/ScenePick';
 import { ScenesGallery } from './components/ScenesGallery';
+import { InterludesGallery } from './components/InterludesGallery';
 import { MancheRecap } from './components/MancheRecap';
 import { QuestBadge } from './components/QuestBadge';
 import { ReadyOverlay } from './components/ReadyScreen';
@@ -113,7 +115,9 @@ function Playing() {
 
 export default function App() {
   const phase = useRunStore((s) => s.phase);
-  if (new URLSearchParams(location.search).has('planches')) return <main><ScenesGallery /></main>;
+  const debug = new URLSearchParams(location.search);
+  if (debug.has('planches')) return <main><ScenesGallery /></main>;
+  if (debug.has('transitions')) return <main><InterludesGallery /></main>;
   return (
     <main>
       <SoundEffects />
@@ -123,6 +127,7 @@ export default function App() {
       {phase === 'scenePick' && <ScenePick />}
       {(phase === 'playing' || phase === 'ready') && <Playing />}
       {phase === 'recap' && <MancheRecap />}
+      {phase === 'interlude' && <Interlude />}
       {phase === 'event' && <EventScreen />}
       {phase === 'shop' && <Shop />}
       {phase === 'victory' && <EndScreen victory />}

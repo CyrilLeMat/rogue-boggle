@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { isMusicEnabled, setMusicEnabled, setMusicIntensity, startMusic, stopMusic } from '../audio/music';
+import { isMusicEnabled, setMusicEnabled, setMusicIntensity, setMusicMood, startMusic, stopMusic } from '../audio/music';
 import { isMuted, setMuted, sfx, unlockAudio } from '../audio/sfx';
 import { useRunStore } from '../state/runStore';
 import { scoreTier } from '../theme/intensity';
@@ -11,6 +11,7 @@ export function SoundEffects() {
   const lastResult = useRunStore((s) => s.lastResult);
   const shop = useRunStore((s) => s.shop);
   const timeLeft = useRunStore((s) => s.manche?.timeLeft ?? 0);
+  const mutatorId = useRunStore((s) => s.manche?.mutatorId ?? null);
   const [muted, setMutedState] = useState(isMuted());
   const [music, setMusicState] = useState(isMusicEnabled());
   const soldCount = useRef(0);
@@ -55,6 +56,17 @@ export function SoundEffects() {
     // les 20 dernières secondes accélèrent la musique, le reste du temps elle reste calme
     setMusicIntensity(phase === 'playing' && timeLeft <= 20 ? 1 - timeLeft / 20 : 0);
   }, [timeLeft, phase]);
+
+  useEffect(() => {
+    // la couleur du moment : le couloir fait peur, le souvenir fait mal, une leçon se combat
+    const combat = phase === 'playing' && (!!mutatorId || timeLeft <= 20);
+    setMusicMood(
+      phase === 'event' ? 'choc'
+      : phase === 'interlude' ? 'triste'
+      : combat ? 'combat'
+      : 'classe',
+    );
+  }, [phase, mutatorId, timeLeft <= 20]);
 
   useEffect(() => {
     if (phase !== 'playing') { lastTick.current = -1; return; }

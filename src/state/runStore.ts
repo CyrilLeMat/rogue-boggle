@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
+import { hasInterlude, pickInterlude } from '../data/interludes';
 import { planScenes, randomLessonId, sceneChoice, sceneRelic } from '../data/scenes';
 import { ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
@@ -30,7 +31,7 @@ import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
 import { posKey } from '../engine/adjacency';
 
-export type Phase = 'menu' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'event' | 'shop' | 'victory' | 'gameover';
+export type Phase = 'menu' | 'intro' | 'startPick' | 'scenePick' | 'ready' | 'playing' | 'recap' | 'interlude' | 'event' | 'shop' | 'victory' | 'gameover';
 
 export interface MancheResult {
   manche: number;
@@ -87,6 +88,7 @@ export interface RunState extends RunView {
   sageWins: number;
   eventPlan: EventId[];   // le programme de l'année, tiré à la rentrée
   scenePlan: string[];    // les planches de l'année, une par dictée paire
+  seenInterludes: string[]; // les transitions déjà jouées : on ne repasse pas deux fois au même endroit
   pendingScene: { sceneId: string; choice: number; lessonId: string | null } | null;
   history: MancheResult[];
   endBonus: number;
@@ -102,6 +104,7 @@ interface Store {
   lastResult: MancheResult | null;
   startChoices: string[];
   currentScene: string | null;
+  currentInterlude: string | null;
   shop: ShopItem[];
   shopRerolls: { paid: number; freeLeft: number };
   event: GameEvent | null;
@@ -120,6 +123,7 @@ interface Store {
   endManche(early?: boolean): void;
   finishEarly(): void;
   continueAfterRecap(): void;
+  continueAfterInterlude(): void;
   eventStart(): void;
   eventTick(dt: number): void;
   eventSubmit(path: Pos[]): void;
@@ -165,6 +169,7 @@ export const useRunStore = create<Store>((set, get) => ({
   lastResult: null,
   startChoices: [],
   currentScene: null,
+  currentInterlude: null,
   shop: [],
   shopRerolls: { paid: 0, freeLeft: 0 },
   event: null,
@@ -179,7 +184,7 @@ export const useRunStore = create<Store>((set, get) => ({
         seed, rng, snailRng: createRng(seed + '-snail'), score: 0, euros: 0, lives: STARTING_LIVES, currentManche: 1,
         relicIds: [], killCount: 0, history: [], endBonus: 0,
         consumables: [], pendingCurseIds: [], tookEnemyMutator: false, lostLifeLastManche: false, nextMutatorId: null, lastConditionId: null, seenEnemies: false, seenShop: false, sageWins: 0, eventPlan: planEvents(rng),
-        scenePlan: planScenes(rng, 5), pendingScene: null,
+        scenePlan: planScenes(rng, 5), pendingScene: null, seenInterludes: [],
       },
       lastResult: null,
       startChoices,
@@ -456,13 +461,22 @@ export const useRunStore = create<Store>((set, get) => ({
       set({ phase: run.lives <= 0 ? 'gameover' : 'victory', run: { ...run, endBonus, score: run.score + endBonus } });
       return;
     }
-    // Un événement de couloir s'invite après les dictées 2, 4, 6 et 8, avant la coopérative.
-    if (isEventManche(run.currentManche) && run.eventPlan.length) {
-      const [id, ...rest] = run.eventPlan;
-      set({ phase: 'event', event: buildEvent(id, run), run: { ...run, eventPlan: rest } });
-      return;
+    // Après une dictée impaire, la caméra te suit hors de la classe.
+    if (hasInterlude(run.currentManche)) {
+      const id = pickInterlude(run.currentManche, !run.lostLifeLastManche, run.seenInterludes, run.rng);
+      if (id) {
+        set({ phase: 'interlude', currentInterlude: id, run: { ...run, seenInterludes: [...run.seenInterludes, id] } });
+        return;
+      }
     }
-    openShop();
+    afterRecap(run);
+  },
+
+  continueAfterInterlude() {
+    const { run } = get();
+    if (!run) return;
+    set({ currentInterlude: null });
+    afterRecap(run);
   },
 
   eventStart() {
@@ -701,7 +715,7 @@ export const useRunStore = create<Store>((set, get) => ({
   },
 
   backToMenu() {
-    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], currentScene: null, shop: [], event: null });
+    set({ phase: 'menu', run: null, manche: null, lastResult: null, feedback: null, startChoices: [], currentScene: null, currentInterlude: null, shop: [], event: null });
   },
 
   addRelic(id) {
@@ -782,6 +796,16 @@ function buildEvent(id: EventId, run: RunState): GameEvent {
   if (id === 'inspecteur') return createHunt('inspecteur', inspectorWords(), run.rng);
   if (id === 'reserve') return createChoice(drawFreeRelics(shopInput(run), run.rng, 3));
   return createHarvest(id, dictionary, run.rng, run.euros);
+}
+
+// Après le recap et la planche de transition : un couloir une fois sur deux, puis la coopérative.
+function afterRecap(run: RunState) {
+  if (isEventManche(run.currentManche) && run.eventPlan.length) {
+    const [id, ...rest] = run.eventPlan;
+    useRunStore.setState({ phase: 'event', event: buildEvent(id, run), run: { ...run, eventPlan: rest } });
+    return;
+  }
+  openShop();
 }
 
 function openShop() {

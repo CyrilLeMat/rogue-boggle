@@ -65,7 +65,7 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   heros: ['Psykokwak', 'Les teletubbies', 'Bioman', 'Astérix', 'Bob l\'éponge'],
   plat: ['les pâtes au beurre', 'les frites surgelées', 'le gratin de mamie', 'les nuggets', 'la purée'],
   horreur: ['les endives', 'le poisson pané', 'les plats de prolétaire', 'les légumes non bios', 'le chou-fleur'],
-  metier: ['pompier bodybulder', 'vétérinaire à coeur ouvert', 'astronaute espion', 'youtubeur en paris sportifs', 'président du monde libre'],
+  metier: ['pompier bodybulder', 'vétérinaire à coeur ouvert', 'astronaute espion', 'youtubeur en paris sportifs', 'président du monde libre', 'videur en boîte de nuit'],
   chanson: ['Ils tapent sur des bambous', 'Le best-of de Zazie', 'l\'hymne de l\'URSS', 'Francky Vincent', 'Le générique du Big Deal'],
   admire: ['Ma grand-mère', 'Richard Nixon', 'Mes ancètres les australopitèques', 'Madonna', 'Ma papa et ma maman', 'Rider de la Pat-patrouille'],
   surnom: ['Toto la seringue', 'Bibou le fou', 'José le taliban', 'Crevette fachée', 'Bouboule', 'Mimi la souris'],

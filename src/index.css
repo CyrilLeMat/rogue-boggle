@@ -240,6 +240,14 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .classroom .frieze g:nth-child(odd) { transform-box: fill-box; }
 /* un avion en papier toutes les quinze secondes, et la craie qui retombe */
 .classroom .plane { animation: glide 24s linear infinite; }
+/* la réponse part dans l'autre sens, à mi-parcours */
+.classroom .plane.back { animation: glide-back 24s linear infinite; animation-delay: 12s; }
+@keyframes glide-back {
+  0% { transform: translate(560px, 66px) rotate(6deg); opacity: 0; }
+  3% { opacity: 1; }
+  42% { transform: translate(-90px, 112px) rotate(-8deg); opacity: 1; }
+  44%, 100% { transform: translate(-90px, 112px) rotate(-8deg); opacity: 0; }
+}
 .classroom .wad { animation: tumble 3.2s linear infinite; transform-origin: center; }
 @keyframes tumble { to { transform: rotate(360deg); } }
 @keyframes glide {

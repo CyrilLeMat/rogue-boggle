@@ -1,6 +1,19 @@
 import { GAME_SUBTITLE, GAME_TITLE } from '../theme/lexicon';
 
 // Bandeau d'accueil : la salle de classe, dans le style des cases du prologue.
+// La boulette : froissée, avec sa traînée de pointillés derrière elle.
+function Wad() {
+  return (
+    <>
+      <g className="wad">
+        <path d="M0 -9 l7 -3 5 6 8 2 -3 8 4 7 -8 4 -4 7 -8 -3 -8 2 -2 -8 -6 -5 6 -6z" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M-3 -2 l6 3 -2 6 M4 -4 l4 5" stroke="#c9b9a0" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+      </g>
+      <path d="M-14 4 h-16 M-20 -6 h-12 M-20 14 h-12" stroke="#b9ae9c" strokeWidth="2" strokeLinecap="round" strokeDasharray="3 6" opacity="0.7" />
+    </>
+  );
+}
+
 export function Classroom() {
   // Un titre long passe sur deux lignes de craie plutôt que de déborder du tableau.
   const words = GAME_TITLE.split(' ');
@@ -99,13 +112,12 @@ export function Classroom() {
       </g>
 
       {/* l'avion en papier de quelqu'un du fond */}
-      {/* une boulette de papier traverse la salle : impossible de la prendre pour un curseur */}
+      {/* les boulettes de papier traversent la salle, une fois dans chaque sens */}
       <g className="plane">
-        <g className="wad">
-          <path d="M0 -9 l7 -3 5 6 8 2 -3 8 4 7 -8 4 -4 7 -8 -3 -8 2 -2 -8 -6 -5 6 -6z" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2" strokeLinejoin="round" />
-          <path d="M-3 -2 l6 3 -2 6 M4 -4 l4 5" stroke="#c9b9a0" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-        </g>
-        <path d="M-14 4 h-16 M-20 -6 h-12 M-20 14 h-12" stroke="#b9ae9c" strokeWidth="2" strokeLinecap="round" strokeDasharray="3 6" opacity="0.7" />
+        <Wad />
+      </g>
+      <g className="plane back">
+        <g transform="scale(-1 1)"><Wad /></g>
       </g>
 
       {/* poussière de craie sous le tableau */}

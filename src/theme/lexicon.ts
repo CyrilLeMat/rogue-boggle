@@ -142,7 +142,7 @@ export const MONOLOGUE = [
   'Le CM1 ne pardonne pas. Le CM1 n\'attend personne. Le CM1 est la lumière.',
   'Ma mère m\'a dit de faire de mon mieux. Je suis prêt[|e] à donner ma vie pour cette épreuve du destin.',
   'Kévin me regarde. Il veut me voir échouer. Qu\'il regarde. Il verra ce que je vaux.',
-  'Comme dit {heros} : le destin frappe à ma porte, et je dois relever le défi.',
+  'Comme dit {heros} : le destin frappe à ma porte, et il frappe avec {objet}. Je dois relever le défi, {adjectif} ou pas.',
   'Si je tombe ici, je ne serai jamais {metier}. Je serai un souvenir.',
   '{Admire}. Regarde-moi bien. Je ne te ferai pas honte.',
   'Dans ma tête, {chanson} tourne en boucle depuis ce matin. Ça m\'aide. Je crois.',

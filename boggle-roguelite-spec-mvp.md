@@ -678,6 +678,15 @@ Quatre niveaux déclarés au même écran (`src/data/levels.ts`), multiplicateur
 8 ans ×1,5 et ×0,55 · 12 ans ×1,25 et ×0,75 · adulte ×1 et ×1 · professionnel ×0,85 et ×1,45.
 Mémorisé sous `rb-level`.
 
-Dans les textes : `{nom}` insère le prénom, `[masculin|féminin]` choisit la forme.
+Deuxième page, la fiche de renseignements : activité préférée, plat préféré, plat détesté
+(22 caractères, bouton « Surprends-moi », valeurs par défaut si on passe).
+
+Dans les textes : `{nom}` insère le prénom, `{hobby}` `{plat}` `{horreur}` la fiche,
+`[masculin|féminin]` choisit la forme.
+Points d'usage : la planche « La cantine », la transition « L'été dernier »,
+trois répliques de la maîtresse et la ligne « Passe-temps déclaré » du bulletin.
+
+**Attention** : `npx tsc --noEmit` ne vérifie rien (tsconfig racine avec `files: []` et des références).
+Toujours valider avec `npm run build`.
 `say(texte, identity)` fait le rendu, `useSay()` le branche sur la partie en cours.
 Un test vérifie qu'aucun marqueur ne subsiste dans les monologues, planches et transitions.

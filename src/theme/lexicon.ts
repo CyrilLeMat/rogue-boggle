@@ -53,7 +53,7 @@ export const DEFAULT_PROFILE: Profile = {
   distance: 'trois mètres',
   nombre: 'onze',
   action: 'sauter partout en criant',
-  cri: 'AU SECOURS! APPELER LA POLICE!',
+  cri: 'AU SECOURS! APPELEZ LA POLICE!',
   faute: 'nénuphard',
   pere: 'Kévin',
 };

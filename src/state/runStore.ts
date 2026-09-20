@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { DEFAULT_LEVEL, level as resolveLevel } from '../data/levels';
-import { DEFAULT_IDENTITY, type Identity } from '../theme/lexicon';
+import { DEFAULT_IDENTITY, DEFAULT_PROFILE, type Identity } from '../theme/lexicon';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
@@ -889,7 +889,7 @@ function loadIdentity(): Identity {
     if (!raw) return DEFAULT_IDENTITY;
     const parsed = JSON.parse(raw) as Partial<Identity>;
     if (!parsed.name || (parsed.gender !== 'm' && parsed.gender !== 'f')) return DEFAULT_IDENTITY;
-    return { name: parsed.name, gender: parsed.gender };
+    return { name: parsed.name, gender: parsed.gender, profile: { ...DEFAULT_PROFILE, ...parsed.profile } };
   } catch { return DEFAULT_IDENTITY; }
 }
 

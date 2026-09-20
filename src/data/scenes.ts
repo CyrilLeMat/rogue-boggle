@@ -204,6 +204,27 @@ export const SCENES: Scene[] = [
     ],
   },
   {
+    id: 'cantine',
+    title: 'La cantine',
+    lines: [
+      'Il est midi. Kévin a fait la queue deux fois et revient à table avec deux plateaux.',
+      'Il pose le second devant toi, sans un mot. Au menu : {horreur}.',
+      'Toute la table s\'est tue. Kévin te regarde. Kévin attend.',
+    ],
+    choices: [
+      {
+        label: 'Tout manger sans respirer',
+        detail: 'Le corps encaisse, l\'esprit encaisse. Tu ressors de table plus fort[|e] que jamais, et un peu ver[t|te].',
+        effects: { seconds: -10, scoreMult: 0.2 },
+      },
+      {
+        label: 'Repousser le plateau',
+        detail: 'Un affront public. Kévin ne dira rien aujourd\'hui, et c\'est bien ça le problème.',
+        effects: { euros: 25, lessonId: 'chasse' },
+      },
+    ],
+  },
+  {
     id: 'anniversaire',
     title: 'L\'anniversaire de Léa',
     lines: [

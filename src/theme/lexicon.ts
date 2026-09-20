@@ -5,15 +5,29 @@
 // L'élève a un prénom et un genre : tous les textes s'accordent.
 // Dans les chaînes, {nom} est remplacé par le prénom et [masculin|féminin] par la bonne forme.
 export type Gender = 'm' | 'f';
-export interface Identity { name: string; gender: Gender }
+export interface Profile { hobby: string; plat: string; horreur: string }
+export interface Identity { name: string; gender: Gender; profile: Profile }
 
-export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f' };
+export const DEFAULT_PROFILE: Profile = { hobby: 'le trampoline', plat: 'les pâtes au beurre', horreur: 'les endives' };
+export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profile: DEFAULT_PROFILE };
 
+// Réponses de secours pour le bouton « Surprends-moi » de la fiche de renseignements.
+export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
+  hobby: ['le trampoline', 'les Pokémon', 'le vélo', 'creuser des trous', 'la piscine', 'les élastiques'],
+  plat: ['les pâtes au beurre', 'les frites', 'le gratin de mamie', 'les nuggets', 'la purée'],
+  horreur: ['les endives', 'le poisson pané', 'la soupe froide', 'les épinards', 'le chou-fleur'],
+};
+
+// {nom} pour le prénom, {hobby} {plat} {horreur} pour la fiche, [masculin|féminin] pour les accords.
 export function say(text: string, id: Identity | null | undefined): string {
   const who = id ?? DEFAULT_IDENTITY;
+  const profile = { ...DEFAULT_PROFILE, ...who.profile };
   return text
     .replace(/\[([^\]|]*)\|([^\]]*)\]/g, (_m, masc, fem) => (who.gender === 'f' ? fem : masc))
-    .replace(/\{nom\}/g, who.name);
+    .replace(/\{nom\}/g, who.name)
+    .replace(/\{hobby\}/g, profile.hobby)
+    .replace(/\{plat\}/g, profile.plat)
+    .replace(/\{horreur\}/g, profile.horreur);
 }
 
 export const GAME_TITLE = 'Rogue Boggle Warrior';
@@ -114,6 +128,7 @@ export const SCOLDS = [
   'J\'ai fait sept ans d\'études pour lire ça.',
   'Même le radiateur a honte.',
   'Tu écris comme on jette des cailloux, {nom}.',
+  'Ton cerveau pense à {hobby}. Pas aux consonnes doubles.',
   'Le dictionnaire vient de claquer tout seul.',
   'Sors. Non, reste. Non, sors.',
   'J\'ai rêvé de cette faute cette nuit. Je le jure.',
@@ -145,6 +160,7 @@ export const PRAISES_BIG = [
   'On note celui-là au tableau d\'honneur.',
   'Même l\'inspecteur aurait applaudi.',
   'Je n\'ai rien à redire. C\'est rare. Savoure.',
+  'Ce soir, tu mérites ça : {plat}.',
 ];
 
 export const PRAISES_SMALL = [
@@ -157,6 +173,7 @@ export const PRAISES_SMALL = [
   'Note-le, ça n\'arrivera pas deux fois.',
   'Tes parents seront contents, {nom}.',
   'Je reprends espoir. Un peu.',
+  'Continue et je te sers {plat} moi-même.',
   'Tiens donc.',
 ];
 

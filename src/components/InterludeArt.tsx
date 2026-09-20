@@ -193,6 +193,37 @@ const ARTS: Record<string, () => ReactElement> = {
     </>
   ),
 
+  // L'été sacrifié : dehors la lumière, dedans les mots en -euil
+  ete: () => (
+    <>
+      <rect width="320" height="180" fill="#f7efdc" />
+      <rect y="150" width="320" height="30" fill="#e0d3b4" />
+      {/* la fenêtre, et l'été qui continue sans toi */}
+      <rect x="176" y="18" width="126" height="98" fill="#bfe0ef" stroke="#3f3a55" strokeWidth="3" />
+      <rect x="176" y="86" width="126" height="30" fill="#9ec98a" />
+      <path d="M239 18 v98 M176 67 h126" stroke="#3f3a55" strokeWidth="2.5" />
+      <circle cx="288" cy="36" r="11" fill="#f7c55c" />
+      <g stroke="#3f3a55" strokeWidth="2" fill="none">
+        <circle cx="200" cy="86" r="6" fill="#ffe1cf" /><path d="M200 92 v12 M200 96 l-7 6 M200 96 l7 -8 M200 104 l-5 10 M200 104 l5 10" />
+        <circle cx="262" cy="84" r="6" fill="#f6d1c2" /><path d="M262 90 v12 M262 94 l7 8 M262 94 l-7 -6 M262 102 l-5 10 M262 102 l5 10" />
+      </g>
+      <circle cx="232" cy="74" r="4" fill="#f28b7d" stroke="#3f3a55" strokeWidth="1.5" className="splash" />
+      {/* toi, dos tourné, à la table de la cuisine */}
+      <rect x="10" y="118" width="150" height="10" rx="3" fill="#c68a4e" stroke="#3f3a55" strokeWidth="2.5" />
+      <path d="M28 128 v34 M142 128 v34" stroke="#3f3a55" strokeWidth="3" />
+      <g transform="rotate(-3 92 112)">
+        <rect x="64" y="100" width="58" height="18" rx="2" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2" />
+        <g stroke="#b9b1c9" strokeWidth="1.5"><path d="M70 107 h46 M70 113 h46" /></g>
+      </g>
+      <g>
+        <circle cx="52" cy="76" r="15" fill="#4a4363" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M52 91 l12 24" {...ink} />
+        <path d="M56 100 l30 10" {...ink} />
+      </g>
+      <text x="16" y="44" fontFamily="'Patrick Hand', cursive" fontSize="15" fill="#3f3a55">é-c-u-r-e-u-i-l</text>
+    </>
+  ),
+
   // La cour : Kévin te regarde et ne dit rien
   kevin1: () => (
     <>

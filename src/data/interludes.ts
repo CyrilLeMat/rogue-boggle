@@ -82,6 +82,16 @@ export const INTERLUDES: Interlude[] = [
     fall: 'Elle a eu son certificat d’études en 1954. Elle en parle encore.',
   },
   {
+    id: 'ete',
+    mood: 'any',
+    lines: [
+      'L\'été dernier. Tout le monde était dehors, tout le monde criait.',
+      'Toi, tu as renoncé à {hobby} pendant deux mois entiers pour réviser les mots en -euil, assis[|e] à la table de la cuisine.',
+    ],
+    cry: 'Le plaisir attendra. Le CM1, lui, n\'attend pas.',
+    fall: 'Personne ne t\'avait rien demandé.',
+  },
+  {
     id: 'kevin1',
     mood: 'any',
     lines: [

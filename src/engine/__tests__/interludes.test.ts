@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
 import { SCENES } from '../../data/scenes';
-import { MONOLOGUE, say } from '../../theme/lexicon';
+import { MONOLOGUE, PRAISES_BIG, PRAISES_SMALL, SCOLDS, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
 
 describe('planches de transition', () => {
@@ -41,8 +41,11 @@ describe('planches de transition', () => {
 describe('accords et prénom', () => {
   it('choisit la forme masculine ou féminine', () => {
     const line = 'Je suis prêt[|e], {nom}.';
-    expect(say(line, { name: 'Léo', gender: 'm' })).toBe('Je suis prêt, Léo.');
-    expect(say(line, { name: 'Léa', gender: 'f' })).toBe('Je suis prête, Léa.');
+    const profile = { hobby: 'le vélo', plat: 'les frites', horreur: 'les endives' };
+    expect(say(line, { name: 'Léo', gender: 'm', profile })).toBe('Je suis prêt, Léo.');
+    expect(say(line, { name: 'Léa', gender: 'f', profile })).toBe('Je suis prête, Léa.');
+    expect(say('Au menu : {horreur}. Puis {plat}, et {hobby}.', { name: 'Léa', gender: 'f', profile }))
+      .toBe('Au menu : les endives. Puis les frites, et le vélo.');
   });
 
   it('ne laisse aucun marqueur dans les textes du jeu', () => {
@@ -50,10 +53,11 @@ describe('accords et prénom', () => {
       ...MONOLOGUE,
       ...INTERLUDES.flatMap((i) => [...i.lines, i.cry ?? '', i.fall]),
       ...SCENES.flatMap((s) => [...s.lines, ...s.choices.map((c) => c.detail)]),
+      ...SCOLDS, ...PRAISES_BIG, ...PRAISES_SMALL,
     ];
     for (const gender of ['m', 'f'] as const) {
       for (const t of texts) {
-        const out = say(t, { name: 'Alix', gender });
+        const out = say(t, { name: 'Alix', gender, profile: { hobby: 'le vélo', plat: 'les frites', horreur: 'les endives' } });
         expect(out).not.toMatch(/[[\]{}|]/);
       }
     }

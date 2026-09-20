@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { Desk, Kid, ink } from './art/primitives';
+import { Desk, Kid, SKIN, ink } from './art/primitives';
 
 // Une planche par situation. Même trait que le prologue : aplats pastel, contour encre,
 // personnages en fil de fer, et toujours un détail qui dit la catastrophe.
@@ -216,6 +216,46 @@ const ARTS: Record<string, () => ReactElement> = {
       <circle cx="296" cy="124" r="10" fill={SKIN} stroke="#3f3a55" strokeWidth="2.5" />
       <Kid x={48} y={104} arms="up" />
       <text x="40" y="60" fontFamily="'Patrick Hand', cursive" fontSize="17" fill="#d9534f">« je l'ai oublié… »</text>
+    </>
+  ),
+
+  // La cantine : deux plateaux, un silence
+  cantine: () => (
+    <>
+      <rect width="320" height="180" fill="#eef1e8" />
+      <rect y="150" width="320" height="30" fill="#cfd3c4" />
+      <g stroke="#dfe3d6" strokeWidth="2">
+        <path d="M0 40 h320 M0 76 h320" />
+      </g>
+      <rect x="20" y="118" width="280" height="12" rx="3" fill="#c9cbd0" stroke="#3f3a55" strokeWidth="2.5" />
+      <path d="M46 130 v34 M274 130 v34" stroke="#3f3a55" strokeWidth="3" />
+      {[70, 186].map((x, i) => (
+        <g key={x}>
+          <rect x={x} y="102" width="64" height="16" rx="4" fill="#f3f1ea" stroke="#3f3a55" strokeWidth="2.5" />
+          <ellipse cx={x + 22} cy="110" rx="13" ry="6" fill={i === 0 ? '#e8d9a8' : '#9db87c'} stroke="#3f3a55" strokeWidth="2" />
+          <circle cx={x + 50} cy="110" r="5" fill="#d9cdb4" stroke="#3f3a55" strokeWidth="2" />
+        </g>
+      ))}
+      <g className="sweat" stroke="#b9c9a8" strokeWidth="2" strokeLinecap="round">
+        <path d="M208 96 v-8 M216 92 v-10 M224 96 v-8" />
+      </g>
+      {/* toi, tétanisé devant ton plateau */}
+      <g>
+        <circle cx="102" cy="72" r="14" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <circle cx="96" cy="70" r="3" fill="#fff" stroke="#3f3a55" strokeWidth="1.5" />
+        <circle cx="108" cy="70" r="3" fill="#fff" stroke="#3f3a55" strokeWidth="1.5" />
+        <circle cx="96" cy="70" r="1.3" fill="#3f3a55" /><circle cx="108" cy="70" r="1.3" fill="#3f3a55" />
+        <path d="M96 82 q6 -4 12 0" {...ink} strokeWidth="2" />
+        <path d="M102 86 v18 M102 92 l-14 12 M102 92 l14 12" {...ink} />
+      </g>
+      {/* Kévin, immobile, satisfait */}
+      <g>
+        <circle cx="222" cy="72" r="14" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M215 68 h6 M225 68 h6" {...ink} strokeWidth="2" />
+        <path d="M214 80 q8 6 16 0" {...ink} strokeWidth="2" />
+        <path d="M222 86 v18 M222 92 l-16 12 M222 92 l16 12" {...ink} />
+      </g>
+      <text x="152" y="52" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="17" fill="#d9534f">« mange. »</text>
     </>
   ),
 

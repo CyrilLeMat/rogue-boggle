@@ -8,10 +8,28 @@ export function Classroom() {
   const head = tail ? words.slice(0, -1).join(' ') : GAME_TITLE;
   const two = !!tail;
   return (
-    <svg viewBox="0 0 480 270" preserveAspectRatio="xMidYMid slice" className="classroom" role="img" aria-label={`${GAME_TITLE}, ${GAME_SUBTITLE}`}>
-      <rect width="480" height="270" fill="#f3ece0" />
-      <rect y="196" width="480" height="74" fill="#e2d6c2" />
-      <path d="M0 196 h480" stroke="#c9b9a0" strokeWidth="2" />
+    <svg viewBox="-110 0 700 270" preserveAspectRatio="xMidYMax slice" className="classroom" role="img" aria-label={`${GAME_TITLE}, ${GAME_SUBTITLE}`}>
+      {/* la salle déborde des deux côtés : sur les écrans larges, on rogne les murs, jamais le pupitre */}
+      <rect x="-110" width="700" height="270" fill="#f3ece0" />
+      <rect x="-110" y="196" width="700" height="74" fill="#e2d6c2" />
+      <path d="M-110 196 h700" stroke="#c9b9a0" strokeWidth="2" />
+
+      {/* à gauche, la porte du couloir */}
+      <g>
+        <rect x="-96" y="40" width="70" height="156" rx="3" fill="#dcd2c0" stroke="#3f3a55" strokeWidth="3" />
+        <rect x="-86" y="54" width="50" height="46" rx="2" fill="#b8cfe0" stroke="#3f3a55" strokeWidth="2.5" />
+        <circle cx="-36" cy="124" r="4" fill="#8a5a2b" stroke="#3f3a55" strokeWidth="2" />
+        <path d="M-88 150 h54" stroke="#c9b9a0" strokeWidth="2" />
+      </g>
+
+      {/* à droite, la fenêtre et la plante qui survit à tout */}
+      <g>
+        <rect x="500" y="44" width="76" height="92" fill="#bfe0ef" stroke="#3f3a55" strokeWidth="3" />
+        <path d="M538 44 v92 M500 90 h76" stroke="#3f3a55" strokeWidth="2.5" />
+        <circle cx="560" cy="62" r="9" fill="#f7c55c" opacity="0.9" />
+        <path d="M512 176 h34 l-5 20 h-24z" fill="#c67f5a" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M529 176 v-24 M529 160 q-14 -6 -18 -20 q16 2 18 16 M529 158 q14 -8 17 -22 q-15 4 -17 18" stroke="#6f8b64" strokeWidth="3" fill="none" strokeLinecap="round" />
+      </g>
 
       {/* carte de France enroulée */}
       <g>

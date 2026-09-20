@@ -60,7 +60,7 @@ export const SCENES: Scene[] = [
     id: 'bocal',
     title: 'Le bocal de la leçon de choses',
     lines: [
-      'Le bocal gît sur le carrelage. Douze escargots ont recouvré leur liberté.',
+      'Le bocal gît sur le carrelage. {Nombre} escargots ont recouvré leur liberté.',
       'Ils progressent vers l\'ouest à trois centimètres par minute. Personne ne les arrêtera. Personne n\'essaiera.',
       'La maîtresse fixe le plafond en silence. Elle a fait sept ans d\'études.',
     ],
@@ -123,8 +123,8 @@ export const SCENES: Scene[] = [
     id: 'grosmot',
     title: 'Le gros mot au tableau',
     lines: [
-      'Quelqu\'un a écrit un gros mot au tableau pendant la récré. Un très gros.',
-      'La maîtresse exige un coupable et annonce que sans aveu, la classe entière sera punie. Le silence dure une éternité.',
+      'Quelqu\'un a écrit « {rigolo} » au tableau pendant la récré. En lettres capitales.',
+      'La maîtresse a blêmi, puis exigé un coupable. Sans aveu, la classe entière sera punie. Le silence dure une éternité.',
       'Puis vingt-six têtes se tournent lentement vers toi, parce que tu es le plus près du tableau et que la justice a ses raisons.',
     ],
     choices: [
@@ -200,6 +200,27 @@ export const SCENES: Scene[] = [
         label: 'En réclamer une deuxième',
         detail: 'L\'audace des désespérés. Elle soupire, elle fouille, elle te la tend en te faisant payer le dérangement.',
         effects: { euros: -25 },
+      },
+    ],
+  },
+  {
+    id: 'araignee',
+    title: 'L\'araignée',
+    lines: [
+      'Elle descend du plafond au bout de son fil, tranquille, juste au-dessus de la rangée.',
+      'Elle atterrit sur ta jambe. Tu le sens avant de le voir.',
+      'Tu hurles « {cri} » et toute l\'école t\'entend. Même la classe de CM2. Même le directeur.',
+    ],
+    choices: [
+      {
+        label: 'Monter sur la table',
+        detail: 'Personne n\'a compris. Personne ne comprendra jamais. Tu resteras debout jusqu\'à ce qu\'on te le demande.',
+        effects: { seconds: -15, streakStep: 0.2 },
+      },
+      {
+        label: 'La laisser vivre sa vie',
+        detail: 'Elle s\'installe dans un coin de ta feuille et y reste. Vous vous êtes compris[|es], toi et elle.',
+        effects: { lessonId: 'escargots', euros: 20 },
       },
     ],
   },

@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { Desk, Kid, SKIN, ink } from './art/primitives';
+import { Desk, Kid, SKIN, Tension, ink } from './art/primitives';
 
 // Une planche par situation. Même trait que le prologue : aplats pastel, contour encre,
 // personnages en fil de fer, et toujours un détail qui dit la catastrophe.
@@ -216,6 +216,35 @@ const ARTS: Record<string, () => ReactElement> = {
       <circle cx="296" cy="124" r="10" fill={SKIN} stroke="#3f3a55" strokeWidth="2.5" />
       <Kid x={48} y={104} arms="up" />
       <text x="40" y="60" fontFamily="'Patrick Hand', cursive" fontSize="17" fill="#d9534f">« je l'ai oublié… »</text>
+    </>
+  ),
+
+  // L'araignée au bout de son fil, et toi qui n'y survivras pas
+  araignee: () => (
+    <>
+      <rect width="320" height="180" fill="#eae6f2" />
+      <rect y="150" width="320" height="30" fill="#c9bfa8" />
+      <path d="M170 0 v58" stroke="#3f3a55" strokeWidth="2" />
+      {/* l'araignée, énorme pour ce qu'elle est */}
+      <g className="splash">
+        <ellipse cx="170" cy="70" rx="13" ry="10" fill="#3f3a55" />
+        <circle cx="170" cy="58" r="6" fill="#3f3a55" />
+        <g stroke="#3f3a55" strokeWidth="2.5" strokeLinecap="round">
+          <path d="M158 66 l-14 -8 M158 72 l-16 2 M158 78 l-14 10" />
+          <path d="M182 66 l14 -8 M182 72 l16 2 M182 78 l14 10" />
+        </g>
+        <g fill="#fffdf9"><circle cx="167" cy="57" r="1.6" /><circle cx="173" cy="57" r="1.6" /></g>
+      </g>
+      {/* toi, debout sur la table, au bord de la rupture */}
+      <Desk x={48} y={128} w={78} />
+      <g>
+        <circle cx="86" cy="78" r="15" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="2.5" />
+        <path d="M76 70 l8 5 M96 70 l-8 5" {...ink} strokeWidth="2" />
+        <ellipse cx="86" cy="90" rx="6" ry="7" fill="#3f3a55" />
+        <path d="M86 97 v22 M86 102 l-16 -14 M86 102 l16 -16 M86 119 l-9 9 M86 119 l9 9" {...ink} />
+      </g>
+      <Tension x={86} y={78} r={26} />
+      <text x="228" y="52" textAnchor="middle" fontFamily="'Patrick Hand', cursive" fontSize="21" fill="#d9534f" transform="rotate(-6 228 52)">!!!</text>
     </>
   ),
 

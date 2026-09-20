@@ -21,6 +21,13 @@ const QUESTIONS: { key: keyof Profile; label: string }[][] = [
     { key: 'plat', label: 'Mon plat préféré' },
     { key: 'horreur', label: 'Le plat que je déteste' },
   ],
+  [
+    { key: 'rigolo', label: 'Un mot rigolo' },
+    { key: 'adjectif', label: 'Un adjectif' },
+    { key: 'nombre', label: 'Un nombre' },
+    { key: 'action', label: 'Une action (sauter, courir…)' },
+    { key: 'cri', label: 'Ce que je crie si une araignée me grimpe sur la jambe' },
+  ],
 ];
 
 const ALL_QUESTIONS = QUESTIONS.flat();
@@ -59,7 +66,9 @@ export function Appel() {
         <p className="appel-sub">
           {page === 1
             ? 'Elle garde ça dans un classeur. Elle s\'en sert plus tard.'
-            : 'Deuxième feuillet. Elle a tout son temps, et toi aussi.'}
+            : page === 2
+              ? 'Deuxième feuillet. Elle a tout son temps, et toi aussi.'
+              : 'Dernier feuillet. Celui-là, personne ne sait pourquoi il existe.'}
         </p>
         <form className="appel-form" onSubmit={(e) => { e.preventDefault(); if (last) submit(); else setPage(page + 1); }}>
           {QUESTIONS[page - 1].map((q) => (

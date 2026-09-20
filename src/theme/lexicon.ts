@@ -16,6 +16,11 @@ export interface Profile {
   chanson: string;  // ta chanson préférée
   admire: string;   // la personne que tu admires le plus, telle qu'on la nomme (« ma grand-mère », « Papa »)
   surnom: string;   // le surnom qu'on te donne
+  rigolo: string;   // un mot rigolo
+  adjectif: string; // un adjectif
+  nombre: string;   // un nombre, gardé tel quel
+  action: string;   // une action, à l'infinitif
+  cri: string;      // ce que tu cries si une araignée te grimpe sur la jambe
 }
 export interface Identity { name: string; gender: Gender; profile: Profile }
 
@@ -30,6 +35,11 @@ export const DEFAULT_PROFILE: Profile = {
   chanson: 'Alouette',
   admire: 'ma grand-mère',
   surnom: 'Toto',
+  rigolo: 'schtroumpf',
+  adjectif: 'gluant',
+  nombre: 'douze',
+  action: 'sauter partout',
+  cri: 'AAAAAH',
 };
 export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profile: DEFAULT_PROFILE };
 
@@ -45,6 +55,11 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   chanson: ['Alouette', 'Frère Jacques', 'l\'hymne de l\'école', 'la chanson du générique', 'Petit Papa Noël'],
   admire: ['ma grand-mère', 'mon grand frère', 'Papa', 'ma grande sœur', 'mon oncle', 'Maman'],
   surnom: ['Toto', 'Bibou', 'le Chef', 'Crevette', 'Bouboule', 'Mimi'],
+  rigolo: ['schtroumpf', 'bidule', 'patate', 'zigouigoui', 'plouf', 'gloubiboulga'],
+  adjectif: ['gluant', 'majestueux', 'mou', 'terrible', 'collant', 'phénoménal'],
+  nombre: ['douze', 'quarante-deux', 'trois', 'mille', 'sept', 'cent'],
+  action: ['sauter partout', 'courir dans les couloirs', 'faire du vélo', 'crier très fort', 'grimper aux arbres'],
+  cri: ['AAAAAH', 'AU SECOURS', 'MAMAN', 'NON NON NON', 'ENLEVEZ-LA'],
 };
 
 // {nom} pour le prénom, {salut} {phrase} {cour} {heros} {plat} {horreur} {metier} {chanson}
@@ -91,6 +106,9 @@ export const MONOLOGUE = [
   'Si je tombe ici, je ne serai jamais {metier}. Je serai un souvenir.',
   '{Admire}. Regarde-moi bien. Je ne te ferai pas honte.',
   'Dans ma tête, {chanson} tourne en boucle depuis ce matin. Ça m\'aide. Je crois.',
+  '{Cri} ! Non. Pas maintenant. Concentre-toi.',
+  'J\'ai compté {nombre} respirations. À la prochaine, je commence.',
+  'Après ça, j\'aurai le droit de {action}. Après ça seulement.',
   'Quand j\'aurai fini, je me lèverai et je dirai simplement : {phrase}.',
   'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est ven[u|ue]s là pour briller !',
 ];
@@ -169,6 +187,9 @@ export const SCOLDS = [
   'J\'ai fait sept ans d\'études pour lire ça.',
   'Même le radiateur a honte.',
   'Tu écris comme on jette des cailloux, {nom}.',
+  'Tu as gribouillé « {rigolo} » dans la marge. Je l\'ai vu. Nous en reparlerons.',
+  'Tu préférerais {action}, je sais. Écris d\'abord.',
+  'Ce mot est {adjectif}. Et ce n\'est pas un compliment.',
   'Ton cerveau pense à {cour}. Pas aux consonnes doubles.',
   'Tu fredonnais {chanson} pendant la dictée. Je l\'ai entendu. Tout le monde l\'a entendu.',
   'Ici, personne ne t\'appelle {surnom}. Ici, tu as un nom et une copie.',
@@ -208,6 +229,7 @@ export const PRAISES_BIG = [
   'Je n\'ai rien à redire. C\'est rare. Savoure.',
   'Ce soir, tu mérites ça : {plat}.',
   'Voilà une copie de futur {metier}.',
+  'Ça, c\'est {adjectif}. Au sens noble du terme.',
 ];
 
 export const PRAISES_SMALL = [
@@ -220,6 +242,7 @@ export const PRAISES_SMALL = [
   'Note-le, ça n\'arrivera pas deux fois.',
   'Tes parents seront contents, {nom}.',
   'Je reprends espoir. Un peu.',
+  'Encore {nombre} comme celui-là et je te laisse {action}.',
   'Continue et je te sers {plat} moi-même.',
   'Tiens donc.',
 ];
@@ -287,6 +310,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Je préviendrai {admire}. Quelqu\'un doit savoir.',
     'Kévin a fait mieux. Kévin n\'a pas de stylo.',
     'Je range cette copie dans le tiroir du bas. Celui qui ferme à clé.',
+    '{Nombre} fautes. J\'ai arrêté de compter après, d\'ailleurs.',
   ],
   prodige: [
     'Je vais encadrer cette copie et l\'accrocher dans mon salon, au-dessus du buffet.',
@@ -296,6 +320,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Ce soir je cuisine {plat} pour toute ma famille, et je leur raconterai ta copie.',
     'Tu seras {metier}, et tu seras le meilleur. Je l\'écris ici, noir sur rouge.',
     'J\'ai pleuré dans la réserve. Ne dis rien à personne, {nom}.',
+    'C\'est {adjectif}. J\'ai cherché un autre mot pendant {nombre} minutes, il n\'y en a pas.',
     'Même {heros} peut aller se rhabiller.',
   ],
   suspect: [
@@ -319,6 +344,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'Passable. Ta voisine a fait mieux sans se donner cette peine.',
     'Acceptable. J\'attendais autre chose de toi, mais j\'attends toujours trop.',
     'Ça ira. Ça ira, mais ça ne restera pas dans les mémoires.',
+    'Un travail {adjectif}. Je te laisse décider si c\'est bien.',
     'Moyen. Comme la purée de la cantine, et avec autant de saveur.',
     'Tu as fait le minimum. Le minimum a été fait. Nous sommes quittes.',
   ],
@@ -328,6 +354,7 @@ const APPRECIATIONS: Record<string, string[]> = {
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
     'Un point de plus et je te félicitais. Un point de moins et j\'appelais chez toi.',
     'Tu as eu chaud. Moi aussi, figure-toi.',
+    'Il s\'en est fallu de {nombre} points. Ou pas loin. Je n\'ai pas recompté.',
   ],
 };
 
@@ -440,7 +467,7 @@ export const EV = {
     title: 'Le Sage du CM1',
     intro: [
       'Dans le couloir, adossé au radiateur, un CM1.',
-      'Deux redoublements, dit la légende. Il a connu trois maîtresses. Il a vu des choses.',
+      'Deux redoublements, dit la légende. Il a connu trois maîtresses et vu {nombre} élèves craquer à cet endroit précis.',
       'Il te barre la route, te toise, et lâche : « De mon temps, on ne disait pas {salut}. »',
       'Puis il te tend une feuille griffonnée :',
     ],
@@ -482,7 +509,7 @@ export const EV = {
     ],
     ask: (_n: number) => 'Trouve-le dans la feuille. Toute la classe te regarde.',
     hint: 'Il tapote la table, agacé, à l\'endroit où commence le mot.',
-    wrong: 'Il note quelque chose. On n\'entend que son stylo.',
+    wrong: 'Il note un seul mot dans son carnet : {adjectif}.',
     won: 'Il referme son carnet. Un silence. Puis, presque un sourire.',
     wonSub: '— Voilà une classe bien tenue, madame.',
     lost: 'Il note. Il souligne. Il note encore.',

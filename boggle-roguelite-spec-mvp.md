@@ -679,10 +679,11 @@ Quatre niveaux déclarés au même écran (`src/data/levels.ts`), multiplicateur
 8 ans ×1,5 et ×0,55 · 12 ans ×1,25 et ×0,75 · adulte ×1 et ×1 · professionnel ×0,85 et ×1,45.
 Mémorisé sous `rb-level`.
 
-Fiche de renseignements en deux feuillets de cinq questions (24 caractères, « Surprends-moi »
+Fiche de renseignements en trois feuillets de cinq questions (24 caractères, « Surprends-moi »
 remplit tout, « Passer le reste » saute la fin, valeurs par défaut sinon) :
 bonjour aux amis, phrase fétiche, surnom, activité dans la cour, personnage préféré,
-métier plus tard, personne admirée, chanson préférée, plat préféré, plat détesté.
+métier plus tard, personne admirée, chanson préférée, plat préféré, plat détesté,
+mot rigolo, adjectif, nombre, action, cri de l'araignée.
 
 Dans les textes : `{nom}` insère le prénom, `{hobby}` `{plat}` `{horreur}` la fiche,
 `[masculin|féminin]` choisit la forme. Un jeton capitalisé (`{Admire}`) sort avec une majuscule.

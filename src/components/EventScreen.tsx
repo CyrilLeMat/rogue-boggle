@@ -176,7 +176,7 @@ export function EventScreen() {
         <div className="frame event-hero"><EventArt id={ev.id} /></div>
         <h2>{text.title}</h2>
         <div className="intro-text">
-          {text.intro.map((l) => <p key={l}>{say(l)}</p>)}
+          {text.intro.map((l, i) => <p key={l} style={{ animationDelay: `${(0.1 + i * 0.55).toFixed(2)}s` }}>{say(l)}</p>)}
         </div>
         <p className="sage-ask">
           {ev.kind === 'hunt' ? say(EV[ev.id].ask(ev.word.length)) : ''}

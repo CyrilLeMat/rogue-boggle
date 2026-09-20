@@ -48,10 +48,10 @@ export function Shop() {
         <div className="frame event-hero"><ShopArt /></div>
         <h2>{SHOP_INTRO.title}</h2>
         <div className="intro-text">
-          {SHOP_INTRO.lines.map((l) => <p key={l}>{say(l)}</p>)}
+          {SHOP_INTRO.lines.map((l, i) => <p key={l} style={{ animationDelay: `${(0.1 + i * 0.55).toFixed(2)}s` }}>{say(l)}</p>)}
         </div>
-        <p className="sage-ask">{say(SHOP_INTRO.ask)}</p>
-        <button className="ready-cta" onClick={enter}>{say(SHOP_INTRO.cta)}</button>
+        <p className="sage-ask" style={{ animationDelay: `${(0.1 + SHOP_INTRO.lines.length * 0.55).toFixed(2)}s` }}>{say(SHOP_INTRO.ask)}</p>
+        <button className="ready-cta" style={{ animationDelay: `${(0.7 + SHOP_INTRO.lines.length * 0.55).toFixed(2)}s` }} onClick={enter}>{say(SHOP_INTRO.cta)}</button>
       </div>
     );
   }

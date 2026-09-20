@@ -16,7 +16,7 @@ export function ScenePick() {
       <div className="frame scene-frame"><SceneArt id={scene.id} /></div>
       <h2>{scene.title}</h2>
       <div className="intro-text">
-        {scene.lines.map((l) => <p key={l}>{say(l)}</p>)}
+        {scene.lines.map((l, i) => <p key={l} style={{ animationDelay: `${(0.1 + i * 0.55).toFixed(2)}s` }}>{say(l)}</p>)}
       </div>
       <div className="cards">
         {scene.choices.map((c, i) => (

@@ -433,8 +433,6 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .scene-pick h2 { margin: 4px 0 0; }
 .scene-pick .intro-text { min-height: 0; max-width: 560px; }
 .scene-pick .intro-text p { animation: reveal 0.5s ease-out both; }
-.scene-pick .intro-text p:nth-child(2) { animation-delay: 0.3s; }
-.scene-pick .intro-text p:nth-child(3) { animation-delay: 0.6s; }
 .scene-pick .cards { grid-template-columns: 1fr 1fr; gap: 14px; }
 .scene-card {
   display: flex; flex-direction: column; gap: 6px; text-align: left; align-items: flex-start;
@@ -478,9 +476,8 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .event-intro h2 { margin: 4px 0 0; }
 .event-intro .intro-text { min-height: 0; }
 .event-intro .intro-text p { animation: reveal 0.5s ease-out both; }
-.event-intro .intro-text p:nth-child(2) { animation-delay: 0.35s; }
-.event-intro .intro-text p:nth-child(3) { animation-delay: 0.7s; }
-.event-intro .sage-ask { margin-top: 0 !important; }
+.event-intro .sage-ask { margin-top: 0 !important; animation: reveal 0.5s ease-out both; }
+.event-intro .ready-cta { animation: reveal 0.5s ease-out both, pulse 1.6s ease-in-out infinite; }
 .event-intro .ready-cta { margin-top: 4px; }
 
 .sage { max-width: 680px; }

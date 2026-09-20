@@ -79,7 +79,7 @@ input:focus { outline: none; border-color: var(--accent); }
 .appel-field { display: flex; flex-direction: column; gap: 6px; text-align: left; }
 .appel-field > span { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 800; }
 .appel-field input {
-  font-family: 'Patrick Hand', cursive; font-size: 1.35rem; text-align: center; padding: 6px 12px;
+  font-family: 'Patrick Hand', cursive; font-size: 1.2rem; text-align: center; padding: 6px 10px; width: 100%;
   border: 0; border-bottom: 2.5px dashed #d9cfc0; border-radius: 0; background: transparent; color: var(--accent-deep);
 }
 .appel-field input:focus { outline: none; border-bottom-color: var(--accent); }

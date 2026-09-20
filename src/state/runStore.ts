@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { DEFAULT_LEVEL, level as resolveLevel } from '../data/levels';
-import { DEFAULT_IDENTITY, DEFAULT_PROFILE, MONOLOGUE, pickAppreciation, say, type Identity } from '../theme/lexicon';
+import { DEFAULT_IDENTITY, DEFAULT_PROFILE, MONOLOGUE, mention, noteSur20, pickAppreciation, say, type Identity } from '../theme/lexicon';
 import { CONSUMABLES, FREEZE_SECONDS, INSPIRATION_SECONDS } from '../data/consumables';
 import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
@@ -497,6 +497,7 @@ export const useRunStore = create<Store>((set, get) => ({
       const hooks = resolveRelics(run.relicIds);
       const ctx = makeContext(run.rng, run, cloneManche(manche!), dictionary);
       const endBonus = runRunEnd(hooks, ctx);
+      saveLastYear(run, run.lives > 0);
       set({ phase: run.lives <= 0 ? 'gameover' : 'victory', run: { ...run, endBonus, score: run.score + endBonus } });
       return;
     }
@@ -906,6 +907,27 @@ function applyReroll([r, c]: Pos, letter: string) {
     manche: { ...manche, grid, search, targeting: null, rerollChoice: null },
     run: { ...run, consumables },
   });
+}
+
+// Le bulletin de l'an dernier, punaisé sur la page d'accueil.
+export interface LastYear { name: string; moyenne: number; mention: string; seed: string; victory: boolean }
+const LAST_KEY = 'rb-last-year';
+
+function saveLastYear(run: RunState, victory: boolean) {
+  const notes = run.history.map((h) => noteSur20(h.score, h.threshold));
+  const moyenne = notes.length ? notes.reduce((a, b) => a + b, 0) / notes.length : 0;
+  const value: LastYear = {
+    name: run.identity.name, moyenne: +moyenne.toFixed(1),
+    mention: mention(moyenne, victory).label, seed: run.seed, victory,
+  };
+  try { localStorage.setItem(LAST_KEY, JSON.stringify(value)); } catch { /* stockage indisponible */ }
+}
+
+export function loadLastYear(): LastYear | null {
+  try {
+    const raw = localStorage.getItem(LAST_KEY);
+    return raw ? (JSON.parse(raw) as LastYear) : null;
+  } catch { return null; }
 }
 
 // Le prénom et le genre sont réutilisés d'une année sur l'autre.

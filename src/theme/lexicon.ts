@@ -123,6 +123,19 @@ export const MONOLOGUE = [
   'Reprends-toi ! Ce ne sont que des dictées ! Tu peux y arriver ! Rien ne pourra nous arrêter ! On est ven[u|ue]s là pour briller !',
 ];
 
+export const HOME = {
+  rules: 'Comment on joue ?',
+  rulesLines: [
+    'Une grille de lettres, quatre-vingt-dix secondes, une note à atteindre.',
+    'Trace un mot en reliant des lettres voisines, dans tous les sens, sans repasser deux fois.',
+    'Plus le mot est long, plus il rapporte. Onze dictées séparent le CE2 du CM1.',
+  ],
+  seedLink: 'reprendre une année précise',
+  seedLabel: 'Année scolaire',
+  lastYear: 'L\'an dernier',
+  replay: 'Rejouer',
+} as const;
+
 export const TAGLINE = 'La maîtresse a préparé onze dictées. Sauras-tu accomplir ton destin et passer en CM1 ?';
 
 export const L = {

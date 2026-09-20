@@ -8,7 +8,7 @@ export function Classroom() {
   const head = tail ? words.slice(0, -1).join(' ') : GAME_TITLE;
   const two = !!tail;
   return (
-    <svg viewBox="0 0 480 270" className="classroom" role="img" aria-label={`${GAME_TITLE}, ${GAME_SUBTITLE}`}>
+    <svg viewBox="0 0 480 270" preserveAspectRatio="xMidYMid slice" className="classroom" role="img" aria-label={`${GAME_TITLE}, ${GAME_SUBTITLE}`}>
       <rect width="480" height="270" fill="#f3ece0" />
       <rect y="196" width="480" height="74" fill="#e2d6c2" />
       <path d="M0 196 h480" stroke="#c9b9a0" strokeWidth="2" />
@@ -62,6 +62,15 @@ export function Classroom() {
         <rect x="306" y="240" width="20" height="16" rx="3" fill="#5d4aa8" stroke="#3f3a55" strokeWidth="2" />
         <path d="M316 240 l14 -30" stroke="#3f3a55" strokeWidth="2.5" strokeLinecap="round" className="quill" />
         <path d="M330 210 q10 6 2 14 q-6 -2 -2 -14z" fill="#f6f1e4" stroke="#3f3a55" strokeWidth="1.5" className="quill" />
+      </g>
+
+      {/* l'avion en papier de quelqu'un du fond */}
+      <g className="plane">
+        <path d="M0 0 l26 9 -10 3 -3 9 -5 -9z" fill="#fffdf9" stroke="#3f3a55" strokeWidth="2" strokeLinejoin="round" />
+      </g>
+      {/* poussière de craie sous le tableau */}
+      <g className="chalk-dust" fill="#f6f1e4">
+        <circle cx="150" cy="166" r="2" /><circle cx="196" cy="170" r="1.6" /><circle cx="252" cy="167" r="1.8" />
       </g>
 
       {/* bons points épinglés au mur */}

@@ -722,3 +722,15 @@ Le cri de l'araignée ne sert jamais pour une araignée : il surgit sur l'encre 
 à l'arrivée du directeur, dans le couloir après un échec et sur l'écran de redoublement.
 Le mot rigolo nomme la famille de l'école : Madame Machin et Monsieur Machin, son frère.
 L'année compte 11 dictées.
+
+## Page d'accueil (2026-09-20)
+
+Plus de carte : la salle de classe occupe toute la largeur en bandeau (52 vh, recadré en `slice`),
+le reste est posé dessous sur le papier.
+- un avion en papier traverse la salle toutes les 15 s, la craie retombe sous le tableau
+- les deux citations de presse sont des coupures de journal punaisées, déchirées et de travers
+- le bulletin de l'an dernier (`rb-last-year` : prénom, moyenne, mention, graine) est punaisé
+  en bas à droite du bandeau, avec un bouton « Rejouer » qui relance la même année
+- « Comment on joue ? » déplie trois lignes de règles, « reprendre une année précise » déplie
+  une étiquette de cahier qui remplace l'ancien champ de graine
+- sur téléphone, le bandeau se raccourcit et le bouton principal devient collant en bas

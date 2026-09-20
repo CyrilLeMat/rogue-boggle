@@ -3,7 +3,6 @@ import { activeHooks } from './data/registry';
 import { posKey } from './engine/adjacency';
 import { uiFlags } from './engine/hookRunner';
 import type { Pos } from './engine/types';
-import { Classroom } from './components/Classroom';
 import { ConsumableBar } from './components/ConsumableBar';
 import { DevPanel } from './components/DevPanel';
 import { EndScreen } from './components/EndScreen';
@@ -14,6 +13,7 @@ import { Grid } from './components/Grid';
 import { GridLegend } from './components/GridLegend';
 import { Interlude } from './components/Interlude';
 import { Appel } from './components/Appel';
+import { Menu } from './components/Menu';
 import { Intro } from './components/Intro';
 import { ScenePick } from './components/ScenePick';
 import { ScenesGallery } from './components/ScenesGallery';
@@ -29,26 +29,7 @@ import { SoundEffects } from './components/SoundEffects';
 import { StartPick } from './components/StartPick';
 import { Timer } from './components/Timer';
 import { useRunStore } from './state/runStore';
-import { BLURBS, GAME_SUBTITLE, GAME_TITLE, TAGLINE } from './theme/lexicon';
 
-function Menu() {
-  const start = useRunStore((s) => s.startRun);
-  const [seed, setSeed] = useState('');
-  return (
-    <div className="panel menu">
-      <h1 className="sr-only">{GAME_TITLE} — {GAME_SUBTITLE}</h1>
-      <div className="frame menu-frame"><Classroom /></div>
-      <p className="tagline">{TAGLINE}</p>
-      <div className="blurbs">
-        {BLURBS.map((b) => (
-          <p key={b.text} className="blurb">« {b.text} »<small>{b.source}</small></p>
-        ))}
-      </div>
-      <button className="menu-cta" onClick={() => start(seed || undefined)}>Entrer en classe</button>
-      <input placeholder="année (seed, optionnel)" value={seed} onChange={(e) => setSeed(e.target.value)} />
-    </div>
-  );
-}
 
 function Playing() {
   const manche = useRunStore((s) => s.manche);

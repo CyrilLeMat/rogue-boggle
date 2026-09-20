@@ -11,7 +11,7 @@ export function StartPick() {
   return (
     <div className="panel pick archetypes">
       <h2>{L.relicDepart}</h2>
-      <p className="muted">{L.relicDepartSub}</p>
+      <p className="muted">{say(L.relicDepartSub)}</p>
       <div className="cards">
         {relics(choices).map((a) => (
           <button key={a.id} className="archetype-card" onClick={() => pick(a.id)}>

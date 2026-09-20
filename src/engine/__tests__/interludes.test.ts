@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
 import { ARCHETYPES } from '../../data/archetypes';
+import { buildDictionary } from '../dictionary';
+import { makeCell } from '../gridGenerator';
+import { resolvePath } from '../manche';
 import { SCENES } from '../../data/scenes';
 import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
@@ -116,5 +119,31 @@ describe('les mots de la fiche s\'insèrent sans faute d\'article', () => {
       const out = say(t, { name: 'Alix', gender: 'f', profile });
       for (const v of valeurs) expect(out).not.toMatch(new RegExp(`(à|de|du) ${v}`, 'i'));
     }
+  });
+});
+
+describe('la case blanche', () => {
+  const grid = {
+    size: 3,
+    cells: [
+      [{ ...makeCell('A'), isJoker: true }, makeCell('R'), makeCell('T')],
+      [makeCell('B'), makeCell('E'), makeCell('S')],
+      [makeCell('C'), makeCell('D'), makeCell('L')],
+    ],
+  };
+  const dict = buildDictionary([{ w: 'ART', c: ['NOM'], f: true }, { w: 'ARTS', c: ['NOM'], f: true }]);
+  const trace = (path: [number, number][], min: number) =>
+    resolvePath(grid, path, dict, new Set(), () => [], 0, min).kind;
+
+  it('refuse les mots de trois lettres quand elle est limitée', () => {
+    expect(trace([[0, 0], [0, 1], [0, 2]], 4)).toBe('tooShort');
+  });
+
+  it('les accepte quand la légendaire lève la condition', () => {
+    expect(trace([[0, 0], [0, 1], [0, 2]], 3)).toBe('ok');
+  });
+
+  it('marche toujours sur les mots plus longs', () => {
+    expect(trace([[0, 0], [0, 1], [0, 2], [1, 2]], 4)).toBe('ok');
   });
 });

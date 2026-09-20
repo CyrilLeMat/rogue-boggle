@@ -86,6 +86,7 @@ export interface Relic {
   gridRerolls?: number; // Sourcier : nouvelles grilles possibles sur l'écran « prêt »
   streakWindow?: number; // Combo : fenêtre de série élargie
   streakMaxLinks?: number;
+  jokerFree?: boolean;   // les cases blanches marchent même sur les mots de 3 lettres
   streakStep?: number;   // gain de multiplicateur par maillon d'élan
   // Personnalités d'élève (src/data/archetypes.ts)
   archetype?: boolean;   // jamais vendu à la coopérative

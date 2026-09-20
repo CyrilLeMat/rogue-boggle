@@ -129,13 +129,14 @@ export const RELICS: Relic[] = [
   },
   {
     id: 'case-joker', name: 'Case blanche', rarity: 'rare',
-    description: 'Une case blanche par feuille : elle vaut n\'importe quelle lettre (1 pt)',
+    description: 'Une case blanche par feuille : elle vaut n\'importe quelle lettre (1 pt), dans les mots de 4 lettres et plus',
     onGridGenerate: placeJoker,
   },
   {
     id: 'double-joker', name: 'Deux cases blanches', rarity: 'legendary', requires: 'case-joker',
-    description: 'Une seconde case blanche',
+    description: 'Une seconde case blanche, et les deux valent aussi dans les mots de 3 lettres',
     onGridGenerate: placeJoker,
+    jokerFree: true,
   },
   {
     id: 'mot-maudit', name: 'Mot mystère', rarity: 'common',

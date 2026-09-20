@@ -24,6 +24,9 @@ export const STREAK_MAX_LINKS = 5;
 export const TOTAL_MANCHES = 11;
 export const STARTING_LIVES = 3;
 export const MIN_WORD_LENGTH = 3;
+// [tuning] La case blanche valait tous les mots : elle ne compte plus qu'à partir de 4 lettres,
+// sauf pour qui possède la légendaire qui lève la condition.
+export const JOKER_MIN_LENGTH = 4;
 // [tuning] En dessous de ce nombre de mots encore trouvables, la maîtresse donne une feuille neuve.
 export const MIN_REMAINING_WORDS = 6;
 

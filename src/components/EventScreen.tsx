@@ -25,6 +25,7 @@ function Chrono({ left, total }: { left: number; total: number }) {
 // Sage et inspecteur : un mot désigné à retrouver dans la feuille.
 function Hunt({ ev }: { ev: HuntEvent }) {
   const submit = useRunStore((s) => s.eventSubmit);
+  const say = useSay();
   const [traced, setTraced] = useState('');
   const playing = ev.outcome === 'playing';
   const onPathChange = useCallback((p: Pos[]) => setTraced(wordFromPath(ev.grid, p)), [ev.grid]);
@@ -55,9 +56,9 @@ function Hunt({ ev }: { ev: HuntEvent }) {
           highlightCells={!playing ? active : undefined}
         />
       </div>
-      {playing && ev.hintGiven && <p className="muted small-hint">{EV[ev.id].hint}</p>}
+      {playing && ev.hintGiven && <p className="muted small-hint">{say(EV[ev.id].hint)}</p>}
       {playing && ev.attempts > 0 && (
-        <p className="ko small-hint">{ev.id === 'sage' ? scold(SCOLDS, ev.attempts) : EV[ev.id].wrong}</p>
+        <p className="ko small-hint">{say(ev.id === 'sage' ? scold(SCOLDS, ev.attempts) : EV[ev.id].wrong)}</p>
       )}
     </>
   );
@@ -66,6 +67,7 @@ function Hunt({ ev }: { ev: HuntEvent }) {
 // Partie de billes et concours de récitation : on ramasse des mots.
 function Harvest({ ev }: { ev: HarvestEvent }) {
   const submit = useRunStore((s) => s.eventSubmit);
+  const say = useSay();
   const stake = useRunStore((s) => s.eventStake);
   const purse = useRunStore((s) => s.run?.euros ?? 0);
   const [traced, setTraced] = useState('');
@@ -84,7 +86,7 @@ function Harvest({ ev }: { ev: HarvestEvent }) {
   if (waiting) {
     return (
       <div className="stakes">
-        <p className="sage-ask">{EV.billes.ask()}</p>
+        <p className="sage-ask">{say(EV.billes.ask())}</p>
         {ev.stakeOptions.length === 0
           ? <p className="ko">Tes poches sont vides. Reviens quand tu auras des billes.</p>
           : (
@@ -177,10 +179,10 @@ export function EventScreen() {
         </div>
         <p className="sage-ask">
           {ev.kind === 'hunt' ? say(EV[ev.id].ask(ev.word.length)) : ''}
-          {ev.kind === 'choice' ? EV.reserve.ask() : ''}
-          {ev.kind === 'harvest' ? (ev.id === 'billes' ? EV.billes.ask() : ruleLabel(ev.ruleId ?? '')) : ''}
+          {ev.kind === 'choice' ? say(EV.reserve.ask()) : ''}
+          {ev.kind === 'harvest' ? say(ev.id === 'billes' ? EV.billes.ask() : ruleLabel(ev.ruleId ?? '')) : ''}
         </p>
-        <button className="ready-cta" onClick={start}>{text.start}</button>
+        <button className="ready-cta" onClick={start}>{say(text.start)}</button>
       </div>
     );
   }
@@ -192,7 +194,7 @@ export function EventScreen() {
         <div className="sage-speech">
           <h2>{text.title}</h2>
           {ev.kind === 'hunt' && <p className="sage-ask">{say(EV[ev.id].ask(ev.word.length))}</p>}
-          {ev.kind === 'choice' && <p className="sage-ask">{EV.reserve.ask()}</p>}
+          {ev.kind === 'choice' && <p className="sage-ask">{say(EV.reserve.ask())}</p>}
         </div>
       </div>
 
@@ -203,8 +205,8 @@ export function EventScreen() {
       {ev.outcome !== 'playing' && (
         <div className={`sage-outcome ${ev.outcome === 'won' ? 'ok' : 'ko'}`}>
           {ev.kind === 'hunt' && <p className="big">{ev.word}</p>}
-          <p>{ev.outcome === 'won' ? text.won : text.lost}</p>
-          <p className="sage-ask">{ev.outcome === 'won' ? text.wonSub : text.lostSub}</p>
+          <p>{say(ev.outcome === 'won' ? text.won : text.lost)}</p>
+          <p className="sage-ask">{say(ev.outcome === 'won' ? text.wonSub : text.lostSub)}</p>
           {ev.extraLife && <p className="ok">★ Un bon point de plus au tableau.</p>}
           {ev.reward !== 0 && <p className="euros">{ev.reward > 0 ? '+' : ''}{money(ev.reward)}</p>}
         </div>
@@ -212,8 +214,8 @@ export function EventScreen() {
 
       <div className="row">
         {canGiveUp
-          ? <button className="secondary" onClick={giveUp}>{text.giveUp}</button>
-          : ev.outcome !== 'playing' && <button onClick={leave}>{text.leave}</button>}
+          ? <button className="secondary" onClick={giveUp}>{say(text.giveUp)}</button>
+          : ev.outcome !== 'playing' && <button onClick={leave}>{say(text.leave)}</button>}
       </div>
     </div>
   );

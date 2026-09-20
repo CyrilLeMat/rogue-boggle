@@ -50,8 +50,8 @@ export function Shop() {
         <div className="intro-text">
           {SHOP_INTRO.lines.map((l) => <p key={l}>{say(l)}</p>)}
         </div>
-        <p className="sage-ask">{SHOP_INTRO.ask}</p>
-        <button className="ready-cta" onClick={enter}>{SHOP_INTRO.cta}</button>
+        <p className="sage-ask">{say(SHOP_INTRO.ask)}</p>
+        <button className="ready-cta" onClick={enter}>{say(SHOP_INTRO.cta)}</button>
       </div>
     );
   }
@@ -77,7 +77,7 @@ export function Shop() {
           <button className="shop-go" onClick={next}>{L.manche} {run.currentManche + 1} →</button>
         </div>
       </div>
-      <p className="shop-sub muted">{L.boutiqueSub}</p>
+      <p className="shop-sub muted">{say(L.boutiqueSub)}</p>
 
       {SECTIONS.map((sec) => {
         const items = indexed.filter(({ item }) => sectionOf(item) === sec.key);

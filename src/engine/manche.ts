@@ -20,9 +20,12 @@ export function resolvePath(
   alreadyFound: ReadonlySet<string>,
   modifiersFor: (word: string) => ScoreModifier[],
   now: number,
+  jokerMinLength = 3, // [tuning] la case blanche ne sert que sur les mots assez longs
 ): SubmitResult {
   const letters = path.reduce((n, [r, c]) => n + (grid.cells[r][c].isJoker ? 1 : grid.cells[r][c].letter.length), 0);
   if (letters < 3) return { kind: 'tooShort' };
+  // une case blanche sur un mot trop court : la maîtresse ne se laisse pas avoir
+  if (path.some(([r, c]) => grid.cells[r][c].isJoker) && letters < jokerMinLength) return { kind: 'tooShort' };
   const candidates = candidatesForPath(grid, path, dict.trie);
   if (candidates.length === 0) return { kind: 'invalid' };
   let best: FoundWord | null = null;

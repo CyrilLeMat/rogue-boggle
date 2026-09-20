@@ -3,7 +3,7 @@ import { sfx } from '../audio/sfx';
 import { mutator } from '../data/registry';
 import { TOTAL_MANCHES } from '../engine/rules';
 import { useRunStore } from '../state/runStore';
-import { L, money } from '../theme/lexicon';
+import { L, money, say } from '../theme/lexicon';
 
 // Le briefing d'avant-dictée porte tout ce qu'on ne veut plus lire pendant :
 // où on en est, ce qu'il faut atteindre, ce qui va nous tomber dessus.
@@ -42,8 +42,8 @@ export function ReadyOverlay() {
         {manche.quest && <span className="chip">{manche.quest.label} · +{money(manche.quest.reward)}</span>}
       </div>
       {mut
-        ? <p className="ready-lesson"><strong>{L.theme} — {mut.name}.</strong> {mut.description}</p>
-        : <p className="ready-lesson plain">{L.pretClassique}</p>}
+        ? <p className="ready-lesson"><strong>{L.theme} — {say(mut.name, run.identity)}.</strong> {say(mut.description, run.identity)}</p>
+        : <p className="ready-lesson plain">{say(L.pretClassique, run.identity)}</p>}
       <button className="ready-cta" onClick={brace}>{L.lancer}</button>
       <div className="ready-foot">
         <span className="bons-points">{'★'.repeat(run.lives)}{'☆'.repeat(Math.max(0, 3 - run.lives))}</span>

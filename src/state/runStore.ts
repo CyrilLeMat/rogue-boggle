@@ -21,13 +21,13 @@ import {
 } from '../engine/events';
 import { adjustThreshold, difficultyOf } from '../engine/difficulty';
 import { FRENCH_STANDARD_WEIGHTS, generateGrid, sampleLetter } from '../engine/gridGenerator';
-import { collectModifiers, eurosMultiplier, extraLives, makeContext, mancheSeconds, runGridGenerate, runInvalidWord, runMancheEnd, runMancheStart, runRunEnd, runWordAccepted, streakRules, thresholdMultiplier, uiFlags } from '../engine/hookRunner';
+import { jokerMinLength, collectModifiers, eurosMultiplier, extraLives, makeContext, mancheSeconds, runGridGenerate, runInvalidWord, runMancheEnd, runMancheStart, runRunEnd, runWordAccepted, streakRules, thresholdMultiplier, uiFlags } from '../engine/hookRunner';
 import { MAX_CONSUMABLES, type MancheView, type RunView } from '../engine/hooks';
 import { resolvePath, type FoundWord, type SubmitResult } from '../engine/manche';
 import { applyModifiers, baseScore } from '../engine/scoring';
 import { candidatesForPath } from '../engine/wordFinder';
 import { createRng, randomSeed, type Rng } from '../engine/rng';
-import { GRACE_SECONDS_AFTER_LOSS, MANCHE_SECONDS, MAX_SAME_CHARM, MIN_REMAINING_WORDS, STARTING_LIVES, STREAK_MAX_LINKS, STREAK_STEP, STREAK_WINDOW, TOTAL_MANCHES, eurosFor, gridSizeFor, mancheSecondsFor, threshold, timeEuros } from '../engine/rules';
+import { GRACE_SECONDS_AFTER_LOSS, JOKER_MIN_LENGTH, MANCHE_SECONDS, MAX_SAME_CHARM, MIN_WORD_LENGTH, MIN_REMAINING_WORDS, STARTING_LIVES, STREAK_MAX_LINKS, STREAK_STEP, STREAK_WINDOW, TOTAL_MANCHES, eurosFor, gridSizeFor, mancheSecondsFor, threshold, timeEuros } from '../engine/rules';
 import { drawFreeRelics, generateShopOffer, shopRerollPrice, type ShopInput, type ShopItem } from '../engine/shop';
 import type { Grid, Pos } from '../engine/types';
 import { findAllWords, findPathForWord } from '../engine/wordFinder';
@@ -330,7 +330,7 @@ export const useRunStore = create<Store>((set, get) => ({
     const links = manche.elapsed - manche.streak.lastAt <= rules.window ? manche.streak.links + 1 : 1;
     const streakMult = 1 + rules.step * Math.min(links - 1, rules.maxLinks);
     if (streakMult > 1) extra.push({ final: streakMult });
-    const result = resolvePath(manche.grid, path, dictionary, already, (w) => collectModifiers(w, hooks, ctx, extra), manche.elapsed);
+    const result = resolvePath(manche.grid, path, dictionary, already, (w) => collectModifiers(w, hooks, ctx, extra), manche.elapsed, jokerMinLength(resolveRelics(run.relicIds), JOKER_MIN_LENGTH, MIN_WORD_LENGTH));
     const fb = { kind: result.kind, id: ++feedbackId, path } as NonNullable<Store['feedback']>;
     if (result.kind === 'ok') {
       fb.word = result.found.word;

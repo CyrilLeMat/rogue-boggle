@@ -69,6 +69,10 @@ export function runRunEnd(relics: Relic[], ctx: RunContext): number {
   return relics.reduce((bonus, r) => bonus + (r.onRunEnd?.(ctx) ?? 0), 0);
 }
 
+export function jokerMinLength(relics: readonly Relic[], base: number, floor: number): number {
+  return relics.some((r) => r.jokerFree) ? floor : base;
+}
+
 export function streakRules(relics: Relic[], base: { window: number; maxLinks: number; step: number }) {
   return relics.reduce((acc, r) => ({
     window: Math.max(acc.window, r.streakWindow ?? 0),

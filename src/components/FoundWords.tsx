@@ -30,9 +30,10 @@ export function FoundWords() {
         {msg}
         {praise && <span className={`praise ${score >= 50 ? 'huge' : rare ? 'suspicious' : ''}`}>{praise}</span>}
       </div>
-      {found.length > 0 && (
-        <span className="found-count">{found.length} mot{found.length > 1 ? 's' : ''} · {total} pts</span>
-      )}
+      {/* la ligne est toujours là, même vide : sinon la page saute au premier mot trouvé */}
+      <span className="found-count">
+        {found.length > 0 ? `${found.length} mot${found.length > 1 ? 's' : ''} · ${total} pts` : '\u00a0'}
+      </span>
       <ul>
         {[...found].reverse().map((f) => (
           <li key={f.word}><span>{f.word}</span><span className="pts">{f.score}</span></li>

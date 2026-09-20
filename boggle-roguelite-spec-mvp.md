@@ -765,3 +765,18 @@ le reste est posé dessous sur le papier.
 - Le nouveau porte une pastille « conseillé pour une première année ».
 - Le bulletin de fin d'année renvoie vers les tickets GitHub pour les retours.
 - En paysage sous 480 px de haut, un écran demande de tourner le téléphone.
+
+## Outils d'équilibrage (2026-09-20)
+
+`scripts/lib/harness.ts` rejoue de vraies dictées sans interface, avec le moteur du jeu
+(génération de grille, recherche de mots, hooks, élan, seuils, niveaux). Modèle de joueur :
+mots par minute, goût pour les mots courts, connaissance des mots rares.
+
+- `npx vite-node scripts/bench-relics.ts [échantillons] [profil]` : valeur de chaque fourniture
+  en points par dictée, gain en pourcentage, prix actuel et prix suggéré. Écrit `relic-values.json`.
+- `npx vite-node scripts/sim-economy.ts [années]` : années complètes par niveau et par profil,
+  avec achat automatique du meilleur article abordable. Sort le taux de victoire, la dictée
+  atteinte, le nombre d'achats et les billes non dépensées.
+
+Limite connue : les fournitures sont mesurées une par une, donc les combinaisons ne sont pas vues.
+Le modèle de joueur n'est pas calé sur de vraies parties : les chiffres sont justes en relatif.

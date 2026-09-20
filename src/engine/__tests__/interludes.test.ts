@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
 import { ARCHETYPES } from '../../data/archetypes';
 import { SCENES } from '../../data/scenes';
-import { DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
+import { APPRECIATIONS, DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
 
 describe('planches de transition', () => {
@@ -99,5 +99,22 @@ describe('les profils s\'accordent', () => {
     }
     expect(say(ARCHETYPES.find((a) => a.id === 'reveur')!.name, { name: 'Léa', gender: 'f', profile: DEFAULT_PROFILE }))
       .toBe('La rêveuse');
+  });
+});
+
+describe('les mots de la fiche s\'insèrent sans faute d\'article', () => {
+  it('ne produit jamais « à les » ni « de les »', () => {
+    const profile = { ...DEFAULT_PROFILE, plat: 'les frites', horreur: 'les endives', cour: 'le mur des billes', chanson: 'la valse', heros: 'les Pokémon' };
+    const textes = [
+      ...MONOLOGUE, ...SCOLDS, ...PRAISES_BIG, ...PRAISES_SMALL, ...PRAISES_HUGE, ...SUSPICIONS, ...DUPLICATES,
+      ...Object.values(APPRECIATIONS).flat(),
+      ...INTERLUDES.flatMap((i) => [...i.lines, i.cry ?? '', i.fall]),
+      ...SCENES.flatMap((s) => [...s.lines, ...s.choices.map((c) => c.detail)]),
+    ];
+    const valeurs = [profile.plat, profile.horreur, profile.cour, profile.chanson, profile.heros];
+    for (const t of textes) {
+      const out = say(t, { name: 'Alix', gender: 'f', profile });
+      for (const v of valeurs) expect(out).not.toMatch(new RegExp(`(à|de|du) ${v}`, 'i'));
+    }
   });
 });

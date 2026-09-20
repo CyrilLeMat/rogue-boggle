@@ -11,7 +11,7 @@ const PANELS = [
     title: 'I. La récré',
     text: [
       'Il était une fois une récréation parfaite.',
-      'Le soleil chauffait les billes, le goudron sentait l\'été, on aurait pu faire {cour} pendant mille ans.',
+      'Tu avais lancé un « {salut} » à toute la cour, tu sifflais {chanson} entre tes dents, et le goudron sentait l\'été. On aurait pu faire {cour} pendant mille ans.',
       'Puis la cloche sonna. Et avec elle s\'acheva l\'âge d\'or.',
     ],
     art: <Recre />,
@@ -19,6 +19,7 @@ const PANELS = [
   {
     title: 'II. L\'annonce',
     text: [
+      'Tu pensais encore au menu de la cantine, tout à l\'heure : {plat}. Tu n\'as rien vu venir.',
       '{Maitresse} se retourna d\'un bloc. La craie hurla sur le tableau. Six lettres, un accent aigu, tranchant comme une lame.',
     ],
     cry: 'DICTÉE !!! Et que ça saute ! Vous allez souffrir, et vos parents aussi !',
@@ -31,6 +32,7 @@ const PANELS = [
     title: 'III. La révolte',
     text: [
       'Tes genoux tremblent ? Qu\'ils tremblent. La sueur coule ? Qu\'elle coule.',
+      'Une seconde, tu penses à t\'enfuir, à sortir, à {action} jusqu\'à la nuit. Une seconde seulement.',
       'Tu montes sur la table. Tu frappes ton poing contre ton cœur, une fois, très fort. Puis tu lances ce poing vers le plafond et tu hurles :',
     ],
     cry: 'JE SUIS PRÊT[|E] À AFFRONTER MON DESTIN !!!',

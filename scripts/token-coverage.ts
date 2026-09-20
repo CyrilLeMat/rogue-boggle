@@ -13,7 +13,11 @@ const TOKENS = ['nom', 'salut', 'phrase', 'cour', 'heros', 'plat', 'horreur', 'm
 
 // Le prologue, tel qu'il est écrit dans le composant.
 const PROLOGUE = [
-  'Le soleil chauffait les billes, le goudron sentait l\'été, on aurait pu faire {cour} pendant mille ans.',
+  'Tu avais lancé un « {salut} » à toute la cour, tu sifflais {chanson} entre tes dents, et le goudron sentait l\'été. On aurait pu faire {cour} pendant mille ans.',
+  'Tu pensais encore à {plat}, à la cantine, tout à l\'heure.',
+  '{Maitresse} se retourna d\'un bloc.',
+  'Une seconde, tu penses à t\'enfuir, à sortir, à {action} jusqu\'à la nuit.',
+  'Personne ne bouge. {Maitresse} décapuchonne son stylo rouge.',
 ];
 
 const RUNS = 4000;

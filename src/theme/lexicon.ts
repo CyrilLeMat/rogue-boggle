@@ -175,15 +175,68 @@ export function scold(list: readonly string[], seed: number): string {
 }
 
 // L'appréciation du bulletin, au stylo rouge. `ratio` = note obtenue / note attendue.
-export function appreciation(ratio: number, success: boolean, lives: number): string {
-  if (!success && lives <= 1) return 'Alarmant. Je convoque les parents dès lundi.';
-  if (!success && ratio >= 0.8) return 'Si près. C\'est rageant, pour toi comme pour moi.';
-  if (!success) return 'Insuffisant. J\'ai relu trois fois en espérant m\'être trompée.';
-  if (ratio >= 2.5) return 'Exceptionnel. Je n\'avais pas vu ça depuis 1987.';
-  if (ratio >= 1.8) return 'Très bon travail. Voilà ce que j\'attends de toi.';
-  if (ratio >= 1.3) return 'Bon travail. J\'ai souri. Ne le répète à personne.';
-  if (ratio >= 1.1) return 'Correct. Mais tu peux mieux faire, nous le savons tous les deux.';
-  return 'Juste, tout juste. J\'avais déjà décapuchonné le stylo rouge.';
+// L'appréciation n'est jamais neutre : ou elle est vacharde, ou elle est inquiétante d'affection.
+// Le score sert d'index : la même copie donne toujours la même phrase.
+const APPRECIATIONS: Record<string, string[]> = {
+  fatal: [
+    'Je convoque tes parents lundi. Nous parlerons de ton avenir, s\'il y en a un.',
+    'À ce stade je ne corrige plus, je constate.',
+    'J\'ai gardé ta copie. Pas pour l\'encadrer.',
+  ],
+  presque: [
+    'Si près. J\'ai failli arrondir, puis j\'ai repensé à ton attitude de mardi.',
+    'Deux points. Deux. Je vais y penser toute la nuit, et j\'espère bien que toi aussi.',
+    'Tu y étais presque, et c\'est encore pire que si tu avais été loin.',
+  ],
+  rate: [
+    'J\'ai relu trois fois en espérant m\'être trompée. Je ne me trompe jamais.',
+    'Ce n\'est rien. Tout le monde ne peut pas réussir, il faut bien des gens pour le reste.',
+    'Tu trouveras ta voie. Elle sera manuelle, mais tu la trouveras.',
+    'J\'ai montré ta copie en salle des maîtres. Personne n\'a ri. Le silence était pire.',
+  ],
+  prodige: [
+    'Je vais encadrer cette copie et l\'accrocher dans mon salon, au-dessus du buffet.',
+    'C\'est le plus beau jour de ma vie. J\'ai appelé ma sœur pendant la récréation.',
+    'J\'aimerais que tu sois mon fils. Ne le répète pas à ta mère.',
+    'Je n\'avais pas vu ça depuis 1987. Ce garçon-là a mal fini, mais quel talent.',
+  ],
+  suspect: [
+    'Trop beau. Je ne sais pas encore comment tu as fait, mais je le saurai.',
+    'Excellent. Un peu trop, même. Je te surveillerai de très près désormais.',
+    'Superbe. J\'ai photographié ta copie, pour mes archives personnelles.',
+    'Personne n\'écrit ça à ton âge. Personne. Nous en reparlerons toi et moi.',
+  ],
+  bien: [
+    'Bon travail. J\'ai souri, et ça ne m\'était pas arrivé depuis des années.',
+    'C\'est bien. Étrangement bien. Tu avais les yeux baissés tout le long.',
+    'Très bonne copie. J\'ai vérifié deux fois, par acquit de conscience.',
+  ],
+  correct: [
+    'Correct. Nous savons tous les deux que tu peux mieux faire, et que tu ne le feras pas.',
+    'Passable. Ta voisine a fait mieux sans se donner cette peine.',
+    'Acceptable. J\'attendais autre chose de toi, mais j\'attends toujours trop.',
+  ],
+  justesse: [
+    'Juste, tout juste. Le stylo rouge était déjà décapuchonné.',
+    'Tu passes. Je te préviens tout de suite que cela ne se reproduira pas.',
+    'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
+  ],
+};
+
+function band(ratio: number, success: boolean, lives: number): keyof typeof APPRECIATIONS {
+  if (!success && lives <= 1) return 'fatal';
+  if (!success && ratio >= 0.8) return 'presque';
+  if (!success) return 'rate';
+  if (ratio >= 2.5) return 'prodige';
+  if (ratio >= 1.8) return 'suspect';
+  if (ratio >= 1.3) return 'bien';
+  if (ratio >= 1.1) return 'correct';
+  return 'justesse';
+}
+
+export function appreciation(ratio: number, success: boolean, lives: number, seed = 0): string {
+  const pool = APPRECIATIONS[band(ratio, success, lives)];
+  return pool[Math.abs(Math.round(seed * 7 + ratio * 100)) % pool.length];
 }
 
 export const SIGNATURE = 'La maîtresse';

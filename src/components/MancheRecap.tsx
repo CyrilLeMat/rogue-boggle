@@ -79,7 +79,7 @@ export function MancheRecap() {
       {act >= 2 && (
       <div className="appreciation act">
         <span className="appreciation-label">Appréciation</span>
-        <p>{appreciation(result.score / Math.max(1, result.threshold), result.success, run.lives)}</p>
+        <p>{appreciation(result.score / Math.max(1, result.threshold), result.success, run.lives, result.score)}</p>
         <span className="signature">{SIGNATURE}</span>
       </div>
       )}

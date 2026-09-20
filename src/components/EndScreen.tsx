@@ -44,7 +44,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
                   <td>{h.manche}</td>
                   <td>{h.gridSize}×{h.gridSize}</td>
                   <td className="note-cell">{note}<span className="sur">/20</span></td>
-                  <td className="appr-cell">{appreciation(h.score / Math.max(1, h.threshold), h.success, h.livesAfter)}</td>
+                  <td className="appr-cell">{appreciation(h.score / Math.max(1, h.threshold), h.success, h.livesAfter, h.score)}</td>
                 </tr>
               );
             })}

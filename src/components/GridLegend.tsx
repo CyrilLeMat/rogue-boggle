@@ -1,11 +1,13 @@
 import { relics } from '../data/registry';
 import { uiFlags } from '../engine/hookRunner';
 import { useRunStore } from '../state/runStore';
+import { useSay } from '../theme/useSay';
 
 // Légende des marqueurs actifs sur la grille : indispensable au doigt, où rien ne se survole.
 export function GridLegend() {
   const manche = useRunStore((s) => s.manche);
   const relicIds = useRunStore((s) => s.run?.relicIds ?? []);
+  const say = useSay();
   if (!manche) return null;
   const flags = uiFlags(relics(relicIds));
   const lines: { icon: string; cls: string; text: string }[] = [];
@@ -25,14 +27,14 @@ export function GridLegend() {
   if (manche.critters.length) lines.push({ icon: '🐌', cls: '', text: `Escargot : un mot qui passe par sa case compte double` });
   const alive = manche.enemies.filter((e) => e.hp > 0);
   const boss = alive.find((e) => e.typeId === 'kevin');
-  if (boss) lines.push({ icon: '🧒', cls: 'enemy', text: `Kévin (${boss.hp} d'endurance) : il change de place toutes les 5 s ; trace des mots à travers sa case, chaque mot lui retire son score. Il tombe à zéro, et pas avant` });
+  if (boss) lines.push({ icon: '🧒', cls: 'enemy', text: `{rival} (${boss.hp} d'endurance) : il change de place toutes les 5 s ; trace des mots à travers sa case, chaque mot lui retire son score. Il tombe à zéro, et pas avant` });
   else if (alive.length === 1) lines.push({ icon: '🧒', cls: 'enemy', text: `Cancre (${alive[0].hp} d'endurance) : il change de place toutes les 8 s ; trace des mots à travers sa case, chaque mot lui retire son score. Calmé : +30 billes, toujours là : −15 billes` });
   if (alive.length > 1) lines.push({ icon: '🧒', cls: 'enemy', text: `${alive.length} cancres (${alive[0].maxHp} d'endurance chacun) : ils changent de place toutes les 8 s ; un mot qui traverse leur case leur retire son score. Calmé : +30 billes, toujours là : −15 billes` });
   if (lines.length === 0) return null;
   return (
     <ul className="legend">
       {lines.map((l) => (
-        <li key={l.text}><span className={`legend-icon ${l.cls}`}>{l.icon}</span><span>{l.text}</span></li>
+        <li key={l.text}><span className={`legend-icon ${l.cls}`}>{l.icon}</span><span>{say(l.text)}</span></li>
       ))}
     </ul>
   );

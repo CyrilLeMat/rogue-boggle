@@ -3,6 +3,7 @@ import { relics } from '../data/registry';
 import { uiFlags } from '../engine/hookRunner';
 import { eurosFor } from '../engine/rules';
 import { useRunStore } from '../state/runStore';
+import { useSay } from '../theme/useSay';
 import { DUEL, L } from '../theme/lexicon';
 
 // Le score affiché rattrape le vrai score en ~400 ms : on voit les points arriver.
@@ -26,6 +27,7 @@ function useTicker(target: number) {
 
 export function ScoreBoard() {
   const run = useRunStore((s) => s.run);
+  const say = useSay();
   const manche = useRunStore((s) => s.manche);
   const shownScore = useTicker(manche?.score ?? 0);
   if (!run || !manche) return null;
@@ -38,7 +40,7 @@ export function ScoreBoard() {
         <div className="note-numbers">
           <span className="note-now">{left}</span>
           <span className="note-target">/ {boss.maxHp}</span>
-          <span className="note-label">{left === 0 ? 'il est à terre' : DUEL.hp}</span>
+          <span className="note-label">{left === 0 ? 'il est à terre' : say(DUEL.hp)}</span>
         </div>
         <div className="note-bar"><span style={{ width: `${(left / boss.maxHp) * 100}%` }} /></div>
       </div>

@@ -12,6 +12,9 @@ export function SoundEffects() {
   const shop = useRunStore((s) => s.shop);
   const timeLeft = useRunStore((s) => s.manche?.timeLeft ?? 0);
   const mutatorId = useRunStore((s) => s.manche?.mutatorId ?? null);
+  const boss = useRunStore((s) => s.manche?.enemies.find((e) => e.typeId === 'kevin') ?? null);
+  const duelWon = useRunStore((s) => s.duelWon);
+  const lostLife = useRunStore((s) => s.run?.lostLifeLastManche ?? false);
   const [muted, setMutedState] = useState(isMuted());
   const [music, setMusicState] = useState(isMusicEnabled());
   const soldCount = useRef(0);
@@ -52,23 +55,32 @@ export function SoundEffects() {
     soldCount.current = sold;
   }, [shop]);
 
+  const bossHp = boss ? boss.hp / Math.max(1, boss.maxHp) : null;
   useEffect(() => {
-    // les 20 dernières secondes accélèrent la musique, le reste du temps elle reste calme
-    setMusicIntensity(phase === 'playing' && timeLeft <= 20 ? 1 - timeLeft / 20 : 0);
-  }, [timeLeft, phase]);
+    // les 20 dernières secondes accélèrent la musique ; face à lui, c'est sa barre de vie
+    // qui pousse le tempo : plus il encaisse, plus ça monte.
+    const bySeconds = phase === 'playing' && timeLeft <= 20 ? 1 - timeLeft / 20 : 0;
+    const byBoss = phase === 'playing' && bossHp !== null ? 1 - bossHp : 0;
+    setMusicIntensity(Math.max(bySeconds, byBoss));
+  }, [timeLeft, phase, bossHp]);
 
   useEffect(() => {
     // le prologue a sa propre bande-son, case par case : on ne lui passe pas dessus
     if (phase === 'intro') return;
-    // la couleur du moment : le couloir fait peur, le souvenir fait mal, une leçon se combat
+    // la couleur du moment. Le couloir fait peur, le souvenir fait mal, une leçon se combat,
+    // et tout ce qui touche à lui a le droit à sa propre humeur.
     const combat = phase === 'playing' && (!!mutatorId || timeLeft <= 20);
     setMusicMood(
-      phase === 'event' ? 'choc'
+      phase === 'duelIntro' ? 'choc'
+      : phase === 'duelEnd' ? (duelWon ? 'classe' : 'triste')
+      : phase === 'gameover' ? 'triste'
+      : phase === 'event' ? 'choc'
       : phase === 'interlude' ? 'triste'
+      : phase === 'recap' && lostLife ? 'triste'
       : combat ? 'combat'
       : 'classe',
     );
-  }, [phase, mutatorId, timeLeft <= 20]);
+  }, [phase, mutatorId, duelWon, lostLife, timeLeft <= 20]);
 
   useEffect(() => {
     if (phase !== 'playing') { lastTick.current = -1; return; }

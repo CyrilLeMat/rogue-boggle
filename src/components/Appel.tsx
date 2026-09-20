@@ -17,6 +17,7 @@ const PAGES: { key: keyof Profile; label: string }[][] = [
   [
     { key: 'metier', label: 'Ce que je veux faire plus tard' },
     { key: 'admire', label: 'La personne que j\'admire le plus' },
+    { key: 'pere', label: 'Le prénom de mon père' },
     { key: 'chanson', label: 'Ma chanson préférée' },
     { key: 'plat', label: 'Mon plat préféré' },
     { key: 'horreur', label: 'Le plat que je déteste' },

@@ -10,7 +10,7 @@ export interface EpilogueInput {
   lives: number;
   duelDone: boolean;       // l'affrontement a eu lieu
   duelWon: boolean;
-  stolen: string | null;   // le nom de ce que Kévin garde, s'il le garde
+  stolen: string | null;   // le nom de ce que {rival} garde, s'il le garde
   words: number;
   bestWord: string | null;
   manche: number;          // la dictée où l'année s'est arrêtée
@@ -65,14 +65,14 @@ function teacher(i: EpilogueInput): EpilogueBeat[] {
 // Kévin : ce qu'il devient dépend uniquement de ce qui s'est passé entre vous.
 function kevin(i: EpilogueInput): EpilogueBeat {
   if (!i.duelDone) {
-    return { act: 2, text: 'Kévin, lui, passe en CM1. Il n\'a pas eu à se forcer : il a copié sur quelqu\'un d\'autre, et ce quelqu\'un d\'autre n\'a rien dit.' };
+    return { act: 2, text: '{rival}, lui, passe en CM1. Il n\'a pas eu à se forcer : il a copié sur quelqu\'un d\'autre, et ce quelqu\'un d\'autre n\'a rien dit.' };
   }
   if (i.duelWon) {
-    return { act: 2, text: 'Kévin n\'a plus jamais copié sur personne. On raconte dans la cour qu\'il s\'est mis à réviser le soir. On raconte n\'importe quoi dans cette cour, mais cette fois-là c\'était vrai.' };
+    return { act: 2, text: '{rival} n\'a plus jamais copié sur personne. On raconte dans la cour qu\'il s\'est mis à réviser le soir. On raconte n\'importe quoi dans cette cour, mais cette fois-là c\'était vrai.' };
   }
   return i.stolen
-    ? { act: 2, text: `Kévin passe en CM1 avec « ${i.stolen} » au fond de son cartable. Il s'en sert encore, mal, devant des élèves qui ne savent pas d'où ça vient.` }
-    : { act: 2, text: 'Kévin passe en CM1 sans t\'adresser un regard. Il a gagné quelque chose cette année, et vous êtes deux à savoir quoi.' };
+    ? { act: 2, text: `{rival} passe en CM1 avec « ${i.stolen} » au fond de son cartable. Il s'en sert encore, mal, devant des élèves qui ne savent pas d'où ça vient.` }
+    : { act: 2, text: '{rival} passe en CM1 sans t\'adresser un regard. Il a gagné quelque chose cette année, et vous êtes deux à savoir quoi.' };
 }
 
 // La personne qu'on admire : c'est pour elle qu'on a fait tout ça, et elle n'en saura jamais rien.
@@ -110,7 +110,7 @@ function fall(i: EpilogueInput): EpilogueBeat {
     kind: 'fall',
     text: i.victory
       ? (i.lives === 3
-        ? 'Sur le mur du couloir, ton prénom est resté écrit au crayon, tout petit, à côté de celui de Kévin. Personne ne l\'a effacé.'
+        ? 'Sur le mur du couloir, ton prénom est resté écrit au crayon, tout petit, à côté de celui de {rival}. Personne ne l\'a effacé.'
         : 'Dans le couloir, la sonnerie de midi. Tu sors en courant, comme les autres, et tu oublies ton cartable.')
       : 'La cloche sonne. Tu sors dans la cour. Il y a {cour}, et il reste deux mois avant septembre.',
   };

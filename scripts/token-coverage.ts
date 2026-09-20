@@ -36,7 +36,7 @@ const endCount: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t
 const atLeastOnce: Record<string, number> = Object.fromEntries(TOKENS.map((t) => [t, 0]));
 
 // {maitresse} et {directeur} sont bâtis sur le mot rigolo : ils comptent pour lui.
-const ALIAS: Record<string, string> = { maitresse: 'rigolo', directeur: 'rigolo' };
+const ALIAS: Record<string, string> = { maitresse: 'rigolo', directeur: 'rigolo', rival: 'pere' };
 
 function tally(texts: (string | undefined)[], seen: Record<string, number>) {
   for (const text of texts) {

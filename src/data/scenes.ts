@@ -82,12 +82,12 @@ export const SCENES: Scene[] = [
     title: 'Le changement de place',
     lines: [
       'Sans prévenir, {maitresse} annonce un changement de place. Le silence devient {adjectif3} : c\'est là que se jouent les destins.',
-      'Deux tables restent libres. L\'une à côté de Kévin, qui n\'a plus de stylo depuis le CP et qui te fixe déjà en souriant.',
+      'Deux tables restent libres. L\'une à côté de {rival}, qui n\'a plus de stylo depuis le CP et qui te fixe déjà en souriant.',
       'L\'autre contre la fenêtre du fond, celle qui ne ferme plus depuis 1996 et par laquelle entre un vent polaire.',
     ],
     choices: [
       {
-        label: 'T\'asseoir près de Kévin',
+        label: 'T\'asseoir près de {rival}',
         detail: 'Il pose la main sur ton épaule. « On va bien s\'entendre, toi et moi. » Il regarde déjà ta feuille.',
         effects: { lessonId: 'chasse' },
       },
@@ -207,9 +207,9 @@ export const SCENES: Scene[] = [
     id: 'cantine',
     title: 'La cantine',
     lines: [
-      'Il est midi. Kévin a fait la queue deux fois et revient à table avec deux plateaux.',
+      'Il est midi. {rival} a fait la queue deux fois et revient à table avec deux plateaux.',
       'Il pose le second devant toi, sans un mot. Au menu : {horreur}, avec {objet} posé à côté, on ne saura jamais pourquoi.',
-      'Toute la table s\'est tue. Kévin te regarde comme {animal} regarde un plus petit que lui, avec un sourire {adjectif}. Kévin attend.',
+      'Toute la table s\'est tue. {rival} te regarde comme {animal} regarde un plus petit que lui, avec un sourire {adjectif}. {rival} attend.',
     ],
     choices: [
       {
@@ -219,7 +219,7 @@ export const SCENES: Scene[] = [
       },
       {
         label: 'Repousser le plateau',
-        detail: 'Un affront public. Kévin ne dira rien aujourd\'hui, et c\'est bien ça le problème.',
+        detail: 'Un affront public. {rival} ne dira rien aujourd\'hui, et c\'est bien ça le problème.',
         effects: { euros: 25, lessonId: 'chasse' },
       },
     ],

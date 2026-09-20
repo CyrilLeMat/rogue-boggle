@@ -246,7 +246,7 @@ export const useRunStore = create<Store>((set, get) => ({
     const { run } = get();
     if (!run) return '';
     const knowsKevin = run.seenInterludes.includes('kevin1');
-    const allowed = MONOLOGUE.filter((t) => knowsKevin || !t.includes('Kévin'));
+    const allowed = MONOLOGUE.filter((t) => knowsKevin || !t.includes('{rival}'));
     const fresh = allowed.filter((t) => !run.saidThoughts.includes(t));
     const text = run.rng.pick(fresh.length ? fresh : allowed);
     set({ run: { ...run, saidThoughts: [...run.saidThoughts, text] } });

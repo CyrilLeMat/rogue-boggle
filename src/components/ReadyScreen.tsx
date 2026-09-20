@@ -37,7 +37,7 @@ export function ReadyOverlay() {
       return;
     }
     // pas un mot sur Kévin tant qu'il ne s'est pas présenté
-    const leads = PSYCHE_LEAD.filter((l) => run?.seenInterludes.includes('kevin1') || !l.includes('Kévin'));
+    const leads = PSYCHE_LEAD.filter((l) => run?.seenInterludes.includes('kevin1') || !l.includes('{rival}'));
     setLead(leads[Math.floor(Math.random() * leads.length)]);
     setThought(draw());
     sfx.heartbeat();

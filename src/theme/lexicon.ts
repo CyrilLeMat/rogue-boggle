@@ -28,6 +28,7 @@ export interface Profile {
   action: string;   // une action, à l'infinitif
   cri: string;      // ce que tu cries si une araignée te grimpe sur la jambe
   faute: string;    // un mot que tu écris toujours mal
+  pere: string;     // le prénom de ton père, qui devient celui du rival de la cour
 }
 export interface Identity { name: string; gender: Gender; profile: Profile }
 
@@ -54,6 +55,7 @@ export const DEFAULT_PROFILE: Profile = {
   action: 'sauter partout en criant',
   cri: 'AU SECOURS! APPELER LA POLICE!',
   faute: 'nénuphard',
+  pere: 'Kévin',
 };
 export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profile: DEFAULT_PROFILE };
 
@@ -81,6 +83,7 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   action: ['sauter partout en criant', 'courir dans les couloirs', 'faire du vélo de vitesse', 'crier très fort pour appeler maman', 'grimper aux arbres'],
   cri: ['AAAAAH! JE SUIS ATTAQUÉ!', 'AU SECOURS! APPELEZ LA POLICE!', 'MAMAN SAUVE MOI', 'NON NON NON JE REFUSE', 'ENLEVEZ-LA'],
   faute: ['nénuphard', 'aujourdhui', 'parmis', 'quand même', 'beaucoups', 'malgrés'],
+  pere: ['Kévin', 'Jean-Michel', 'Bryan', 'Patrick', 'Ludovic', 'Christophe'],
 };
 
 // {nom} pour le prénom, {salut} {phrase} {cour} {heros} {plat} {horreur} {metier} {chanson}
@@ -103,6 +106,8 @@ export function say(text: string, id: Identity | null | undefined, extra?: Recor
     ...profile, nom: who.name,
     maitresse: `Madame ${family}`,
     directeur: `Monsieur ${family}`,
+    // le redoublant du fond porte le prénom du père : personne ne relève jamais
+    rival: capitalize(profile.pere),
     ...extra,
   };
   return text
@@ -141,7 +146,7 @@ export const PSYCHE_LEAD = [
   'Tu décapuchonnes ton stylo. Le bruit résonne dans toute la salle. Personne ne t\'entend penser :',
   'Tu ranges {objet} au fond du cartable, tu remontes tes manches, et tu te murmures :',
   'Tu vérifies trois fois que ton stylo écrit, sur le coin de la feuille, puis tu te jures :',
-  'Tu jettes un œil à Kévin, qui ne te regarde même pas. Ça t\'énerve. Tu te dis :',
+  'Tu jettes un œil à {rival}, qui ne te regarde même pas. Ça t\'énerve. Tu te dis :',
   'Tu arraches la page précédente, tu lisses la nouvelle du plat de la main, et tu penses :',
   'Tu croises les doigts sous la table, là où {maitresse} ne peut pas voir, et tu récites :',
   'Tu cales ton coude, tu inclines la feuille de trois degrés, comme {admire} te l\'a montré, et tu souffles :',
@@ -168,7 +173,7 @@ export const MONOLOGUE = [
   'Si je tombe ici, personne ne se souviendra de mon nom, {nom}. Même mes parents m\'oublieront.',
   'Le CM1 ne pardonne pas. Le CM1 n\'attend personne. Le CM1 est la lumière.',
   'Ma mère m\'a dit de faire de mon mieux. Je suis prêt[|e] à donner ma vie pour cette épreuve du destin.',
-  'Kévin me regarde. Il veut me voir échouer. Qu\'il regarde. Il verra ce que je vaux.',
+  '{rival} me regarde. Il veut me voir échouer. Qu\'il regarde. Il verra ce que je vaux.',
   'Comme dit {heros} : le destin frappe à ma porte, et il frappe avec {objet}. Je dois relever le défi, {adjectif} ou pas.',
   'Si je tombe ici, je ne serai jamais {metier}. Je serai un souvenir.',
   '{Admire}. Regarde-moi bien. Je ne te ferai pas honte.',
@@ -426,7 +431,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'J\'ai montré ta copie en salle des maîtres. Personne n\'a ri. Le silence était pire.',
     'Tu as passé l\'année sur {cour}. Voilà le résultat, {nom}.',
     'Je préviendrai {admire}. Quelqu\'un doit savoir.',
-    'Kévin a fait mieux. Kévin n\'a pas de stylo.',
+    '{rival} a fait mieux. {rival} n\'a pas de stylo.',
     'Je range cette copie dans le tiroir du bas. Celui qui ferme à clé.',
     'Même {animal} aurait fait mieux, et il n\'a pas de mains.',
     '{Nombre} fautes. J\'ai arrêté de compter après, d\'ailleurs.',
@@ -596,18 +601,18 @@ export const DUEL = {
   // la scène d'abord, en grand : on ne tombe pas sur une grille sans avoir vu la salle
   intro: [
     'Le lendemain matin, avant la sonnerie. La classe est vide, les chaises encore retournées sur les tables. Sauf deux.',
-    'Kévin a descendu la sienne et la tienne, et il les a mises face à face, au milieu de l\'allée.',
+    '{rival} a descendu la sienne et la tienne, et il les a mises face à face, au milieu de l\'allée.',
     'Il est assis, bien droit, les deux mains à plat. Pour la première fois de l\'année, il a sorti une feuille et un stylo.',
   ],
   cta: 'T\'asseoir en face de lui',
   sub: 'Pas de note, pas de copie à rendre. Il est sur ta feuille, entre tes lettres.',
   lesson: `Chaque mot dont le tracé lui passe dessus lui rentre dedans. Fais-le tomber avant la sonnerie.`,
   taunt: `Il te regarde en face et articule, assez fort pour le couloir entier : « Aujourd'hui, t'as ${INSULTE}. »`,
-  hp: 'Kévin',
+  hp: '{rival}',
   lead: 'Tu poses ton cartable au milieu du couloir. Il ne bouge pas. Toi non plus. Puis tu te dis, une seule fois :',
   cry: 'Tu m\'as pris quelque chose. Je viens le reprendre.',
   won: [
-    'Kévin est à genoux au milieu de la feuille. Il tient {corps} à deux mains et ne relève pas la tête.',
+    '{rival} est à genoux au milieu de la feuille. Il tient {corps} à deux mains et ne relève pas la tête.',
     'Il ne ricane plus. Il ne copie plus. Il souffle très fort, et sa voix part dans les aigus.',
   ],
   wonCry: 'Pardon… Pardon, {nom}. J\'aurais pas dû. Je te jure que j\'aurais pas dû.',
@@ -616,7 +621,7 @@ export const DUEL = {
   wonEmpty: 'Il n\'a rien à te rendre. Il te tend une bille, sa meilleure, et referme tes doigts dessus.',
   wonFall: 'Tu ranges tout sans un mot. Il reste une dictée. Une seule.',
   lost: [
-    'La sonnerie. Kévin se relève, essoufflé, et recule vers la porte sans te quitter des yeux.',
+    'La sonnerie. {rival} se relève, essoufflé, et recule vers la porte sans te quitter des yeux.',
     'Il a tenu. Pas longtemps, mais il a tenu, et dans cette cour ça suffit à tout changer.',
   ],
   lostCry: 'La prochaine fois, {surnom}. La prochaine fois.',
@@ -648,7 +653,7 @@ export const EV = {
     leave: 'Reprendre le couloir',
   },
   kevin: {
-    title: 'Kévin te barre le couloir',
+    title: '{rival} te barre le couloir',
     intro: [
       'Il t\'attendait. Il a même prévu une feuille, ce qui ne lui ressemble pas.',
       'Depuis la rentrée il copie sur toi, et depuis la rentrée ça ne lui suffit plus.',
@@ -657,9 +662,9 @@ export const EV = {
     ask: (n: number) => `— Alors, {surnom} ? Ce mot fait ${n} lettres, et je suis à {distance} de toi. Tu le trouves, ou tout le couloir saura que tu n\'es rien sans ta maîtresse.`,
     hint: 'Il soupire et tapote la feuille du doigt, là où le mot commence.',
     wrong: `— Toi, t'as vraiment ${INSULTE}. Deux CM1 se sont arrêtés pour regarder.`,
-    won: 'Kévin recule d\'un pas, {adjectif2} de surprise. Il ne ricane plus du tout, {nom}.',
+    won: '{rival} recule d\'un pas, {adjectif2} de surprise. Il ne ricane plus du tout, {nom}.',
     wonSub: '— Coup de chance. Va manger {plat} et profites-en. Je reste à {distance}, et je regarde.',
-    lost: 'Kévin plie la feuille en quatre et la met dans sa poche.',
+    lost: '{rival} plie la feuille en quatre et la met dans sa poche.',
     lostSub: '— Je la garde, et j\'écris « {surnom} » dessus. En grand, au feutre, et je l\'affiche au porte-manteaux.',
     start: 'Relever le défi',
     giveUp: 'Lui laisser le couloir',
@@ -670,7 +675,7 @@ export const EV = {
     title: 'Les toilettes du fond',
     intro: [
       'Tu pousses la porte des toilettes du fond de la cour. Ça sent le savon rose et le carrelage froid.',
-      'La porte se rouvre derrière toi. Kévin entre, la cale avec son pied, et te sourit comme on sourit à quelqu\'un qui ne dira rien à personne.',
+      'La porte se rouvre derrière toi. {rival} entre, la cale avec son pied, et te sourit comme on sourit à quelqu\'un qui ne dira rien à personne.',
       '« Tranquille, {surnom}. Je veux juste voir ton cartable. Juste voir. »',
     ],
     ask: () => 'Il reste onze minutes de récré. Le couloir est vide. {Admire} est à huit kilomètres d\'ici.',
@@ -685,12 +690,13 @@ export const EV = {
     swap: 'Il regarde ce que tu lui tends. Il ne le prend même pas.',
     swapSub: '« Non. Ça. » Sa main est déjà dans ton cartable. Il savait avant toi ce qu\'il y avait dedans.',
     stood: 'Tu serres les bretelles à deux mains. Tu tiens quatre secondes entières.',
-    stoodSub: 'Quatre secondes, {nom}. Devant Kévin. Personne ne le saura jamais, et pourtant c\'est arrivé.',
+    stoodSub: 'Quatre secondes, {nom}. Devant {rival}. Personne ne le saura jamais, et pourtant c\'est arrivé.',
     took: 'Il le range dans SON cartable, comme si ça lui appartenait depuis la rentrée.',
     won: '', wonSub: '',
     lost: 'Tu n\'as rien fait de mal.',
     lostSub: 'C\'est pourtant toi qui ressors avec {corps} qui tremble et les yeux qui piquent. Il te tient la porte, en plus.',
     grudge: 'Tu retiens son nom. Tu retiens l\'heure. Un jour tu seras {metier}, et lui ne sera rien. Il reste deux dictées avant qu\'il s\'assoie en face de toi.',
+    pick: 'Ramasser ton cartable',
     start: 'Poser le cartable par terre',
     giveUp: '',
     leave: 'Sortir sans rien dire',
@@ -759,7 +765,7 @@ export const EV = {
     won: 'La classe applaudit. Même ceux du fond.',
     wonSub: '{Maitresse} note quelque chose. Cette fois, c\'est bon signe. Ce soir, c\'est {plat} pour toi.',
     lost: 'La classe applaudit mollement.',
-    lostSub: 'On a connu des récitations plus longues. Kévin a soufflé « {rigolo} » au deuxième vers.',
+    lostSub: 'On a connu des récitations plus longues. {rival} a soufflé « {rigolo} » au deuxième vers.',
     start: 'Monter sur l\'estrade',
     giveUp: 'Descendre de l\'estrade',
     leave: 'Regagner sa place',

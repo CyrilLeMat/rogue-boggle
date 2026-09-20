@@ -104,7 +104,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Tu ne le connaissais pas ce matin. Il t’a lancé un « {salut} » en arrivant, et ce soir tu ne verras plus que lui.',
-      'Kévin. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords, et un regard {adjectif2}. Il copie sur tout le monde et tout le monde le laisse faire.',
+      '{rival}. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords, et un regard {adjectif2}. Il copie sur tout le monde et tout le monde le laisse faire.',
       'Dans la cour, il traverse le goudron sans se presser, s’arrête à {distance} de toi, sort les mains de ses poches et te désigne du menton.',
     ],
     cry: `Cette année, c’est toi ma victime. T’as ${INSULTE}.`,
@@ -114,19 +114,19 @@ export const INTERLUDES: Interlude[] = [
     id: 'kevin2',
     mood: 'any',
     lines: [
-      'Vendredi, la maîtresse rend les copies. Elle garde la tienne pour la fin. Elle garde aussi celle de Kévin.',
+      'Vendredi, la maîtresse rend les copies. Elle garde la tienne pour la fin. Elle garde aussi celle de {rival}.',
       'Les deux sont identiques. Mot pour mot, faute pour faute, y compris « {faute} », que tu es [le seul|la seule] au monde à écrire comme ça.',
-      'Elle regarde Kévin. Kévin baisse les yeux avec un air {adjectif3}, exactement comme quelqu\'un qu\'on aurait copié.',
+      'Elle regarde {rival}. {rival} baisse les yeux avec un air {adjectif3}, exactement comme quelqu\'un qu\'on aurait copié.',
     ],
     cry: 'C\'est lui ! C\'est lui qui a copié sur moi !!!',
-    fall: 'Tu as été [puni|punie]. Kévin a eu un bon point pour son courage.',
+    fall: 'Tu as été [puni|punie]. {rival} a eu un bon point pour son courage.',
   },
   {
     id: 'kevin3',
     mood: 'any',
     lines: [
       'Le soir. La classe est éteinte. Tu passes devant la fenêtre et tu t’arrêtes net.',
-      'Kévin est là, seul devant le tableau, à recopier les mots dans un silence {adjectif}. À ses pieds, il y a {objet}. Tu sais très bien à qui c’était, {nom}.',
+      '{rival} est là, seul devant le tableau, à recopier les mots dans un silence {adjectif}. À ses pieds, il y a {objet}. Tu sais très bien à qui c’était, {nom}.',
     ],
     cry: 'Ce que tu m’as pris, je viendrai le reprendre.',
     fall: 'Le lendemain, il s’assoit en face de toi. Pas à côté. En face.',

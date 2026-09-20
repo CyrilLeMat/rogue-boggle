@@ -12,6 +12,7 @@ import { EV, SCOLDS, money, scold } from '../theme/lexicon';
 import { EventArt } from './EventArt';
 import { Grid } from './Grid';
 import { RelicCard } from './RelicCard';
+import { Exit, Grab } from './RacketArt';
 
 function Chrono({ left, total }: { left: number; total: number }) {
   return (
@@ -151,7 +152,9 @@ function Choice({ ev }: { ev: ChoiceEvent }) {
 function Racket({ ev }: { ev: RacketEvent }) {
   const offer = useRunStore((s) => s.racketOffer);
   const refuse = useRunStore((s) => s.racketRefuse);
+  const leave = useRunStore((s) => s.leaveEvent);
   const say = useSay();
+  const [step, setStep] = useState(0);
   const t = EV.racket;
 
   if (ev.outcome === 'playing') {
@@ -177,28 +180,36 @@ function Racket({ ev }: { ev: RacketEvent }) {
   }
 
   const stolen = ev.demanded ? relic(ev.demanded) : null;
-  // trois temps, séparés : l'échange, ce qu'il emporte, ce que ça t'a coûté.
+  // deux temps, deux cases : ce qu'il emporte, puis ce que ça t'a coûté et comment tu sors.
+  if (step === 0) {
+    return (
+      <div className="racket-outcome">
+        <div className="frame scene-frame" style={{ animationDelay: '0.05s' }}><Grab /></div>
+        <p className="beat" style={{ animationDelay: '0.5s' }}>{say(ev.refused ? t.stood : t.swap)}</p>
+        <p className="beat him" style={{ animationDelay: '1.1s' }}>{say(ev.refused ? t.stoodSub : t.swapSub)}</p>
+        {stolen && (
+          <div className="stolen" style={{ animationDelay: '1.8s' }}>
+            <RelicCard relic={stolen} />
+            <span className="stamp-pris">pris</span>
+            <p className="caption">{say(t.took)}</p>
+          </div>
+        )}
+        <button className="ready-cta" style={{ animationDelay: '2.4s' }} onClick={() => setStep(1)}>{t.pick}</button>
+      </div>
+    );
+  }
+
   return (
     <div className="racket-outcome">
-      <p className="beat" style={{ animationDelay: '0.1s' }}>{say(ev.refused ? t.stood : t.swap)}</p>
-      <p className="beat him" style={{ animationDelay: '0.7s' }}>{say(ev.refused ? t.stoodSub : t.swapSub)}</p>
-
-      {stolen && (
-        <div className="stolen" style={{ animationDelay: '1.4s' }}>
-          <RelicCard relic={stolen} />
-          <span className="stamp-pris">pris</span>
-          <p className="caption">{say(t.took)}</p>
-        </div>
-      )}
-
-      <ul className="racket-bill" style={{ animationDelay: '2.1s' }}>
+      <div className="frame scene-frame" style={{ animationDelay: '0.05s' }}><Exit /></div>
+      <ul className="racket-bill" style={{ animationDelay: '0.5s' }}>
         {ev.refused && ev.toll === 0 && <li className="ko"><span>−1</span> bon point · il te pousse contre le carrelage</li>}
         {ev.toll > 0 && <li className="ko"><span>−{money(ev.toll)}</span> il compte tes billes devant toi</li>}
         {ev.refused && <li className="ok"><span>+ La rancune</span> +3 pts sur chaque mot, jusqu'à la fin de l'année</li>}
       </ul>
-
-      <p className="beat" style={{ animationDelay: '2.7s' }}>{say(t.lost)} {say(t.lostSub)}</p>
-      <p className="racket-grudge" style={{ animationDelay: '3.3s' }}>{say(t.grudge)}</p>
+      <p className="beat" style={{ animationDelay: '1.1s' }}>{say(t.lost)} {say(t.lostSub)}</p>
+      <p className="racket-grudge" style={{ animationDelay: '1.8s' }}>{say(t.grudge)}</p>
+      <button className="ready-cta" style={{ animationDelay: '2.4s' }} onClick={leave}>{t.leave}</button>
     </div>
   );
 }
@@ -283,7 +294,7 @@ export function EventScreen() {
       <div className="row">
         {canGiveUp
           ? <button className="secondary" onClick={giveUp}>{say(text.giveUp)}</button>
-          : ev.outcome !== 'playing' && <button onClick={leave}>{say(text.leave)}</button>}
+          : ev.outcome !== 'playing' && ev.kind !== 'racket' && <button onClick={leave}>{say(text.leave)}</button>}
       </div>
     </div>
   );

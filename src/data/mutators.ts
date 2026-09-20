@@ -35,7 +35,7 @@ export const MUTATORS: Mutator[] = [
   },
   {
     id: 'chasse', name: 'Le cancre copie', rarity: 'rare', enemy: true,
-    scene: 'Kévin s\'est assis à côté de toi. Il n\'a pas de stylo. Il n\'a jamais de stylo.',
+    scene: '{rival} s\'est assis à côté de toi. Il n\'a pas de stylo. Il n\'a jamais de stylo.',
     description: 'Un cancre copie sur ta feuille (il change de place toutes les 8 s). Trace 3 ou 4 mots à travers sa case pour le faire taire. Calmé : +30 billes. Toujours là : −15 billes',
   },
   {
@@ -141,8 +141,8 @@ export const MUTATORS: Mutator[] = [
   },
   {
     id: 'duel', name: 'Le duel', rarity: 'rare', enemy: true, boss: true,
-    scene: 'Kévin s\'est assis en face de toi, pas à côté. Il a posé sa feuille. Il ne copiera pas aujourd\'hui.',
-    description: 'Kévin en personne. Il bouge vite, il encaisse, et le faire taire rapporte gros',
+    scene: '{rival} s\'est assis en face de toi, pas à côté. Il a posé sa feuille. Il ne copiera pas aujourd\'hui.',
+    description: '{rival} en personne. Il bouge vite, il encaisse, et le faire taire rapporte gros',
   },
   {
     id: 'geante', name: 'Grande carte', rarity: 'rare', minManche: 4,

@@ -522,6 +522,9 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 /* Trois temps bien séparés : l'échange, l'objet qui part, l'addition. */
 .racket-outcome { margin: 6px auto 0; display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 460px; }
 .racket-outcome > * { opacity: 0; animation: reveal 0.6s ease-out both; }
+.racket-outcome .scene-frame { width: min(340px, 100%); margin-bottom: 2px; }
+/* le bouton générique pulse en boucle : ici il doit d'abord apparaître, comme le reste */
+.racket-outcome .ready-cta { opacity: 0; animation: reveal 0.6s ease-out both; }
 .racket-outcome p { margin: 0; }
 .racket-outcome .beat { line-height: 1.45; }
 /* sa voix à lui : plus grande, à la craie */

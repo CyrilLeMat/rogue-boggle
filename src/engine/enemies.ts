@@ -64,7 +64,7 @@ export function enemyTouched(path: Pos[], enemy: Enemy): boolean {
   return enemy.cells.some(([r, c]) => keys.has(posKey(r, c)));
 }
 
-export const ENEMY_NAMES: Record<string, string> = { limace: 'Cancre', tank: 'Gros cancre', kevin: 'Kévin' };
+export const ENEMY_NAMES: Record<string, string> = { limace: 'Cancre', tank: 'Gros cancre', kevin: '{rival}' };
 export const BOSS_BOUNTY = 120;      // [tuning] Kévin paie mieux qu'un cancre
 // L'affrontement n'est pas une dictée : il n'a pas de note à atteindre, donc l'endurance de Kévin
 // ne se déduit plus d'un seuil, elle est posée. [tuning] 150 au niveau adulte, soit trois à quatre

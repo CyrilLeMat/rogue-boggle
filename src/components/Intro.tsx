@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { setMusicMood } from '../audio/music';
 import { useRunStore } from '../state/runStore';
+import { useSay } from '../theme/useSay';
 
 // Prologue en trois cases de bande dessinée. Le ton du jeu tient là-dedans :
 // une tragédie antique pour une dictée de CE2, avec un fond de révolte.
@@ -10,7 +11,7 @@ const PANELS = [
     title: 'I. La récré',
     text: [
       'Il était une fois une récréation parfaite.',
-      'Le soleil chauffait les billes, le goudron sentait l\'été, une partie d\'élastique aurait pu durer mille ans.',
+      'Le soleil chauffait les billes, le goudron sentait l\'été, on aurait pu faire {cour} pendant mille ans.',
       'Puis la cloche sonna. Et avec elle s\'acheva l\'âge d\'or.',
     ],
     art: <Recre />,
@@ -140,6 +141,7 @@ const PANEL_MOODS = ['classe', 'choc', 'combat'] as const;
 export function Intro() {
   const accept = useRunStore((s) => s.acceptChallenge);
   const [i, setI] = useState(0);
+  const say = useSay();
   useEffect(() => { setMusicMood(PANEL_MOODS[i]); }, [i]);
   const panel = PANELS[i];
   const last = i === PANELS.length - 1;
@@ -155,8 +157,8 @@ export function Intro() {
         ))}
       </div>
       <div className="intro-text" key={i}>
-        {panel.text.map((l, k) => <p key={k} style={{ animationDelay: `${0.15 + k * 0.7}s` }}>{l}</p>)}
-        {'cry' in panel && panel.cry && <p className="intro-cry" style={{ animationDelay: `${0.3 + panel.text.length * 0.7}s` }}>{panel.cry}</p>}
+        {panel.text.map((l, k) => <p key={k} style={{ animationDelay: `${0.15 + k * 0.7}s` }}>{say(l)}</p>)}
+        {'cry' in panel && panel.cry && <p className="intro-cry" style={{ animationDelay: `${0.3 + panel.text.length * 0.7}s` }}>{say(panel.cry)}</p>}
       </div>
       <div className="dots">{PANELS.map((_, k) => <span key={k} className={k === i ? 'on' : ''} />)}</div>
       <button className="intro-cta" onClick={(e) => { e.stopPropagation(); next(); }}>{last ? 'Monter sur la table' : 'Suite →'}</button>

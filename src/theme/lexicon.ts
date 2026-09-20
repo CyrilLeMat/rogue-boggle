@@ -116,8 +116,9 @@ export function say(text: string, id: Identity | null | undefined, extra?: Recor
     });
 }
 
-// L'insulte de Kévin : sa signature verbale. Elle revient à chaque fois qu'il ouvre la bouche,
-// de la rentrée au duel — et c'est la première chose qu'il retire quand il est à terre.
+// L'insulte de Kévin : sa signature verbale. Trois fois dans l'année, pas une de plus —
+// il la pose à la rencontre, il la relance avant l'affrontement, et c'est la première chose
+// qu'il retire quand il est à terre. (Plus une, s'il te prend en faute dans le couloir.)
 // Formulée « à être » : le mot d'animal de la fiche arrive avec son article (« un hérisson »).
 export const INSULTE = 'une tête à être {animal} {adjectif}';
 
@@ -650,7 +651,7 @@ export const EV = {
     won: 'Kévin recule d\'un pas, {adjectif2} de surprise. Il ne ricane plus du tout, {nom}.',
     wonSub: '— Coup de chance. Va manger {plat} et profites-en. Je reste à {distance}, et je regarde.',
     lost: 'Kévin plie la feuille en quatre et la met dans sa poche.',
-    lostSub: `— Je la garde, et j'écris « {surnom} » dessus. T'as ${INSULTE}, va.`,
+    lostSub: '— Je la garde, et j\'écris « {surnom} » dessus. En grand, au feutre, et je l\'affiche au porte-manteaux.',
     start: 'Relever le défi',
     giveUp: 'Lui laisser le couloir',
     leave: 'Rentrer en classe',
@@ -667,7 +668,7 @@ export const EV = {
     hint: 'Il tend la main, paume ouverte, et ne la baisse pas.',
     wrong: '',
     // Le choix, et ce qu'il en reste
-    open: `— Ouvre. Tu choisis, hein, je suis sympa, moi. T'as ${INSULTE}, mais je suis sympa.`,
+    open: '— Ouvre. Tu choisis, hein. Je suis sympa, moi.',
     give: 'Lui donner',
     empty: 'Il retourne ton cartable. Il tombe une gomme, deux billes et un mouchoir. Il soupire, [déçu|déçue] pour toi.',
     emptyCta: 'Vider tes poches',

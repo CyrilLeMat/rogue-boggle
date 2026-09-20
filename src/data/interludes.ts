@@ -118,7 +118,7 @@ export const INTERLUDES: Interlude[] = [
       'Elle regarde Kévin. Kévin baisse les yeux avec un air {adjectif3}, exactement comme quelqu\'un qu\'on aurait copié.',
     ],
     cry: 'C\'est lui ! C\'est lui qui a copié sur moi !!!',
-    fall: `Tu as été [puni|punie]. Kévin a eu un bon point pour son courage. En sortant, il te glisse « t’as ${INSULTE} » sans bouger les lèvres.`,
+    fall: 'Tu as été [puni|punie]. Kévin a eu un bon point pour son courage.',
   },
   {
     id: 'kevin3',

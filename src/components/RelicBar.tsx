@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { curse, mutator, relics } from '../data/registry';
 import { useRunStore } from '../state/runStore';
+import { useSay } from '../theme/useSay';
 
 // La leçon du jour reste visible ; les fournitures se replient dans un « cartable » qu'on ouvre au tap.
 export function RelicBar() {
@@ -8,12 +9,13 @@ export function RelicBar() {
   const curseIds = useRunStore((s) => s.manche?.curseIds ?? []);
   const mutatorId = useRunStore((s) => s.manche?.mutatorId ?? null);
   const [open, setOpen] = useState(false);
+  const say = useSay();
   const mut = mutatorId ? mutator(mutatorId) : null;
   const counts = new Map<string, number>();
   for (const id of ids) counts.set(id, (counts.get(id) ?? 0) + 1);
   const items = [
     ...relics([...counts.keys()]).map((r) => ({
-      id: r.id, name: (counts.get(r.id) ?? 1) > 1 ? `${r.name} ×${counts.get(r.id)}` : r.name,
+      id: r.id, name: (counts.get(r.id) ?? 1) > 1 ? `${say(r.name)} ×${counts.get(r.id)}` : say(r.name),
       description: r.description, cls: r.charm ? 'charm' : r.rarity,
     })),
     ...curseIds.map(curse).map((c) => ({ id: c.id, name: c.name, description: c.description, cls: 'curse' })),

@@ -69,7 +69,7 @@ export function EndScreen({ victory }: { victory: boolean }) {
 
       {run.relicIds.length > 0 && (
         <div className="relic-bar end-relics">
-          {relics(run.relicIds).map((r) => <span key={r.id} className={`relic ${r.rarity}`}>{r.name}</span>)}
+          {relics(run.relicIds).map((r) => <span key={r.id} className={`relic ${r.rarity}`}>{say(r.name, run.identity)}</span>)}
         </div>
       )}
 

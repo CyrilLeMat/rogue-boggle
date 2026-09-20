@@ -7,13 +7,13 @@ import { findPathForWord } from '../engine/wordFinder';
 // Chaque archétype a un effet franc et une contrepartie, sauf le Cancre repenti (neutre, pour débuter).
 export const ARCHETYPES: Relic[] = [
   {
-    id: 'nouveau', name: 'Le nouveau', rarity: 'rare', archetype: true,
+    id: 'nouveau', name: '[Le nouveau|La nouvelle]', rarity: 'rare', archetype: true,
     flavor: 'Tu viens d\'arriver dans l\'école. Personne ne sait ce que tu vaux. Toi non plus, d\'ailleurs.',
     description: 'Rien de particulier. Juste toi, la feuille, et 20 billes de bienvenue',
     // profil neutre : le bon endroit pour découvrir le jeu
   },
   {
-    id: 'chouchou', name: 'Le chouchou de la maîtresse', rarity: 'rare', archetype: true,
+    id: 'chouchou', name: '[Le chouchou|La chouchoute] de la maîtresse', rarity: 'rare', archetype: true,
     flavor: 'Tu effaces le tableau sans qu\'on te le demande. C\'est répugnant. Ça paie.',
     description: '+25 % sur tous les mots, mais les autres te rackettent : −25 % de billes',
     onWordFound: () => ({ percent: 0.25 }),
@@ -36,22 +36,22 @@ export const ARCHETYPES: Relic[] = [
     },
   },
   {
-    id: 'footballeur', name: 'Le footballeur', rarity: 'rare', archetype: true,
+    id: 'footballeur', name: '[Le footballeur|La footballeuse]', rarity: 'rare', archetype: true,
     flavor: 'Quarante minutes de match sans souffler. Ton cœur bat à 180. Le temps n\'a plus le même sens.',
     description: '+25 s de chrono à chaque dictée, mais la tête est restée au but : −15 % sur les mots',
     mancheSeconds: (s) => s + 25,
     onWordFound: () => ({ percent: -0.15 }),
   },
   {
-    id: 'redoublant', name: 'Le redoublant', rarity: 'rare', archetype: true,
-    flavor: 'Tu as déjà fait ce CE2. Tu connais les questions. Tu connais surtout les pièges.',
+    id: 'redoublant', name: '[Le redoublant|La redoublante]', rarity: 'rare', archetype: true,
+    flavor: 'Tu as déjà fait ce CE2. Tu connais les questions, et tu connais surtout les pièges.',
     description: 'Un bon point de plus à la rentrée, mais on t\'en demande davantage : note à atteindre +12 %',
     extraLives: 1,
     thresholdMult: 1.12,
   },
   {
-    id: 'petit-dernier', name: 'Le petit dernier', rarity: 'rare', archetype: true,
-    flavor: 'Le plus petit de la classe. Le plus rapide aussi. On ne te voit jamais arriver.',
+    id: 'petit-dernier', name: '[Le petit dernier|La petite dernière]', rarity: 'rare', archetype: true,
+    flavor: '[Le plus petit|La plus petite] de la classe, et [le plus rapide|la plus rapide] aussi. On ne te voit jamais arriver.',
     description: 'L\'élan monte deux fois plus vite et tient 7 s, mais tu t\'essouffles : −10 s de chrono',
     streakStep: 0.2,
     streakWindow: 7,
@@ -65,7 +65,7 @@ export const ARCHETYPES: Relic[] = [
     onWordFound: () => ({ percent: -0.1 }),
   },
   {
-    id: 'reveur', name: 'La rêveuse', rarity: 'rare', archetype: true,
+    id: 'reveur', name: '[Le rêveur|La rêveuse]', rarity: 'rare', archetype: true,
     flavor: 'Tu regardes par la fenêtre. Les grands mots viennent tout seuls ; les petits t\'ennuient.',
     description: '+60 % sur les mots de 6 lettres et plus, rien de plus sur les mots de 3 lettres',
     onWordFound: (w) => (w.length >= 6 ? { percent: 0.6 } : w.length <= 3 ? { percent: -0.4 } : undefined),

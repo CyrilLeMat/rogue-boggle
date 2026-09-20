@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { INTERLUDES, hasInterlude, pickInterlude } from '../../data/interludes';
+import { ARCHETYPES } from '../../data/archetypes';
 import { SCENES } from '../../data/scenes';
 import { DEFAULT_PROFILE, EV, L, SHOP_INTRO, mention, DUPLICATES, MONOLOGUE, PRAISES_BIG, PRAISES_HUGE, PRAISES_SMALL, SCOLDS, SUSPICIONS, TOO_SHORT, pickAppreciation, say } from '../../theme/lexicon';
 import { createRng } from '../rng';
@@ -84,5 +85,19 @@ describe('la maîtresse se répète le moins possible', () => {
     const used: string[] = [];
     for (let i = 0; i < 40; i++) used.push(pickAppreciation(1.15, true, 3, used, i));
     expect(used.length).toBe(40);
+  });
+});
+
+describe('les profils s\'accordent', () => {
+  it('donne un nom masculin ou féminin à chaque archétype', () => {
+    const profile = DEFAULT_PROFILE;
+    for (const a of ARCHETYPES) {
+      const m = say(a.name, { name: 'Léo', gender: 'm', profile });
+      const f = say(a.name, { name: 'Léa', gender: 'f', profile });
+      expect(m).not.toMatch(/[[\]|]/);
+      expect(f).not.toMatch(/[[\]|]/);
+    }
+    expect(say(ARCHETYPES.find((a) => a.id === 'reveur')!.name, { name: 'Léa', gender: 'f', profile: DEFAULT_PROFILE }))
+      .toBe('La rêveuse');
   });
 });

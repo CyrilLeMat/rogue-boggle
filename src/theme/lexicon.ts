@@ -26,6 +26,7 @@ export interface Profile {
   nombre: string;   // un nombre, gardé tel quel
   action: string;   // une action, à l'infinitif
   cri: string;      // ce que tu cries si une araignée te grimpe sur la jambe
+  faute: string;    // un mot que tu écris toujours mal
 }
 export interface Identity { name: string; gender: Gender; profile: Profile }
 
@@ -50,6 +51,7 @@ export const DEFAULT_PROFILE: Profile = {
   nombre: 'douze',
   action: 'sauter partout',
   cri: 'AAAAAH',
+  faute: 'nénuphard',
 };
 export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profile: DEFAULT_PROFILE };
 
@@ -75,6 +77,7 @@ export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   nombre: ['douze', 'quarante-deux', 'trois', 'mille', 'sept', 'cent'],
   action: ['sauter partout', 'courir dans les couloirs', 'faire du vélo', 'crier très fort', 'grimper aux arbres'],
   cri: ['AAAAAH', 'AU SECOURS', 'MAMAN', 'NON NON NON', 'ENLEVEZ-LA'],
+  faute: ['nénuphard', 'aujourdhui', 'parmis', 'quand même', 'beaucoups', 'malgrés'],
 };
 
 // {nom} pour le prénom, {salut} {phrase} {cour} {heros} {plat} {horreur} {metier} {chanson}
@@ -131,6 +134,7 @@ export const MONOLOGUE = [
   'J\'ai compté {nombre} respirations. À la prochaine, je commence.',
   'Après ça, j\'aurai le droit de {action}. Après ça seulement.',
   'Quand j\'aurai fini, je me lèverai et je dirai simplement : {phrase}.',
+  'Cette fois, je n\'écrirai pas « {faute} ». Cette fois, je le jure.',
   'Si je rate, ce soir il y aura {horreur} sur la table. Et le silence. Surtout le silence.',
   'Un jour je serai {metier}. Ce jour-là, j\'aurai {cour} tous les jours de ma vie.',
   'Regarde-moi bien, {admire}. Ce que tu vas voir est {adjectif}.',
@@ -235,6 +239,7 @@ export const SCOLDS = [
   'Tu écris comme on jette des cailloux, {nom}.',
   'Arrête de chantonner {chanson}, on t\'entend jusqu\'au fond du couloir.',
   'Tu as gribouillé « {rigolo} » dans la marge. Je l\'ai vu. Nous en reparlerons.',
+  'Et tu as encore écrit « {faute} ». Encore.',
   'Tu as crié « {cri} » en découvrant ce mot. Toute la classe l\'a entendu.',
   'Tu préférerais {action}, je sais. Écris d\'abord.',
   'Ce mot est {adjectif}. Et ce n\'est pas un compliment.',
@@ -369,7 +374,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'La prochaine fois, arrête de regarder la pendule. Elle ne t\'aime pas.',
   ],
   rate: [
-    'J\'ai relu trois fois en espérant m\'être trompée. Je ne me trompe jamais.',
+    'J\'ai relu trois fois en espérant m\'être trompée. Je ne me trompe jamais, et « {faute} » non plus.',
     'Tu écris comme {animal} qu\'on dérange. Et je dérange rarement {animal}.',
     'Ce n\'est rien. Ce soir tu mangeras {horreur} et demain tu recommenceras, comme tout le monde.',
     'Tu trouveras ta voie. Elle sera manuelle, mais tu la trouveras.',
@@ -410,7 +415,7 @@ export const APPRECIATIONS: Record<string, string[]> = {
     'Bien. Tu vois ce qui arrive quand tu oublies {cour} pendant cinq minutes ?',
     'Voilà ce qu\'on raconte à {admire} en rentrant. Un travail {adjectif2}, vraiment.',
     'C\'est propre, c\'est juste, et tu fredonnais {chanson} en le faisant. Agaçant.',
-    'Voilà un travail {adjectif2}. Je n\'ai pas d\'autre mot, et j\'ai cherché.',
+    'Voilà un travail {adjectif2}. Et pas une seule fois « {faute} ». Je n\'en reviens pas.',
   ],
   correct: [
     'Correct, {nom}. Nous savons tous les deux que tu peux mieux faire, et que tu ne le feras pas.',
@@ -426,10 +431,10 @@ export const APPRECIATIONS: Record<string, string[]> = {
   justesse: [
     'Juste, tout juste, {nom}. Un point de moins et je remplissais ton carnet de correspondance.',
     'Tu passes. Ce soir, {plat}. Demain, on recommence, et je serai moins généreuse.',
-    'Tu as tremblé jusque dans {corps}, ça se lit sur la feuille. Mais tu passes.',
+    'Tu as tremblé jusque dans {corps}, et « {faute} » est encore là. Mais tu passes.',
     'De justesse. J\'ai hésité longtemps, et j\'hésite encore.',
     'Il te manquait {distance}. Une toute petite distance.',
-    'Tu as dû dire « {phrase} » en rendant ta copie. Tu avais tort.',
+    'Tu as dû dire « {phrase} » en rendant ta copie. Tu avais tort, et « {faute} » ne s\'écrit toujours pas comme ça.',
     'Un point de plus et je te félicitais. Là, tu es {adjectif}, et c\'est tout.',
     'Tu as eu chaud, et moi aussi. Va {action}, tu l\'as mérité de justesse.',
     'Il s\'en est fallu de {nombre} points. Ou pas loin. Je n\'ai pas recompté.',

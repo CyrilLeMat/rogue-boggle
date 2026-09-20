@@ -107,7 +107,7 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Vendredi, la maîtresse rend les copies. Elle garde la tienne pour la fin. Elle garde aussi celle de Kévin.',
-      'Les deux sont identiques. Mot pour mot, faute pour faute, jusqu\'à ce « nénuphard » avec un d que tu es [le seul|la seule] au monde à avoir écrit.',
+      'Les deux sont identiques. Mot pour mot, faute pour faute, y compris « {faute} », que tu es [le seul|la seule] au monde à écrire comme ça.',
       'Elle regarde Kévin. Kévin baisse les yeux avec un air {adjectif}, exactement comme quelqu\'un qu\'on aurait copié.',
     ],
     cry: 'C\'est lui ! C\'est lui qui a copié sur moi !!!',

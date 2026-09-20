@@ -34,6 +34,7 @@ const QUESTIONS: { key: keyof Profile; label: string }[][] = [
     { key: 'distance', label: 'Une distance (trois mètres, deux pas…)' },
     { key: 'action', label: 'Une action (sauter, courir…)' },
     { key: 'cri', label: 'Ce que je crie quand j\'ai peur' },
+    { key: 'faute', label: 'Un mot que j\'écris toujours mal' },
   ],
 ];
 

@@ -9,7 +9,7 @@ import {
   SCOLDS, SHOP_INTRO, SIGNATURE, SUSPICIONS, TOO_SHORT, mention,
 } from '../src/theme/lexicon';
 
-const TOKENS = ['nom', 'salut', 'phrase', 'cour', 'heros', 'plat', 'horreur', 'metier', 'chanson', 'admire', 'surnom', 'rigolo', 'adjectif', 'adjectif2', 'objet', 'animal', 'corps', 'distance', 'nombre', 'action', 'cri'];
+const TOKENS = ['nom', 'salut', 'phrase', 'cour', 'heros', 'plat', 'horreur', 'metier', 'chanson', 'admire', 'surnom', 'rigolo', 'adjectif', 'adjectif2', 'objet', 'animal', 'corps', 'distance', 'nombre', 'action', 'cri', 'faute'];
 
 // Le prologue, tel qu'il est écrit dans le composant.
 const PROLOGUE = [

@@ -684,7 +684,7 @@ remplit tout, « Passer le reste » saute la fin, valeurs par défaut sinon) :
 bonjour aux amis, phrase fétiche, surnom, activité dans la cour, personnage préféré,
 métier plus tard, personne admirée, chanson préférée, plat préféré, plat détesté,
 mot rigolo, adjectif, autre adjectif, objet, nombre, animal, partie du corps, distance,
-action, cri de l'araignée. Chaque question a son dé « Inspire-moi » ; le pied de page
+action, cri de peur, mot qu'on écrit toujours mal. Chaque question a son dé « Inspire-moi » ; le pied de page
 tire toute la fiche d'un coup.
 
 Dans les textes : `{nom}` insère le prénom, `{hobby}` `{plat}` `{horreur}` la fiche,

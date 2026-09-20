@@ -235,7 +235,15 @@ li { display: flex; justify-content: space-between; padding: 5px 0; border-botto
 .chalk-sub { animation: reveal 0.5s ease-out 0.9s both; }
 .classroom .hand-m { transform-origin: 432px 52px; animation: spin 12s linear infinite; }
 .classroom .quill { transform-origin: 316px 240px; animation: write 3.2s ease-in-out infinite; }
-.classroom .pointer-arm { transform-origin: 70px 142px; animation: shakeText 2.4s ease-in-out infinite alternate; }
+/* elle se balance d'un pied sur l'autre, tapote sa règle et cligne des yeux */
+.classroom .maitresse { transform-box: fill-box; transform-origin: bottom center; animation: teacher-sway 3.6s ease-in-out infinite alternate; }
+@keyframes teacher-sway { from { transform: rotate(-1.1deg); } to { transform: rotate(1.4deg); } }
+.classroom .pointer-arm { transform-box: fill-box; transform-origin: 6% 92%; animation: tap-ruler 1.8s ease-in-out infinite; }
+@keyframes tap-ruler { 0%, 60%, 100% { transform: rotate(0deg); } 72% { transform: rotate(-11deg); } 84% { transform: rotate(3deg); } }
+.classroom .tap-foot { transform-box: fill-box; transform-origin: left center; animation: tap-foot 1.8s ease-in-out infinite; }
+@keyframes tap-foot { 0%, 55%, 100% { transform: rotate(0deg); } 70% { transform: rotate(-16deg); } }
+.classroom .blink { opacity: 0; animation: blink 5.4s ease-in-out infinite; }
+@keyframes blink { 0%, 94%, 100% { opacity: 0; } 96%, 98% { opacity: 1; } }
 @keyframes write { 0%, 100% { rotate: 0deg; } 50% { rotate: -7deg; } }
 .classroom .stars-wall { animation: flicker 3.4s ease-in-out infinite; }
 .classroom .frieze g:nth-child(odd) { transform-box: fill-box; }

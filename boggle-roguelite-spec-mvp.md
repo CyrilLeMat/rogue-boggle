@@ -639,3 +639,30 @@ Bilan partagé : la boucle, l'économie, les thèmes et le pipeline tiennent ; i
 - Ennemis en cœur de jeu (vagues remplaçant le seuil), ennemis persistants entre manches, ennemis qui attaquent le chrono
 - Mode daily-run partageable (seed reproductible : RNG escargots séparé, bouton « Rejouer cette seed » déjà là)
 - Packaging Tauri final
+
+## Intensité manga (2026-09-20)
+
+Le moteur d'humour est le premier degré total sur un enjeu nul. Pas de référence antique.
+
+### Paliers d'impact d'un mot
+`src/theme/intensity.ts` — seuils [12, 25, 45, 80], cinq paliers.
+1. pop discret · 2. pop doré · 3. traits de vitesse + secousse légère + basse qui cogne
+4. le mot jeté en travers de la feuille + secousse forte · 5. flash blanc + secousse maximale
+
+### Planches de transition (`src/data/interludes.ts`)
+Dix planches illustrées, une après chaque dictée impaire, jamais deux fois la même dans une année.
+Structure : le narrateur pose la scène, l'élève déclame, une dernière ligne plate remet tout à sa place.
+- après une réussite : toilettes, miroir, préau
+- après un échec : couloir, chambre
+- flashbacks : pluie, mamie
+- arc de Kévin, toujours dans l'ordre, aux dictées 3, 7 et 9 : kevin1, kevin2, kevin3
+
+### Narrateur
+`NARRATOR` dans le lexique : une ligne par dictée sur l'écran « prêt », au futur grave.
+
+### Humeurs musicales (`src/audio/music.ts`)
+`setMusicMood()` : classe (défaut), combat (une leçon est active ou 20 s restantes),
+choc (couloir), triste (planche de transition). Tempo, gamme, batterie et timbre changent avec l'humeur.
+
+### Galeries de contrôle
+`?planches` pour les scènes de choix, `?transitions` pour les planches de transition.

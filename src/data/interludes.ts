@@ -104,7 +104,8 @@ export const INTERLUDES: Interlude[] = [
     mood: 'any',
     lines: [
       'Tu ne le connaissais pas ce matin. Il t’a lancé un « {salut} » en arrivant, et ce soir tu ne verras plus que lui.',
-      '{rival}. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords, et un regard {adjectif2}. Il copie sur tout le monde et tout le monde le laisse faire.',
+      'Il s’appelle {rival}. Comme ton père. Personne dans cette cour ne trouve ça bizarre, et toi non plus, au bout de trois jours.',
+      '{Rival}. Redoublant. Aucun stylo depuis le CP, aucune trousse, aucun remords, et un regard {adjectif2}. Il copie sur tout le monde et tout le monde le laisse faire.',
       'Dans la cour, il traverse le goudron sans se presser, s’arrête à {distance} de toi, sort les mains de ses poches et te désigne du menton.',
     ],
     cry: `Cette année, c’est toi ma victime. T’as ${INSULTE}.`,

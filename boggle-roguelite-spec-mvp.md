@@ -657,8 +657,9 @@ Structure : le narrateur pose la scène, l'élève déclame, une dernière ligne
 - flashbacks : pluie, mamie
 - arc de Kévin, toujours dans l'ordre, aux dictées 3, 7 et 9 : kevin1, kevin2, kevin3
 
-### Narrateur
-`NARRATOR` dans le lexique : une ligne par dictée sur l'écran « prêt », au futur grave.
+### Dialogue intérieur
+`MONOLOGUE` dans le lexique : après « Silence. On commence. », 2,8 s de pensée déclamée
+sur fond sombre, deux battements de cœur, puis le chrono part. Un clic passe la pensée.
 
 ### Humeurs musicales (`src/audio/music.ts`)
 `setMusicMood()` : classe (défaut), combat (une leçon est active ou 20 s restantes),

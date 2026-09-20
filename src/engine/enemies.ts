@@ -36,7 +36,7 @@ function goodCells(grid: Grid, search: WordSearch, occupied: Set<number>): Pos[]
   return keep.filter((p) => reachability(search, p) > 0);
 }
 
-export function spawnEnemies(grid: Grid, search: WordSearch, rng: Rng, hp: number, count: number, nextMoveAt = ENEMY_MOVE_SECONDS): Enemy[] {
+export function spawnEnemies(grid: Grid, search: WordSearch, rng: Rng, hp: number, count: number, nextMoveAt = ENEMY_MOVE_SECONDS, typeId = 'limace'): Enemy[] {
   const out: Enemy[] = [];
   const occupied = new Set<number>();
   for (let i = 0; i < count; i++) {
@@ -44,7 +44,7 @@ export function spawnEnemies(grid: Grid, search: WordSearch, rng: Rng, hp: numbe
     if (!cands.length) break;
     const pos = rng.pick(cands);
     occupied.add(posKey(pos[0], pos[1]));
-    out.push({ id: `enemy-${i + 1}`, typeId: i === 0 ? 'limace' : 'limace', cells: [pos], hp, maxHp: hp, nextMoveAt: nextMoveAt * (1 + i / Math.max(1, count)) });
+    out.push({ id: `enemy-${i + 1}`, typeId, cells: [pos], hp, maxHp: hp, nextMoveAt: nextMoveAt * (1 + i / Math.max(1, count)) });
   }
   return out;
 }
@@ -64,4 +64,6 @@ export function enemyTouched(path: Pos[], enemy: Enemy): boolean {
   return enemy.cells.some(([r, c]) => keys.has(posKey(r, c)));
 }
 
-export const ENEMY_NAMES: Record<string, string> = { limace: 'Cancre', tank: 'Gros cancre' };
+export const ENEMY_NAMES: Record<string, string> = { limace: 'Cancre', tank: 'Gros cancre', kevin: 'Kévin' };
+export const BOSS_HP_MULT = 1.8;     // [tuning] Kévin encaisse bien plus qu'un cancre
+export const BOSS_BOUNTY = 120;      // [tuning] et il paie en conséquence

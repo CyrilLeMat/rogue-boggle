@@ -736,3 +736,13 @@ le reste est posé dessous sur le papier.
 - « Comment on joue ? » déplie trois lignes de règles, « reprendre une année précise » déplie
   une étiquette de cahier qui remplace l'ancien champ de graine
 - sur téléphone, le bandeau se raccourcit et le bouton principal devient collant en bas
+
+## Duel final et équilibrage (2026-09-20)
+
+- La 11e dictée est toujours la leçon « Le duel » : Kévin en personne sur la feuille,
+  1,8 fois les points de vie d'un cancre, déplacement 40 % plus rapide, prime de 120 billes.
+- La case blanche ne compte que dans les mots de 4 lettres et plus (`JOKER_MIN_LENGTH`).
+  La légendaire « Deux cases blanches » lève la condition (`jokerFree`).
+- Feuille de présence : deux portraits dessinés à la place des cases à cocher,
+  et moins de gras sur les niveaux.
+- `src/theme/tokenGuard.ts` surveille en développement tout `{jeton}` affiché brut.

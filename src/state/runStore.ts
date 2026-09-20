@@ -6,7 +6,7 @@ import { randomCharm } from '../data/charms';
 import { hasLessonChoice, mutatorGridSize } from '../data/mutators';
 import { hasInterlude, pickInterlude } from '../data/interludes';
 import { planScenes, randomLessonId, sceneChoice, sceneRelic } from '../data/scenes';
-import { ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
+import { BOSS_BOUNTY, BOSS_HP_MULT, ENEMY_BOUNTY, ENEMY_MOVE_SECONDS, enemyHp, ENEMY_NAMES, ENEMY_SURVIVOR_PENALTY, GRENADE_DAMAGE, HARPOON_RATIO, enemyTouched, moveEnemy, spawnEnemies } from '../engine/enemies';
 import { dictionary, inspectorWords, sageWords } from '../data/dictionary';
 import { activeHooks, consumable, mutator as resolveMutator, relics as resolveRelics } from '../data/registry';
 import { ARCHETYPES, STARTING_PURSE } from '../data/archetypes';
@@ -357,7 +357,7 @@ export const useRunStore = create<Store>((set, get) => ({
           const hp = Math.max(0, e.hp - dmg);
           notes.push(hp > 0 ? `${ENEMY_NAMES[e.typeId]} −${dmg}` : `${ENEMY_NAMES[e.typeId]} calmé`);
           if (hp === 0) {
-            let b = ENEMY_BOUNTY;
+            let b = e.typeId === 'kevin' ? BOSS_BOUNTY : ENEMY_BOUNTY;
             for (const h of hooks) if (h.onEnemyKilled) b = h.onEnemyKilled(e, b, ctx);
             bounty += b;
             killedNow++;
@@ -650,6 +650,12 @@ export const useRunStore = create<Store>((set, get) => ({
     const { run } = get();
     if (!run) return;
     const manche = run.currentManche + 1;
+    // La dernière dictée de l'année est un duel : Kévin s'assoit en face, pas à côté.
+    if (manche === TOTAL_MANCHES) {
+      set({ run: { ...run, currentManche: manche, nextMutatorId: 'duel', pendingScene: null }, shop: [] });
+      get().startManche();
+      return;
+    }
     // Une dictée sur deux, il se passe quelque chose en classe et tu dois réagir.
     const [sceneId, ...restScenes] = run.scenePlan;
     if (hasLessonChoice(manche) && sceneId) {
@@ -782,8 +788,10 @@ function buildGrid(draft: MancheState, run: RunState, hooks: ReturnType<typeof a
   draft.quest = mut?.quest ? pickQuest(grid, search, run.rng) : null;
   // Le cancre copie : 1 cancre ; punition Classe de cancres : +2 (même hors leçon) ; Cancres têtus : endurance ×1.5
   const count = (mut?.enemy ? 1 : 0) + (draft.curseIds.includes('infestation') ? 2 : 0);
-  const hpMult = draft.curseIds.includes('peau-dure') ? 1.5 : 1;
-  draft.enemies = count ? spawnEnemies(grid, search, run.rng, enemyHp(draft.threshold, count, hpMult), count) : [];
+  const hpMult = (draft.curseIds.includes('peau-dure') ? 1.5 : 1) * (mut?.boss ? BOSS_HP_MULT : 1);
+  draft.enemies = count
+    ? spawnEnemies(grid, search, run.rng, enemyHp(draft.threshold, count, hpMult), count, mut?.boss ? ENEMY_MOVE_SECONDS * 0.6 : ENEMY_MOVE_SECONDS, mut?.boss ? 'kevin' : 'limace')
+    : [];
   runMancheStart(hooks, ctx);
 }
 

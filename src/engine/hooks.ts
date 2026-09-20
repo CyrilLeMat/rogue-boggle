@@ -130,7 +130,8 @@ export interface Mutator extends Relic {
   scene?: string;      // pourquoi cette absurdité arrive aujourd'hui
   snails?: boolean;   // thème Escargots
   quest?: boolean;    // thème Objectif
-  enemy?: boolean;    // thème Chasse
+  enemy?: boolean;
+  boss?: boolean;     // un seul adversaire, mais c'est Kévin en personne
   minManche?: number; // pas avant cette manche
   sizeDelta?: number;
   secondsDelta?: number;

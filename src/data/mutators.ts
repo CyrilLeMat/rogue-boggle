@@ -140,6 +140,11 @@ export const MUTATORS: Mutator[] = [
     secondsDelta: 45, thresholdMult: 1.4,
   },
   {
+    id: 'duel', name: 'Le duel', rarity: 'rare', enemy: true, boss: true,
+    scene: 'Kévin s\'est assis en face de toi, pas à côté. Il a posé sa feuille. Il ne copiera pas aujourd\'hui.',
+    description: 'Kévin en personne, deux fois plus coriace qu\'un cancre ordinaire. Il bouge vite. Le faire taire rapporte gros',
+  },
+  {
     id: 'geante', name: 'Grande carte', rarity: 'rare', minManche: 4,
     scene: 'Elle déroule la grande carte de France par-dessus le tableau. On va voir grand.',
     description: 'Une feuille d\'une taille de plus (jusqu\'à 7×7), avec le chrono qui va avec',

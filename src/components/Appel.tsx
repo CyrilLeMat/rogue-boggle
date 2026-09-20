@@ -41,6 +41,25 @@ const ALL_QUESTIONS = QUESTIONS.flat();
 
 const pick = (list: string[]) => list[Math.floor(Math.random() * list.length)];
 
+// Deux frimousses valent mieux qu'un « e » en exposant.
+function Portrait({ gender }: { gender: Gender }) {
+  return (
+    <svg viewBox="0 0 48 48" className="portrait" aria-hidden="true">
+      <circle cx="24" cy="26" r="15" fill="#ffe1cf" stroke="#3f3a55" strokeWidth="3" />
+      {gender === 'm'
+        ? <path d="M9 24 q3 -16 15 -16 q12 0 15 16 q-6 -8 -15 -8 q-9 0 -15 8z" fill="#6f4a33" stroke="#3f3a55" strokeWidth="2.5" strokeLinejoin="round" />
+        : (
+          <>
+            <path d="M8 30 q0 -22 16 -22 q16 0 16 22 q-5 -12 -16 -12 q-11 0 -16 12z" fill="#6f4a33" stroke="#3f3a55" strokeWidth="2.5" strokeLinejoin="round" />
+            <path d="M8 30 v6 M40 30 v6" stroke="#6f4a33" strokeWidth="6" strokeLinecap="round" />
+          </>
+        )}
+      <g fill="#3f3a55"><circle cx="18" cy="27" r="2.2" /><circle cx="30" cy="27" r="2.2" /></g>
+      <path d="M19 34 q5 4 10 0" stroke="#3f3a55" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // L'appel, en deux temps : la feuille de présence, puis la fiche de renseignements.
 export function Appel() {
   const run = useRunStore((s) => s.run);
@@ -124,10 +143,12 @@ export function Appel() {
           <span>Case à cocher</span>
           <div className="appel-boxes">
             <button type="button" className={`appel-box ${gender === 'm' ? 'on' : ''}`} onClick={() => setGender('m')}>
-              <i>{gender === 'm' ? '✓' : ''}</i> Élève
+              <Portrait gender="m" />
+              <span>Un élève</span>
             </button>
             <button type="button" className={`appel-box ${gender === 'f' ? 'on' : ''}`} onClick={() => setGender('f')}>
-              <i>{gender === 'f' ? '✓' : ''}</i> Élève<small>e</small>
+              <Portrait gender="f" />
+              <span>Une élève</span>
             </button>
           </div>
         </div>

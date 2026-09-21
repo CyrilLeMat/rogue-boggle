@@ -63,7 +63,7 @@ export const DEFAULT_IDENTITY: Identity = { name: 'Camille', gender: 'f', profil
 export const PROFILE_IDEAS: Record<keyof Profile, string[]> = {
   salut: ['Salut la compagnie créole', 'Wesh les gros', 'Bonjour à tous, camarades', 'Yo les cocos', 'Hey hey, ca sent le pâté ou quoi', 'Salut dans le bus les minus'],
   phrase: ['Six seeeveeeeeeen', 'Tranquilou Bilou', 'C\'est pas ma faute à moi, moi lolita', 'Même pas mal', 'H.I.P H.O.P c\'est moi le roi de la récré'],
-  cour: ['des parties de foot', 'du rap pour sortir sa haine', 'du racketage des CPs', 'du vol de cartes pokemon', 'de l\'entrainement à l\'hyrox', 'convertir les camarades à l\'islam'],
+  cour: ['des parties de foot', 'du rap pour sortir sa haine', 'du racketage des CPs', 'du vol de cartes pokemon', 'de l\'entrainement à l\'hyrox', 'la convertion forcée des camarades à l\'islam'],
   heros: ['Psykokwak', 'Le teletubbies jaune', 'Bioman', 'Astérix', 'Bob l\'éponge', 'Edward Elric, l\'alchimiste FullMetal'],
   plat: ['les pâtes au beurre', 'les frites surgelées', 'le gratin de mamie', 'la soupe de nuggets', 'les narines de porcs', 'purée et magret de canard'],
   horreur: ['les endives', 'le poisson pané', 'les plats de prolétaire', 'les légumes non bios', 'le chou-fleur'],

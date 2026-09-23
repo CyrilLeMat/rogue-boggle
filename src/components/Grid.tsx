@@ -264,14 +264,14 @@ export function Grid({ grid, onSubmit, disabled, highlightCells, oracleCell, ora
                 {cursedCell === key && <span className="badge badge-cursed" title="Mot maudit : il commence ici">✦</span>}
                 {(() => { const e = enemyAt(r, c); const hit = impact?.cell === key; return e && e.cells[0][0] === r && e.cells[0][1] === c ? (
                   // la clé change à chaque coup : c'est ce qui relance la secousse
-                  <span key={hit ? `hit-${impact!.id}` : 'tag'} className={`enemy-tag ${hit ? 'hit' : ''}`} title={`${e.hp} / ${e.maxHp} PV`}>
+                  <span key={hit ? `tag-hit-${impact!.id}` : 'tag'} className={`enemy-tag ${hit ? 'hit' : ''}`} title={`${e.hp} / ${e.maxHp} PV`}>
                     <span className="enemy-icon">👾</span>
                     <span className="hp"><span style={{ width: `${(e.hp / e.maxHp) * 100}%` }} /></span>
                     <span className="hp-text">{e.hp}</span>
                   </span>
                 ) : null; })()}
                 {/* le mot est le poing : ça claque sur sa case */}
-                {impact && impact.cell === key && <span key={`hit-${impact.id}`} className="impact">{impact.label}</span>}
+                {impact && impact.cell === key && <span key={`impact-${impact.id}`} className="impact">{impact.label}</span>}
               </div>
             );
           }),

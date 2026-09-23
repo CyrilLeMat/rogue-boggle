@@ -64,7 +64,7 @@ export function ReadyOverlay() {
       </h2>
       <div className="ready-chips">
         {boss
-          ? <span className="chip strong">{DUEL.hp} · {boss.maxHp} PV</span>
+          ? <span className="chip strong">{say(DUEL.hp, run.identity)} · {boss.maxHp} PV</span>
           : <span className="chip strong">{L.seuil} {manche.threshold}</span>}
         <span className="chip">{Math.round(manche.totalSeconds)} s</span>
         <span className={`chip mood-${manche.difficulty.mood}`}>feuille {manche.grid.size}×{manche.grid.size}, {manche.difficulty.mood}</span>

@@ -16,15 +16,15 @@ export function RelicBar() {
   const items = [
     ...relics([...counts.keys()]).map((r) => ({
       id: r.id, name: (counts.get(r.id) ?? 1) > 1 ? `${say(r.name)} ×${counts.get(r.id)}` : say(r.name),
-      description: r.description, cls: r.charm ? 'charm' : r.rarity,
+      description: say(r.description), cls: r.charm ? 'charm' : r.rarity,
     })),
-    ...curseIds.map(curse).map((c) => ({ id: c.id, name: c.name, description: c.description, cls: 'curse' })),
+    ...curseIds.map(curse).map((c) => ({ id: c.id, name: say(c.name), description: say(c.description), cls: 'curse' })),
   ];
   if (!mut && items.length === 0) return null;
   return (
     <div className="relic-bar-wrap">
       <div className="relic-bar">
-        {mut && <span className="relic mutator" title={mut.description}>{mut.name}</span>}
+        {mut && <span className="relic mutator" title={say(mut.description)}>{say(mut.name)}</span>}
         {items.length > 0 && (
           <button className={`relic cartable ${open ? 'open' : ''}`} onClick={() => setOpen(!open)} aria-expanded={open}>
             🎒 Cartable · {items.length}{curseIds.length ? ` · ${curseIds.length} punition${curseIds.length > 1 ? 's' : ''}` : ''}
@@ -33,7 +33,7 @@ export function RelicBar() {
       </div>
       {open && (
         <ul className="cartable-list">
-          {mut && <li className="mutator"><strong>{mut.name}</strong><span>{mut.description}</span></li>}
+          {mut && <li className="mutator"><strong>{say(mut.name)}</strong><span>{say(mut.description)}</span></li>}
           {items.map((it) => (
             <li key={it.id} className={it.cls}><strong>{it.name}</strong><span>{it.description}</span></li>
           ))}

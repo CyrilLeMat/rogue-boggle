@@ -408,7 +408,7 @@ export const useRunStore = create<Store>((set, get) => ({
         if (killedNow > 0) {
           draft.killsThisManche += killedNow;
           notes.push(`prime +${bounty} billes`);
-          if (kevinDown) notes.push('Kévin est à terre.');
+          if (kevinDown) notes.push('{rival} est à terre.');
           set({ run: { ...run, euros: run.euros + bounty, killCount: run.killCount + killedNow } });
         }
       }
@@ -416,7 +416,7 @@ export const useRunStore = create<Store>((set, get) => ({
         draft.quest = updateQuest(draft.quest, draft.found);
         if (draft.quest.done) notes.push(`consigne +${draft.quest.reward} billes`);
       }
-      if (notes.length) fb.bonus = notes.join(' · ');
+      if (notes.length) fb.bonus = say(notes.join(' · '), run.identity);
       const before = draft.bonuses.length;
       runWordAccepted(result.found, hooks, ctx);
       const gained = draft.bonuses.slice(before);

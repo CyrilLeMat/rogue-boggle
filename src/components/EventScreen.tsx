@@ -253,7 +253,7 @@ export function EventScreen() {
     return (
       <div className="panel pick event-intro">
         <div className="frame event-hero"><EventArt id={ev.id} /></div>
-        <h2>{text.title}</h2>
+        <h2>{say(text.title)}</h2>
         <div className="intro-text">
           {text.intro.map((l, i) => <p key={l} style={{ animationDelay: `${(0.1 + i * 0.55).toFixed(2)}s` }}>{say(l)}</p>)}
         </div>
@@ -273,7 +273,7 @@ export function EventScreen() {
       <div className="sage-head compact">
         <div className="frame sage-frame"><EventArt id={ev.id} /></div>
         <div className="sage-speech">
-          <h2>{text.title}</h2>
+          <h2>{say(text.title)}</h2>
           {ev.kind === 'hunt' && <p className="sage-ask">{say(EV[ev.id].ask(ev.word.length))}</p>}
           {ev.kind === 'choice' && <p className="sage-ask">{say(EV.reserve.ask())}</p>}
         </div>
